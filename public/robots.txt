@@ -1,4 +1,4 @@
 User-agent: *
 Disallow:
 
-Sitemap: https://webodle.com/sitemap.xml
+Sitemap: https://pixelkriti.com/sitemap.xml

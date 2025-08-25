@@ -4,9 +4,6 @@ import ScrollToTop from "@/router/ScrollToTop";
 import Spinner from "@/components/skeleton/Spinner.jsx"
 import PageLayout from "@/components/PageLayout.jsx";
 
-const NotFound = lazy(() =>  import("@/pages/NotFoundPage.jsx"));
-
-
 import Home from "@/pages/HomePage.jsx";
 
 const AppRoutes = () => {
@@ -20,7 +17,7 @@ const AppRoutes = () => {
         <Routes>
             <Route element={<PageLayout />}>
                 <Route path="/" element={<Home />} />
-                <Route path="*" element={<NotFound />} />
+                <Route path="*" element={<Home />} />
             </Route>
 
         </Routes>

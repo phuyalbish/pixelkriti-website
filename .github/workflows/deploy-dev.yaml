@@ -8,14 +8,17 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # 1. Checkout source code
       - name: Checkout Repository
         uses: actions/checkout@v2
 
+      # 2. Setup Node.js
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
           node-version: 20.x
 
+      # 3. Cache npm dependencies
       - name: Cache npm dependencies
         uses: actions/cache@v4
         with:
@@ -24,26 +27,27 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-node-
 
+      # 4. Install dependencies
       - name: Install Dependencies
         run: npm ci
 
+      # 5. Build project
       - name: Build Project
         run: npm run build
 
+      # 6. Deploy to server (no zipping, rsync only)
       - name: Setup SSH and Deploy via rsync with rollback
         env:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
           SSH_USERNAME: ${{ secrets.SSH_USERNAME }}
           SERVER_IP: ${{ secrets.SERVER_IP }}
           VITE_LIVE_URL: ${{ secrets.VITE_LIVE_URL }}
-
-
         run: |
           set -e  # Exit on error
 
           LIVE_DIR="/home/$SSH_USERNAME/pixelkriti"
 
-          # Prepare SSH key
+          # Setup SSH key
           mkdir -p ~/.ssh
           echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_ed25519
           chmod 600 ~/.ssh/id_ed25519
@@ -51,10 +55,13 @@ jobs:
           # Test SSH connection
           ssh -o StrictHostKeyChecking=accept-new -i ~/.ssh/id_ed25519 $SSH_USERNAME@$SERVER_IP exit
 
-          # Optional: Backup current deployment
-          ssh -i ~/.ssh/id_ed25519 -o StrictHostKeyChecking=accept-new $SSH_USERNAME@$SERVER_IP "cp -r $LIVE_DIR ${LIVE_DIR}_backup_$(date +%F_%T)"
+          # Backup current deployment
+          ssh -i ~/.ssh/id_ed25519 -o StrictHostKeyChecking=accept-new $SSH_USERNAME@$SERVER_IP \
+            "cp -r $LIVE_DIR ${LIVE_DIR}_backup_$(date +%F_%T)"
 
-          # Deploy new files with rsync (excluding .htaccess)
-          rsync -avz --delete --exclude=".htaccess" -e "ssh -i ~/.ssh/id_ed25519 -o StrictHostKeyChecking=accept-new" dist/ $SSH_USERNAME@$SERVER_IP:$LIVE_DIR
+          # Deploy new build (sync dist/ → live dir, keep .htaccess if exists)
+          rsync -avz --delete --exclude=".htaccess" \
+            -e "ssh -i ~/.ssh/id_ed25519 -o StrictHostKeyChecking=accept-new" \
+            dist/ $SSH_USERNAME@$SERVER_IP:$LIVE_DIR
 
           echo "✅ Deployment complete."

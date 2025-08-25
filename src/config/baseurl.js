@@ -1,0 +1,1 @@
+export const LIVE_URL = import.meta.env.VITE_LIVE_URL;

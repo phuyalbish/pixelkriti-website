@@ -1,0 +1,179 @@
+@import url("https://fonts.googleapis.com/css2?family=Reenie+Beanie&family=Pixelify+Sans&family=Rethink+Sans:ital,wght@0,400..800;1,400..800&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap");
+
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --G100: #CCEEE9;
+  --G200: #99DDD3;
+  --G300: #66CBBD;
+  --G400: #33BAA7;
+  --G500: #00A991;
+  --G600: #008774;
+  --G700: #006557;
+  --G800: #00443A;
+  --G900: #00221D;
+
+  --B100: #D9E8F9;
+  --B200: #B3D1F3;
+  --B300: #8DB9EC;
+  --B400: #67A2E6;
+  --B500: #418BE0;
+  --B600: #346FB3;
+  --B700: #275386;
+  --B800: #1A385A;
+  --B900: #0D1C2D;
+  
+  --N100: #e6e6e6;
+  --N200: #cccccc;
+  --N300: #b3b3b3;
+  --N400: #999999;
+  --N500: #7f7f7f;
+  --N600: #666666;
+  --N700: #4d4d4d;
+  --N800: #333333;
+  --N900: #1A1A1A;
+
+  --GMAIN: #31ae48;
+  --GLIGHT: #31ae48;
+
+  --success: #00ff00;
+  --danger: #ff0000;
+
+  --bg-primary:#1e1e1e;
+
+
+  --font-liches:"Staatliches", sans-serif;
+  --font-reenie: "Reenie Beanie", cursive;
+  --font-manrope: "Manrope", sans-serif;
+  --font-dance: "Dancing Script", cursive;
+
+  --font-pixel: "Pixelify Sans", sans-serif;
+
+  --lineheight-base: 16px;
+  --lineheight-md: 24px;
+  --lineheight-lg: 32px;
+  --lineheight-xl: 49px;
+  --lineheight-2xl: 48px;
+  --lineheight-3xl: 64px;
+  --lineheight-4xl: 64px;
+  --lineheight-5xl: 72px;
+  --lineheight-6xl: 80px;
+
+  --text-xs: 12px;
+  --text-sm: 14px;
+  --text-base: 16px;
+  --text-md: 18px;
+  --text-lg: 24px;
+  --text-xl: 32px;
+  --text-2xl: 40px;
+  --text-3xl: 48px;
+  --text-4xl: 64px;
+  --text-5xl: 72px;
+}
+
+::-webkit-scrollbar {
+  width: 5px;
+  height: 3px;
+}
+
+::-webkit-scrollbar-track {
+  background: black;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: blue;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: blue;
+}
+
+
+.custom-scrollbar::-webkit-scrollbar {
+  height: 12px; 
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: black;
+  border-radius: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: #888;
+  border-radius: 6px;
+  border: 2px solid #f0f0f0;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background-color: #555;
+}
+
+
+* {
+  padding: 0px;
+  margin: 0px;
+  box-sizing: border-box;
+  font-family: "Manrope", sans-serif;
+  line-height: 2;
+  scroll-behavior: smooth;
+}
+html {
+  overflow: overlay;
+  scrollbar-gutter: stable;
+}
+
+body {
+  font-family: "Manrope", sans-serif;
+  color: var(--text);
+  background-color: #1e1e1e;
+}
+p{
+  font-family: "Manrope", sans-serif !important;
+}
+
+
+.reenie-beanie {
+  font-family: "Reenie Beanie";
+}
+
+.container {
+  max-width: 1440px;
+  margin: 0 auto;
+}
+.splash-heading {
+  font-size: clamp(34px, 6vw, 72px);
+}
+
+
+.embla {
+  overflow: hidden;
+}
+.embla__container {
+  display: flex;
+}
+.embla__slide {
+  flex: 0 0 100%;
+  min-width: 0;
+}
+
+.custom-rich-content img {
+  border-radius: 0.375rem;
+}
+
+
+.custom-rich-content p {
+  font-family: "Manrope", sans-serif;
+}
+
+.test{
+  border: 1px solid black;
+}
+
+.testw{
+  border: 1px solid white;
+}

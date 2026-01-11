@@ -4,7 +4,7 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "serve": "serve -s dist -l tcp://0.0.0.0:5174"
+    "serve": "serve -s dist -l tcp://0.0.0.0:5171"
   },
   "dependencies": {
     

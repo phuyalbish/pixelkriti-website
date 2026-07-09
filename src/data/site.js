@@ -12,17 +12,18 @@ export const site = {
 };
 
 /**
- * The portfolio showreel on the home page.
+ * The video section right after the splash.
  *
- * `src` must point at a file that exists, or the section renders a black box -
- * drop it at `public/showreel.mp4` (already un-ignored in .gitignore). Set `src`
- * to null to hide the section entirely until the video is ready.
+ * `youtubeId` streams that video from YouTube (autoplaying, muted, looped);
+ * when it is set, `src` is ignored. Clear it to fall back to a self-hosted
+ * file at `src` (drop one at `public/showreel.mp4` - already un-ignored in
+ * .gitignore). With neither, the section does not render.
  *
- * Keep it short and small: it autoplays on every visit, so anything past a few
- * megabytes is paid for by the visitor. A `poster` frame is shown while it
- * loads, and is what mobile users on a data saver will see instead.
+ * TODO: the current ID is a stock ink-in-water loop, standing in until the
+ * real Pixel Kriti reel is uploaded to youtube.com/@pixelkriti.
  */
 export const showreel = {
+  youtubeId: "NCa9fMtIpLg",
   src: "/showreel.mp4",
   poster: null,
   caption: "Selected work, 2025-2026",

@@ -4,6 +4,7 @@ import Container from "@/components/Container.jsx";
 import Reveal from "@/components/Reveal.jsx";
 import SectionHeading from "@/components/SectionHeading.jsx";
 import CallToAction from "@/components/CallToAction.jsx";
+import LogoOutline from "@/components/LogoOutline.jsx";
 import Splash from "@/components/Splash.jsx";
 import Showreel from "@/components/Showreel.jsx";
 import Testimonials from "@/components/Testimonials.jsx";
@@ -37,7 +38,7 @@ function ServicesOverview() {
                 to={`/services/${pillar.id}`}
                 className="group flex h-full flex-col p-8 transition-colors duration-300 hover:bg-ink-overlay md:p-10"
               >
-                <p className="font-mono text-xs text-paper-faint">
+                <p className="font-mono text-xs text-paper-faint transition-colors duration-300 group-hover:text-brand">
                   {String(index + 1).padStart(2, "0")}
                 </p>
 
@@ -67,8 +68,19 @@ function ServicesOverview() {
 
 function WhyUs() {
   return (
-    <section className="border-t border-line py-24 md:py-32">
-      <Container className="grid gap-16 md:grid-cols-12">
+    <section className="relative overflow-hidden border-t border-line py-24 md:py-32">
+      {/* Watermark, bleeding off the left edge behind the heading. */}
+      <LogoOutline
+        interactive
+        className="absolute -left-24 top-[57%] hidden h-[30rem] w-[30rem] -translate-y-1/2 -rotate-12 md:block"
+      />
+
+      {/*
+        `pointer-events-none` lets the pointer reach the petals underneath. This
+        wrapper paints above them and would otherwise swallow every hover across
+        its full box. Safe here only because this section holds nothing to click.
+      */}
+      <Container className="pointer-events-none relative grid gap-16 md:grid-cols-12">
         <SectionHeading
           className="md:col-span-5"
           eyebrow="Why us"
@@ -127,11 +139,11 @@ function FeaturedWork() {
                 to={`/work/${item.slug}`}
                 className="group grid gap-4 border-b border-line py-10 transition-colors duration-300 hover:bg-ink-raised md:grid-cols-12 md:items-baseline md:gap-8 md:px-4"
               >
-                <span className="font-mono text-xs text-paper-faint md:col-span-1">
+                <span className="font-mono text-xs text-paper-faint transition-colors duration-300 group-hover:text-brand md:col-span-1">
                   {String(index + 1).padStart(2, "0")}
                 </span>
 
-                <div className="md:col-span-5">
+                <div className="transition-transform duration-300 ease-out group-hover:translate-x-1 md:col-span-5">
                   <h3 className="font-display text-title tracking-display">
                     {item.client}
                   </h3>

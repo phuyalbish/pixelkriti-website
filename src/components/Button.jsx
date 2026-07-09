@@ -2,10 +2,22 @@ import { Link } from "react-router-dom";
 import { FiArrowUpRight } from "react-icons/fi";
 
 const styles = {
-  base: "group inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 text-sm font-medium transition-colors duration-300 ease-out",
-  primary: "bg-paper text-ink hover:bg-white",
+  base: "group relative isolate inline-flex items-center justify-center gap-2 overflow-hidden rounded-full px-6 py-3 text-sm font-medium transition-[background-color,border-color,color,transform] duration-300 ease-out active:scale-[0.97]",
+  primary: "bg-paper text-ink",
   secondary: "border border-line-strong text-paper hover:bg-ink-overlay",
 };
+
+/**
+ * The brand-green wipe behind a primary button's label: parked fully off the
+ * left edge, it slides across on hover. Under the text (-z-10 inside the
+ * button's own stacking context) but over the button's background.
+ */
+const sweep = (
+  <span
+    aria-hidden="true"
+    className="absolute inset-0 -z-10 -translate-x-full bg-brand transition-transform duration-300 ease-out group-hover:translate-x-0"
+  />
+);
 
 function Button({
   to,
@@ -20,6 +32,7 @@ function Button({
 
   const inner = (
     <>
+      {variant === "primary" && sweep}
       {children}
       {withArrow && (
         <FiArrowUpRight

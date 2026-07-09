@@ -9,11 +9,28 @@ import {
 import { FiVolume2, FiVolumeX } from "react-icons/fi";
 import { showreel } from "@/data/site.js";
 
+/**
+ * The full-bleed video after the splash. Two sources, one look: a YouTube
+ * embed when `showreel.youtubeId` is set, a self-hosted file otherwise. Either
+ * way it behaves as a background - autoplaying, muted, looped, no player
+ * chrome - with our own unmute button as the only control.
+ */
+
+/** YouTube's iframe answers play-control commands sent via postMessage. */
+function commandYouTube(iframe, func) {
+  iframe?.contentWindow?.postMessage(
+    JSON.stringify({ event: "command", func, args: [] }),
+    "*",
+  );
+}
+
 function Showreel() {
   const sectionRef = useRef(null);
   const videoRef = useRef(null);
+  const iframeRef = useRef(null);
   const reduceMotion = useReducedMotion();
   const [muted, setMuted] = useState(true);
+  const isYouTube = Boolean(showreel.youtubeId);
 
   /**
    * React does not serialise the `muted` attribute, so a `muted` prop alone can
@@ -22,7 +39,8 @@ function Showreel() {
    */
   useEffect(() => {
     if (videoRef.current) videoRef.current.muted = muted;
-  }, [muted]);
+    if (isYouTube) commandYouTube(iframeRef.current, muted ? "mute" : "unMute");
+  }, [muted, isYouTube]);
 
   // Tracks the section from entering the viewport until it is centred.
   const { scrollYProgress } = useScroll({
@@ -44,7 +62,16 @@ function Showreel() {
 
   const motionStyle = reduceMotion ? undefined : { rotateX, scale, y, opacity };
 
-  if (!showreel.src) return null;
+  if (!showreel.youtubeId && !showreel.src) return null;
+
+  /*
+   * loop only works with `playlist` set to the same video; enablejsapi is what
+   * lets the unmute button talk to the player. Everything else strips chrome.
+   */
+  const youtubeSrc =
+    `https://www.youtube-nocookie.com/embed/${showreel.youtubeId}` +
+    `?autoplay=1&mute=1&loop=1&playlist=${showreel.youtubeId}` +
+    `&controls=0&playsinline=1&rel=0&iv_load_policy=3&disablekb=1&enablejsapi=1`;
 
   return (
     <section
@@ -62,20 +89,38 @@ function Showreel() {
           style={motionStyle}
           className="relative origin-center bg-ink-raised will-change-transform"
         >
-          <video
-            ref={videoRef}
-            className="block aspect-video max-h-[85vh] w-full object-cover"
-            autoPlay
-            loop
-            muted
-            playsInline
-            preload="metadata"
-            poster={showreel.poster ?? undefined}
-            // Not a control surface: the unmute button below is the affordance.
-            tabIndex={-1}
-          >
-            <source src={showreel.src} type="video/mp4" />
-          </video>
+          {isYouTube ? (
+            <div className="relative mx-auto aspect-video max-h-[85vh] w-full">
+              {/*
+                pointer-events-none makes it scenery: YouTube's own hover UI
+                can never appear, and clicks fall through to the page. The
+                mute button below is the whole control surface.
+              */}
+              <iframe
+                ref={iframeRef}
+                src={youtubeSrc}
+                title="Portfolio showreel"
+                allow="autoplay; encrypted-media"
+                tabIndex={-1}
+                className="pointer-events-none absolute inset-0 h-full w-full"
+              />
+            </div>
+          ) : (
+            <video
+              ref={videoRef}
+              className="block aspect-video max-h-[85vh] w-full object-cover"
+              autoPlay
+              loop
+              muted
+              playsInline
+              preload="metadata"
+              poster={showreel.poster ?? undefined}
+              // Not a control surface: the unmute button below is the affordance.
+              tabIndex={-1}
+            >
+              <source src={showreel.src} type="video/mp4" />
+            </video>
+          )}
 
           {/*
             Blends the video into the page: the page colour at the top edge, and

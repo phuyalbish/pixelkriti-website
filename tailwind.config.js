@@ -18,6 +18,10 @@ export default {
           DEFAULT: "var(--line)",
           strong: "var(--line-strong)",
         },
+        brand: {
+          DEFAULT: "var(--brand)",
+          soft: "var(--brand-soft)",
+        },
       },
       fontFamily: {
         display: "var(--font-display)",

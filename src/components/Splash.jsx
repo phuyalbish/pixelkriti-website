@@ -1,19 +1,40 @@
-import { motion, useReducedMotion } from "framer-motion";
-import { FiArrowDown } from "react-icons/fi";
+import { useRef } from "react";
+import {
+  motion,
+  useReducedMotion,
+  useScroll,
+  useTransform,
+} from "framer-motion";
 import Container from "@/components/Container.jsx";
 import Button from "@/components/Button.jsx";
 import SocialLinks from "@/components/SocialLinks.jsx";
+import SplashMark from "@/components/SplashMark.jsx";
+import Wordmark from "@/components/Wordmark.jsx";
 import { site } from "@/data/site.js";
 
 /**
  * The opening screen: the name, the motto, and where to find us. Everything
  * else is below the fold, reached by scrolling.
  *
+ * Scrolling away pulls the splash content along at a fraction of scroll speed
+ * and fades it - the classic hero parallax, kept shallow. The two columns run
+ * at slightly different rates, which is what makes it read as depth rather
+ * than as the whole block merely lagging.
+ *
  * Height uses `svh` (small viewport height) rather than `vh` so mobile browsers
- * do not hide the scroll cue behind a collapsing URL bar.
+ * do not crop the content behind a collapsing URL bar.
  */
 function Splash() {
   const reduceMotion = useReducedMotion();
+  const sectionRef = useRef(null);
+
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start start", "end start"],
+  });
+  const textY = useTransform(scrollYProgress, [0, 1], [0, 90]);
+  const markY = useTransform(scrollYProgress, [0, 1], [0, 150]);
+  const fade = useTransform(scrollYProgress, [0, 0.75], [1, 0]);
 
   const rise = (delay) =>
     reduceMotion
@@ -26,63 +47,59 @@ function Splash() {
 
   return (
     <section
+      ref={sectionRef}
       aria-label={`${site.name} - introduction`}
-      className="relative flex min-h-[100svh] flex-col justify-center overflow-hidden pb-28 pt-24"
+      className="relative flex min-h-[100svh] flex-col justify-center overflow-hidden py-24"
     >
-      <Container>
-        {/*
-          The wordmark, not a heading of the page's content - but it is the
-          page's h1, and the most accurate description of what this site is.
-        */}
-        <motion.h1
-          {...rise(0)}
-          className="font-display leading-[0.9] tracking-display"
-          style={{ fontSize: "clamp(3.5rem, 15vw, 13rem)" }}
-        >
-          {site.name}
-        </motion.h1>
-
-        <motion.p
-          {...rise(0.14)}
-          className="mt-8 max-w-3xl text-balance font-display text-title italic text-paper-dim"
-        >
-          {site.motto}
-        </motion.p>
-
+      <Container className="grid items-center gap-16 lg:grid-cols-12 lg:gap-12">
         <motion.div
-          {...rise(0.26)}
-          className="mt-12 flex flex-wrap items-center gap-3"
+          className="lg:col-span-7"
+          style={reduceMotion ? undefined : { y: textY, opacity: fade }}
         >
-          <Button to="/contact">Book a Free Consultation</Button>
-          <Button to="/work" variant="secondary" withArrow={false}>
-            See Our Work
-          </Button>
+          {/*
+            The wordmark, not a heading of the page's content - but it is the
+            page's h1, and the most accurate description of what this site is.
+          */}
+          <motion.div {...rise(0)}>
+            <Wordmark
+              className="font-display leading-[0.9] tracking-display"
+              style={{ fontSize: "clamp(3.25rem, 9vw, 8.5rem)" }}
+            />
+          </motion.div>
+
+          <motion.p
+            {...rise(0.14)}
+            className="mt-8 max-w-xl text-balance font-display text-title italic text-paper-dim"
+          >
+            {site.motto}
+          </motion.p>
+
+          <motion.div
+            {...rise(0.26)}
+            className="mt-12 flex flex-wrap items-center gap-3"
+          >
+            <Button to="/contact">Book a Free Consultation</Button>
+            <Button to="/work" variant="secondary" withArrow={false}>
+              See Our Work
+            </Button>
+          </motion.div>
+
+          <motion.div {...rise(0.38)} className="mt-14">
+            <SocialLinks size="large" />
+          </motion.div>
         </motion.div>
 
-        <motion.div {...rise(0.38)} className="mt-14">
-          <SocialLinks size="large" />
+        {/*
+          Decorative. Hidden below lg, where the column would be too narrow to
+          read the construction lines and the wordmark needs the full width.
+        */}
+        <motion.div
+          className="hidden lg:col-span-5 lg:block"
+          style={reduceMotion ? undefined : { y: markY, opacity: fade }}
+        >
+          <SplashMark className="mx-auto max-w-[26rem]" />
         </motion.div>
       </Container>
-
-      {/* Scroll cue. Decorative: the page scrolls whether or not it is read. */}
-      <motion.div
-        {...rise(0.5)}
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-x-0 bottom-8 flex justify-center"
-      >
-        <motion.span
-          animate={reduceMotion ? undefined : { y: [0, 8, 0] }}
-          transition={
-            reduceMotion
-              ? undefined
-              : { duration: 2.2, repeat: Infinity, ease: "easeInOut" }
-          }
-          className="flex items-center gap-3 font-mono text-[11px] uppercase tracking-[0.18em] text-paper-faint"
-        >
-          Scroll
-          <FiArrowDown size={14} />
-        </motion.span>
-      </motion.div>
     </section>
   );
 }

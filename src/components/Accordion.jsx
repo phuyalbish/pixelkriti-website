@@ -1,13 +1,16 @@
 import { useId, useState } from "react";
+import { motion, useReducedMotion } from "framer-motion";
 import { FiPlus } from "react-icons/fi";
 
 /**
  * A disclosure. `defaultOpen` opens it on first render; state is uncontrolled
  * after that. The panel stays mounted so its content is findable by in-page
- * search and by crawlers, and is hidden with `hidden` rather than unmounted.
+ * search and by crawlers; closed means height 0 + `visibility: hidden` (which
+ * also drops it from the tab order), never unmounted.
  */
 function Accordion({ title, count, defaultOpen = false, children }) {
   const [open, setOpen] = useState(defaultOpen);
+  const reduceMotion = useReducedMotion();
   const panelId = useId();
   const buttonId = useId();
 
@@ -43,9 +46,25 @@ function Accordion({ title, count, defaultOpen = false, children }) {
         </button>
       </h3>
 
-      <div id={panelId} role="region" aria-labelledby={buttonId} hidden={!open}>
+      <motion.div
+        id={panelId}
+        role="region"
+        aria-labelledby={buttonId}
+        initial={false}
+        animate={
+          open
+            ? { height: "auto", opacity: 1, visibility: "visible" }
+            : { height: 0, opacity: 0, visibility: "hidden" }
+        }
+        transition={
+          reduceMotion
+            ? { duration: 0 }
+            : { duration: 0.45, ease: [0.22, 1, 0.36, 1] }
+        }
+        className="overflow-hidden"
+      >
         <div className="pb-8">{children}</div>
-      </div>
+      </motion.div>
     </div>
   );
 }

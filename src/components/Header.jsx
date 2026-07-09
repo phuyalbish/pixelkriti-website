@@ -1,17 +1,32 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link, NavLink, useLocation } from "react-router-dom";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { FiMenu, FiX } from "react-icons/fi";
 import Container from "@/components/Container.jsx";
 import Logo from "@/components/Logo.jsx";
 import { nav } from "@/data/site.js";
 
+/**
+ * Sticky header that steps aside while you read: scrolling down slides it away,
+ * any upward scroll brings it straight back. The 160px grace zone keeps it
+ * pinned near the top, and an open drawer pins it unconditionally - hiding the
+ * bar would orphan the close button.
+ */
 function Header() {
   const [scrolled, setScrolled] = useState(false);
+  const [hidden, setHidden] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const lastY = useRef(0);
   const { pathname } = useLocation();
+  const reduceMotion = useReducedMotion();
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 12);
+    const onScroll = () => {
+      const y = window.scrollY;
+      setScrolled(y > 12);
+      setHidden(y > 160 && y > lastY.current);
+      lastY.current = y;
+    };
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
@@ -27,19 +42,28 @@ function Header() {
     };
   }, [menuOpen]);
 
+  /*
+   * The underline lives on ::after and grows from the left on hover; on the
+   * active link it stays fully drawn. Colour and transform both transition.
+   */
   const linkClass = ({ isActive }) =>
-    `text-sm transition-colors duration-300 hover:text-paper ${
-      isActive ? "text-paper" : "text-paper-dim"
+    `relative text-sm transition-colors duration-300 hover:text-paper ` +
+    `after:absolute after:-bottom-1.5 after:left-0 after:h-px after:w-full ` +
+    `after:origin-left after:bg-paper after:transition-transform after:duration-300 after:ease-out ` +
+    `${
+      isActive
+        ? "text-paper after:scale-x-100"
+        : "text-paper-dim after:scale-x-0 hover:after:scale-x-100"
     }`;
 
   return (
     <header
-      className={`sticky top-0 z-50 transition-colors duration-500 ease-out ${
+      className={`sticky top-0 z-50 transition-[background-color,border-color,transform] duration-500 ease-out ${
         scrolled ? "border-b border-line bg-ink/85 backdrop-blur-md" : ""
-      }`}
+      } ${hidden && !menuOpen && !reduceMotion ? "-translate-y-full" : ""}`}
     >
       <Container className="flex h-20 items-center justify-between">
-        <Logo />
+        <Logo size="small" />
 
         <nav className="hidden items-center gap-10 md:flex">
           {nav.map((item) => (
@@ -49,8 +73,13 @@ function Header() {
           ))}
           <Link
             to="/contact"
-            className="rounded-full bg-paper px-5 py-2.5 text-sm font-medium text-ink transition-colors duration-300 hover:bg-white"
+            className="group relative isolate overflow-hidden rounded-full bg-paper px-5 py-2.5 text-sm font-medium text-ink transition-transform duration-300 active:scale-[0.97]"
           >
+            {/* Same green wipe as the primary Button, kept in step with it. */}
+            <span
+              aria-hidden="true"
+              className="absolute inset-0 -z-10 -translate-x-full bg-brand transition-transform duration-300 ease-out group-hover:translate-x-0"
+            />
             Book a Free Consultation
           </Link>
         </nav>
@@ -66,31 +95,63 @@ function Header() {
         </button>
       </Container>
 
-      {menuOpen && (
-        <div className="fixed inset-x-0 top-20 bottom-0 z-40 border-t border-line bg-ink md:hidden">
-          <Container className="flex flex-col gap-2 py-8">
-            {nav.map((item) => (
-              <NavLink
-                key={item.to}
-                to={item.to}
-                className={({ isActive }) =>
-                  `border-b border-line py-5 font-display text-3xl transition-colors ${
-                    isActive ? "text-paper" : "text-paper-dim"
-                  }`
-                }
+      <AnimatePresence>
+        {menuOpen && (
+          <motion.div
+            initial={reduceMotion ? false : { opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={reduceMotion ? undefined : { opacity: 0 }}
+            transition={{ duration: 0.25, ease: "easeOut" }}
+            className="fixed inset-x-0 top-20 bottom-0 z-40 border-t border-line bg-ink md:hidden"
+          >
+            <Container className="flex flex-col gap-2 py-8">
+              {nav.map((item, index) => (
+                <motion.div
+                  key={item.to}
+                  initial={reduceMotion ? false : { opacity: 0, y: 16 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{
+                    duration: 0.45,
+                    delay: 0.05 + index * 0.06,
+                    ease: [0.22, 1, 0.36, 1],
+                  }}
+                >
+                  <NavLink
+                    to={item.to}
+                    className={({ isActive }) =>
+                      `block border-b border-line py-5 font-display text-3xl transition-colors ${
+                        isActive ? "text-paper" : "text-paper-dim"
+                      }`
+                    }
+                  >
+                    {item.label}
+                  </NavLink>
+                </motion.div>
+              ))}
+              <motion.div
+                initial={reduceMotion ? false : { opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{
+                  duration: 0.45,
+                  delay: 0.05 + nav.length * 0.06,
+                  ease: [0.22, 1, 0.36, 1],
+                }}
               >
-                {item.label}
-              </NavLink>
-            ))}
-            <Link
-              to="/contact"
-              className="mt-6 rounded-full bg-paper px-6 py-4 text-center text-sm font-medium text-ink"
-            >
-              Book a Free Consultation
-            </Link>
-          </Container>
-        </div>
-      )}
+                <Link
+                  to="/contact"
+                  className="group relative isolate mt-6 block overflow-hidden rounded-full bg-paper px-6 py-4 text-center text-sm font-medium text-ink"
+                >
+                  <span
+                    aria-hidden="true"
+                    className="absolute inset-0 -z-10 -translate-x-full bg-brand transition-transform duration-300 ease-out group-hover:translate-x-0"
+                  />
+                  Book a Free Consultation
+                </Link>
+              </motion.div>
+            </Container>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </header>
   );
 }

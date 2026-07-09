@@ -15,6 +15,11 @@
   --line: rgba(242, 242, 240, 0.1);
   --line-strong: rgba(242, 242, 240, 0.24);
 
+  /* The one saturated colour on an otherwise monochrome site. */
+  --brand: #31ae49;
+  /* The same green, dialled back for watermarks that must stay in the back. */
+  --brand-soft: rgba(49, 174, 73, 0.45);
+
   --font-display: "Instrument Serif", Georgia, serif;
   --font-sans: "Manrope", system-ui, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, monospace;
@@ -25,6 +30,23 @@
     scroll-behavior: smooth;
     /* The header is sticky; anchored sections must not slide under it. */
     scroll-padding-top: 6rem;
+  }
+
+  /*
+   * While Lenis drives the scroll, native smooth scrolling must stand down or
+   * the two animate against each other. Lenis stamps these classes itself.
+   */
+  html.lenis,
+  html.lenis body {
+    height: auto;
+  }
+
+  .lenis.lenis-smooth {
+    scroll-behavior: auto !important;
+  }
+
+  .lenis.lenis-stopped {
+    overflow: hidden;
   }
 
   body {
@@ -68,6 +90,18 @@
   /* Default tracking is too loose at display sizes. */
   .tracking-display {
     letter-spacing: -0.02em;
+  }
+
+  /*
+   * Chunks a letter into visible blocks on hover. There is no CSS pixelate
+   * filter, so this leans on the SVG filter defined in <PixelateFilter />:
+   * `image-rendering: pixelated` only applies to raster images, never to text.
+   *
+   * The filter must exist in the same document, which is why the component
+   * renders it rather than a static file.
+   */
+  .pixel-letter:hover {
+    filter: url(#wordmark-pixelate);
   }
 }
 

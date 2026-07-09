@@ -11,7 +11,7 @@ function TeamCard({ person, size = "default" }) {
 
   return (
     <article
-      className={`flex flex-col rounded-2xl border border-line bg-ink-raised transition-colors duration-300 hover:border-line-strong ${
+      className={`flex flex-col rounded-2xl border border-line bg-ink-raised transition-[border-color,transform] duration-300 ease-out hover:-translate-y-1 hover:border-line-strong ${
         isLarge ? "p-8 md:p-10" : "p-6"
       }`}
     >

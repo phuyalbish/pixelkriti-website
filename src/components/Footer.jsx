@@ -3,12 +3,16 @@ import { FiArrowUpRight } from "react-icons/fi";
 import Container from "@/components/Container.jsx";
 import Logo from "@/components/Logo.jsx";
 import SocialLinks from "@/components/SocialLinks.jsx";
+import LogoOutline from "@/components/LogoOutline.jsx";
 import { nav, site } from "@/data/site.js";
 
 function Footer() {
   return (
-    <footer className="border-t border-line">
-      <Container className="py-16 md:py-20">
+    <footer className="relative overflow-hidden border-t border-line">
+      {/* Watermark, cropped by the bottom-right corner. */}
+      <LogoOutline className="absolute -bottom-32 -right-24 hidden h-[26rem] w-[26rem] rotate-6 sm:block" />
+
+      <Container className="relative py-16 md:py-20">
         <div className="grid gap-12 md:grid-cols-12">
           <div className="md:col-span-5">
             <Logo />

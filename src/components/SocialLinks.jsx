@@ -33,7 +33,7 @@ function SocialLinks({ size = "default", className = "" }) {
               target="_blank"
               rel="noreferrer"
               aria-label={`${site.name} on ${social.label}`}
-              className={`flex items-center justify-center rounded-full border border-line text-paper-dim transition-colors duration-300 hover:border-line-strong hover:bg-ink-overlay hover:text-paper ${box}`}
+              className={`flex items-center justify-center rounded-full border border-line text-paper-dim transition-[border-color,background-color,color,transform] duration-300 ease-out hover:-translate-y-1 hover:border-line-strong hover:bg-ink-overlay hover:text-paper active:scale-95 ${box}`}
             >
               <Icon aria-hidden="true" size={glyph} />
             </a>

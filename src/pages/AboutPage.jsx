@@ -1,4 +1,5 @@
 import Container from "@/components/Container.jsx";
+import LogoOutline from "@/components/LogoOutline.jsx";
 import Reveal from "@/components/Reveal.jsx";
 import SectionHeading from "@/components/SectionHeading.jsx";
 import CallToAction from "@/components/CallToAction.jsx";
@@ -39,8 +40,11 @@ function AboutPage() {
 
   return (
     <>
-      <section className="pb-16 pt-20 md:pb-24 md:pt-28">
-        <Container>
+      <section className="relative overflow-hidden pb-16 pt-20 md:pb-24 md:pt-28">
+        {/* Watermark, bleeding off the left edge behind the heading. */}
+        <LogoOutline className="absolute -left-28 top-1/2 hidden h-[32rem] w-[32rem] -translate-y-1/2 -rotate-12 md:block" />
+
+        <Container className="relative">
           <Reveal>
             <p className="eyebrow">About</p>
           </Reveal>

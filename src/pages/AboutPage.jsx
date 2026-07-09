@@ -41,8 +41,8 @@ function AboutPage() {
   return (
     <>
       <section className="relative overflow-hidden pb-16 pt-20 md:pb-24 md:pt-28">
-        {/* Watermark, bleeding off the left edge behind the heading. */}
-        <LogoOutline className="absolute -left-28 top-1/2 hidden h-[32rem] w-[32rem] -translate-y-1/2 -rotate-12 md:block" />
+        {/* Watermark, bleeding off the right edge beside the heading. */}
+        <LogoOutline className="absolute -right-28 top-1/2 hidden h-[32rem] w-[32rem] -translate-y-1/2 rotate-12 md:block" />
 
         <Container className="relative">
           <Reveal>
@@ -130,12 +130,20 @@ function AboutPage() {
                 <h3 className="font-display text-2xl tracking-display md:col-span-3">
                   {row.them}
                 </h3>
-                <p className="text-pretty text-sm leading-relaxed text-paper-faint md:col-span-4">
-                  {row.they}
-                </p>
-                <p className="text-pretty leading-relaxed md:col-span-5">
-                  {row.us}
-                </p>
+                {/*
+                  On desktop the three columns explain themselves by position.
+                  Stacked on mobile, the two paragraphs need naming.
+                */}
+                <div className="md:col-span-4">
+                  <p className="eyebrow mb-2 md:hidden">Where they win</p>
+                  <p className="text-pretty text-sm leading-relaxed text-paper-faint">
+                    {row.they}
+                  </p>
+                </div>
+                <div className="md:col-span-5">
+                  <p className="eyebrow mb-2 md:hidden">Where we earn it</p>
+                  <p className="text-pretty leading-relaxed">{row.us}</p>
+                </div>
               </Reveal>
             ))}
           </ul>

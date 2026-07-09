@@ -51,7 +51,7 @@ function Splash() {
       aria-label={`${site.name} - introduction`}
       className="relative flex min-h-[100svh] flex-col justify-center overflow-hidden py-24"
     >
-      <Container className="grid items-center gap-16 lg:grid-cols-12 lg:gap-12">
+      <Container className="grid items-center gap-12 lg:grid-cols-12 lg:gap-12">
         <motion.div
           className="lg:col-span-7"
           style={reduceMotion ? undefined : { y: textY, opacity: fade }}
@@ -90,14 +90,15 @@ function Splash() {
         </motion.div>
 
         {/*
-          Decorative. Hidden below lg, where the column would be too narrow to
-          read the construction lines and the wordmark needs the full width.
+          Decorative. Below lg the columns collapse, so the mark moves above the
+          wordmark at a stamp size - small enough that the construction lines
+          stay an accent, large enough to carry the assembly animation.
         */}
         <motion.div
-          className="hidden lg:col-span-5 lg:block"
+          className="order-first lg:order-none lg:col-span-5"
           style={reduceMotion ? undefined : { y: markY, opacity: fade }}
         >
-          <SplashMark className="mx-auto max-w-[26rem]" />
+          <SplashMark className="w-40 sm:w-52 lg:mx-auto lg:w-full lg:max-w-[26rem]" />
         </motion.div>
       </Container>
     </section>

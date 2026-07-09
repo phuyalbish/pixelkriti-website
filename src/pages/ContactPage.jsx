@@ -3,8 +3,8 @@ import { FiArrowUpRight, FiChevronDown } from "react-icons/fi";
 import Container from "@/components/Container.jsx";
 import Reveal from "@/components/Reveal.jsx";
 import usePageMeta from "@/hooks/usePageMeta.js";
-import { regions, site } from "@/data/site.js";
-import { tiers } from "@/data/services.js";
+import { site, socials } from "@/data/site.js";
+import { serviceGroups } from "@/data/services.js";
 
 const fieldClass =
   "w-full border-b border-line bg-transparent py-4 text-paper placeholder:text-paper-faint transition-colors focus:border-paper focus:outline-none";
@@ -13,7 +13,7 @@ const emptyForm = {
   name: "",
   email: "",
   company: "",
-  tier: "",
+  service: "",
   message: "",
 };
 
@@ -36,7 +36,7 @@ function ContactPage() {
   const handleSubmit = (event) => {
     event.preventDefault();
 
-    const subject = `New enquiry — ${form.name}${
+    const subject = `New enquiry - ${form.name}${
       form.company ? ` (${form.company})` : ""
     }`;
 
@@ -44,7 +44,7 @@ function ContactPage() {
       `Name: ${form.name}`,
       `Email: ${form.email}`,
       form.company && `Company: ${form.company}`,
-      form.tier && `Engagement: ${form.tier}`,
+      form.service && `Service interested in: ${form.service}`,
       "",
       form.message,
     ]
@@ -71,8 +71,14 @@ function ContactPage() {
           <Reveal delay={0.12}>
             <p className="mt-8 max-w-prose text-pretty leading-relaxed text-paper-dim">
               Not the solution you have in mind, and not the budget. Tell us
-              what is not working, and we will tell you what we would build —
+              what is not working, and we will tell you what we would build -
               even when the answer is nothing at all.
+            </p>
+          </Reveal>
+
+          <Reveal delay={0.16}>
+            <p className="mt-6 font-mono text-xs leading-relaxed text-paper-faint">
+              We reply within 24 hours - real humans, not a bot.
             </p>
           </Reveal>
 
@@ -92,14 +98,38 @@ function ContactPage() {
             </div>
           </Reveal>
 
-          <Reveal delay={0.24}>
+          {/* Rendered only once a real booking URL exists in site.js. */}
+          {site.bookingUrl && (
+            <Reveal delay={0.22}>
+              <div className="mt-8 border-t border-line pt-8">
+                <p className="eyebrow">Book a call</p>
+                <a
+                  href={site.bookingUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="mt-3 inline-flex items-center gap-2 text-sm text-paper-dim transition-colors hover:text-paper"
+                >
+                  Find a time that suits you
+                  <FiArrowUpRight aria-hidden="true" />
+                </a>
+              </div>
+            </Reveal>
+          )}
+
+          <Reveal delay={0.26}>
             <div className="mt-8 border-t border-line pt-8">
-              <p className="eyebrow">Where we are</p>
-              <ul className="mt-3 space-y-2">
-                {regions.map((region) => (
-                  <li key={region.country} className="text-sm text-paper-dim">
-                    {region.country}
-                    <span className="ml-2 text-paper-faint">{region.note}</span>
+              <p className="eyebrow">Elsewhere</p>
+              <ul className="mt-4 flex flex-wrap gap-3">
+                {socials.map((social) => (
+                  <li key={social.label}>
+                    <a
+                      href={social.href}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="text-sm text-paper-dim transition-colors hover:text-paper"
+                    >
+                      {social.label}
+                    </a>
                   </li>
                 ))}
               </ul>
@@ -157,23 +187,32 @@ function ContactPage() {
             </div>
 
             <div>
-              <label htmlFor="tier" className="eyebrow">
-                Engagement <span className="normal-case">(optional)</span>
+              <label htmlFor="service" className="eyebrow">
+                Service interested in{" "}
+                <span className="normal-case">(optional)</span>
               </label>
               <div className="relative">
                 <select
-                  id="tier"
-                  value={form.tier}
-                  onChange={update("tier")}
+                  id="service"
+                  value={form.service}
+                  onChange={update("service")}
                   className={`${fieldClass} cursor-pointer appearance-none pr-8`}
                 >
                   <option value="" className="bg-ink">
                     Not sure yet
                   </option>
-                  {tiers.map((tier) => (
-                    <option key={tier.id} value={tier.name} className="bg-ink">
-                      {tier.name}
-                    </option>
+                  {serviceGroups.map((group) => (
+                    <optgroup
+                      key={group.label}
+                      label={group.label}
+                      className="bg-ink"
+                    >
+                      {group.options.map((option) => (
+                        <option key={option} value={option} className="bg-ink">
+                          {option}
+                        </option>
+                      ))}
+                    </optgroup>
                   ))}
                 </select>
                 <FiChevronDown

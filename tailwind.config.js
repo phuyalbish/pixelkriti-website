@@ -36,17 +36,6 @@ export default {
       transitionTimingFunction: {
         out: "cubic-bezier(0.22, 1, 0.36, 1)",
       },
-      keyframes: {
-        /* Two identical tracks sit side by side; each travels its own full
-           width, so the second lands exactly where the first began. */
-        marquee: {
-          from: { transform: "translateX(0)" },
-          to: { transform: "translateX(-100%)" },
-        },
-      },
-      animation: {
-        marquee: "marquee 42s linear infinite",
-      },
     },
   },
   plugins: [],

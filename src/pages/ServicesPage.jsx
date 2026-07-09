@@ -1,16 +1,18 @@
+import { Link } from "react-router-dom";
+import { FiArrowUpRight } from "react-icons/fi";
 import Container from "@/components/Container.jsx";
 import Reveal from "@/components/Reveal.jsx";
-import SectionHeading from "@/components/SectionHeading.jsx";
+import Accordion from "@/components/Accordion.jsx";
 import CallToAction from "@/components/CallToAction.jsx";
-import Button from "@/components/Button.jsx";
 import usePageMeta from "@/hooks/usePageMeta.js";
-import { services, tiers } from "@/data/services.js";
+import { pillars } from "@/data/services.js";
 import { process } from "@/data/process.js";
+import SectionHeading from "@/components/SectionHeading.jsx";
 
 function ServicesPage() {
   usePageMeta(
     "Services",
-    "Websites, UI/UX and branding, custom software, AI/ML, and analytics — with transparent, scope-based pricing across three engagement tiers.",
+    "Websites, analytics and business intelligence, and AI/ML - delivered by one accountable team.",
   );
 
   return (
@@ -27,7 +29,7 @@ function ServicesPage() {
           </Reveal>
           <Reveal delay={0.12}>
             <p className="mt-8 max-w-prose text-pretty text-lg leading-relaxed text-paper-dim">
-              A website is a means. So is a model, a dashboard, or an internal
+              A website is a means. So is a dashboard, a model, or an internal
               tool. We work backwards from the outcome you are actually paying
               for, and recommend the smallest thing that gets you there.
             </p>
@@ -35,110 +37,79 @@ function ServicesPage() {
         </Container>
       </section>
 
-      <section className="pb-24 md:pb-32">
-        <Container>
-          <ul className="border-t border-line">
-            {services.map((service, index) => (
-              <Reveal
-                as="li"
-                key={service.id}
-                delay={index * 0.04}
-                className="grid gap-6 border-b border-line py-12 md:grid-cols-12 md:gap-8"
-              >
-                <p className="font-mono text-xs text-paper-faint md:col-span-1 md:pt-3">
-                  {String(index + 1).padStart(2, "0")}
-                </p>
-
-                <div className="md:col-span-5">
-                  <h2 className="font-display text-title tracking-display">
-                    {service.title}
-                  </h2>
-                  <p className="mt-4 max-w-md text-pretty leading-relaxed text-paper-dim">
-                    {service.summary}
+      {pillars.map((pillar, pillarIndex) => (
+        <section
+          key={pillar.id}
+          id={pillar.id}
+          className={`border-t border-line py-20 md:py-28 ${
+            pillarIndex % 2 === 1 ? "bg-ink-raised" : ""
+          }`}
+        >
+          <Container>
+            <div className="grid gap-12 md:grid-cols-12">
+              <div className="md:col-span-5">
+                <Reveal>
+                  <p className="eyebrow">
+                    Pillar {String(pillarIndex + 1).padStart(2, "0")}
                   </p>
-                </div>
+                </Reveal>
+                <Reveal delay={0.06}>
+                  <h2 className="mt-5 text-balance font-display text-headline tracking-display">
+                    {pillar.title}
+                  </h2>
+                </Reveal>
+                <Reveal delay={0.12}>
+                  <p className="mt-6 max-w-prose text-pretty leading-relaxed text-paper-dim">
+                    {pillar.outcome}
+                  </p>
+                </Reveal>
+                <Reveal delay={0.18}>
+                  <Link
+                    to={`/services/${pillar.id}`}
+                    className="group mt-8 inline-flex items-center gap-2 text-sm transition-colors hover:text-paper-dim"
+                  >
+                    Explore {pillar.title}
+                    <FiArrowUpRight
+                      aria-hidden="true"
+                      className="transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+                    />
+                  </Link>
+                </Reveal>
+              </div>
 
-                <ul className="space-y-3 md:col-span-5 md:col-start-8 md:pt-2">
-                  {service.deliverables.map((deliverable) => (
-                    <li
-                      key={deliverable}
-                      className="flex gap-4 text-sm text-paper-dim"
-                    >
-                      <span
-                        aria-hidden="true"
-                        className="mt-2.5 h-px w-4 shrink-0 bg-line-strong"
-                      />
-                      {deliverable}
-                    </li>
-                  ))}
-                </ul>
-              </Reveal>
-            ))}
-          </ul>
-        </Container>
-      </section>
-
-      <section className="border-t border-line bg-ink-raised py-24 md:py-32">
-        <Container>
-          <SectionHeading
-            eyebrow="Engagement tiers"
-            title="Priced in the open, scoped before we start."
-            lead="Most agencies hide their pricing until you are already on a call. We publish how we charge, because a client who cannot see the road from here to Enterprise will never take it."
-          />
-
-          <ul className="mt-16 grid gap-px overflow-hidden rounded-2xl border border-line bg-line lg:grid-cols-3">
-            {tiers.map((tier, index) => (
-              <Reveal
-                as="li"
-                key={tier.id}
-                delay={index * 0.08}
-                className={`flex flex-col p-10 ${
-                  tier.featured ? "bg-ink-overlay" : "bg-ink-raised"
-                }`}
-              >
-                <div className="flex items-center justify-between gap-4">
-                  <h3 className="font-display text-3xl tracking-display">
-                    {tier.name}
-                  </h3>
-                  {tier.featured && (
-                    <span className="rounded-full border border-line-strong px-3 py-1 font-mono text-[10px] uppercase tracking-[0.14em] text-paper-dim">
-                      Most common
-                    </span>
-                  )}
-                </div>
-
-                <p className="mt-4 text-pretty text-sm leading-relaxed text-paper-dim">
-                  {tier.forWhom}
-                </p>
-
-                <p className="mt-8 border-t border-line pt-6 font-mono text-xs text-paper-faint">
-                  {tier.model}
-                </p>
-
-                <ul className="mt-8 flex-1 space-y-4">
-                  {tier.points.map((point) => (
-                    <li key={point} className="flex gap-4 text-sm">
-                      <span
-                        aria-hidden="true"
-                        className="mt-2.5 h-px w-4 shrink-0 bg-line-strong"
-                      />
-                      {point}
-                    </li>
-                  ))}
-                </ul>
-
-                <Button
-                  to="/contact"
-                  variant={tier.featured ? "primary" : "secondary"}
-                  className="mt-10 w-full"
-                >
-                  Discuss {tier.name}
-                </Button>
-              </Reveal>
-            ))}
-          </ul>
-        </Container>
-      </section>
+              <div className="md:col-span-6 md:col-start-7">
+                <Reveal>
+                  <div className="border-t border-line">
+                    {pillar.groups.map((group, groupIndex) => (
+                      <Accordion
+                        key={group.title}
+                        title={group.title}
+                        count={group.items.length}
+                        defaultOpen={groupIndex === 0}
+                      >
+                        <ul className="grid gap-x-8 gap-y-3 sm:grid-cols-2">
+                          {group.items.map((item) => (
+                            <li
+                              key={item}
+                              className="flex gap-3 text-sm text-paper-dim"
+                            >
+                              <span
+                                aria-hidden="true"
+                                className="mt-2.5 h-px w-3 shrink-0 bg-line-strong"
+                              />
+                              {item}
+                            </li>
+                          ))}
+                        </ul>
+                      </Accordion>
+                    ))}
+                  </div>
+                </Reveal>
+              </div>
+            </div>
+          </Container>
+        </section>
+      ))}
 
       <section className="border-t border-line py-24 md:py-32">
         <Container>

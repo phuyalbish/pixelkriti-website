@@ -5,7 +5,9 @@ import Container from "@/components/Container.jsx";
 import Reveal from "@/components/Reveal.jsx";
 import CallToAction from "@/components/CallToAction.jsx";
 import usePageMeta from "@/hooks/usePageMeta.js";
-import { work, tiersInWork } from "@/data/work.js";
+import { work, workCategories } from "@/data/work.js";
+
+const filters = ["All", ...workCategories];
 
 function WorkPage() {
   usePageMeta(
@@ -13,11 +15,14 @@ function WorkPage() {
     "Case studies from Pixel Kriti, written diagnosis-first: problem, investigation, solution, result.",
   );
 
-  const [tier, setTier] = useState("All");
+  const [category, setCategory] = useState("All");
 
   const filtered = useMemo(
-    () => (tier === "All" ? work : work.filter((item) => item.tier === tier)),
-    [tier],
+    () =>
+      category === "All"
+        ? work
+        : work.filter((item) => item.category === category),
+    [category],
   );
 
   return (
@@ -35,7 +40,7 @@ function WorkPage() {
           <Reveal delay={0.12}>
             <p className="mt-8 max-w-prose text-pretty text-lg leading-relaxed text-paper-dim">
               Usually the client&apos;s. Sometimes ours. These are the ones
-              worth writing down — what was asked for, what we found, and what
+              worth writing down - what was asked for, what we found, and what
               we built instead.
             </p>
           </Reveal>
@@ -45,14 +50,14 @@ function WorkPage() {
       <section className="pb-24 md:pb-32">
         <Container>
           <div className="flex flex-wrap gap-2 border-b border-line pb-8">
-            {tiersInWork.map((option) => (
+            {filters.map((option) => (
               <button
                 key={option}
                 type="button"
-                onClick={() => setTier(option)}
-                aria-pressed={tier === option}
+                onClick={() => setCategory(option)}
+                aria-pressed={category === option}
                 className={`rounded-full border px-5 py-2 font-mono text-xs uppercase tracking-[0.12em] transition-colors duration-300 ${
-                  tier === option
+                  category === option
                     ? "border-paper bg-paper text-ink"
                     : "border-line-strong text-paper-dim hover:text-paper"
                 }`}
@@ -64,7 +69,7 @@ function WorkPage() {
 
           {filtered.length === 0 ? (
             <p className="py-24 text-center text-paper-dim">
-              No case studies in this tier yet.
+              No case studies in this category yet.
             </p>
           ) : (
             <ul className="grid gap-px overflow-hidden bg-line md:grid-cols-2">
@@ -75,7 +80,7 @@ function WorkPage() {
                     className="group flex h-full flex-col bg-ink p-8 transition-colors duration-300 hover:bg-ink-raised md:p-12"
                   >
                     <p className="font-mono text-xs text-paper-faint">
-                      {item.sector} · {item.tier} · {item.year}
+                      {item.sector} · {item.category} · {item.year}
                     </p>
 
                     <h2 className="mt-8 font-display text-title tracking-display">

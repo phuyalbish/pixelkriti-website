@@ -1,6 +1,6 @@
 {
   "$schema": "./node_modules/wrangler/config-schema.json",
-  "name": "pixel-kriti-web",
+  "name": "pixelkriti",
   "compatibility_date": "2026-07-09",
 
   // Assets-only Worker: the site is fully static, so there is no `main` entry

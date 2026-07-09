@@ -8,6 +8,9 @@ importers:
 
   .:
     dependencies:
+      '@cloudflare/kv-asset-handler':
+        specifier: ^0.5.0
+        version: 0.5.0
       framer-motion:
         specifier: ^12.4.7
         version: 12.42.2(react-dom@19.2.7(react@19.2.7))(react@19.2.7)

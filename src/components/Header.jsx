@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { NavLink, useLocation } from "react-router-dom";
+import { Link, NavLink, useLocation } from "react-router-dom";
 import { FiMenu, FiX } from "react-icons/fi";
 import Container from "@/components/Container.jsx";
 import Logo from "@/components/Logo.jsx";
@@ -47,6 +47,12 @@ function Header() {
               {item.label}
             </NavLink>
           ))}
+          <Link
+            to="/contact"
+            className="rounded-full bg-paper px-5 py-2.5 text-sm font-medium text-ink transition-colors duration-300 hover:bg-white"
+          >
+            Book a Free Consultation
+          </Link>
         </nav>
 
         <button
@@ -76,6 +82,12 @@ function Header() {
                 {item.label}
               </NavLink>
             ))}
+            <Link
+              to="/contact"
+              className="mt-6 rounded-full bg-paper px-6 py-4 text-center text-sm font-medium text-ink"
+            >
+              Book a Free Consultation
+            </Link>
           </Container>
         </div>
       )}

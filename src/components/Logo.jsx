@@ -6,7 +6,7 @@ function Logo({ className = "" }) {
   return (
     <Link
       to="/"
-      aria-label={`${site.name} — home`}
+      aria-label={`${site.name} - home`}
       className={`group inline-flex items-center gap-3 ${className}`}
     >
       <img

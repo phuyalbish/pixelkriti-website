@@ -2,67 +2,104 @@ import { Link } from "react-router-dom";
 import { FiArrowUpRight } from "react-icons/fi";
 import Container from "@/components/Container.jsx";
 import Reveal from "@/components/Reveal.jsx";
-import Button from "@/components/Button.jsx";
-import Marquee from "@/components/Marquee.jsx";
 import SectionHeading from "@/components/SectionHeading.jsx";
 import CallToAction from "@/components/CallToAction.jsx";
+import Splash from "@/components/Splash.jsx";
+import Showreel from "@/components/Showreel.jsx";
+import Testimonials from "@/components/Testimonials.jsx";
+import TeamCard from "@/components/TeamCard.jsx";
 import usePageMeta from "@/hooks/usePageMeta.js";
-import { capabilities, regions, site } from "@/data/site.js";
-import { services } from "@/data/services.js";
-import { process, principles } from "@/data/process.js";
+import { site } from "@/data/site.js";
+import { pillars } from "@/data/services.js";
+import { principles } from "@/data/process.js";
 import { work } from "@/data/work.js";
+import { founders } from "@/data/team.js";
 
-function Hero() {
+function ServicesOverview() {
   return (
-    <section className="relative overflow-hidden">
-      <Container className="pb-24 pt-20 md:pb-32 md:pt-32">
-        <Reveal>
-          <p className="eyebrow">
-            India · Nepal · Pakistan — est. {site.foundedYear}
-          </p>
-        </Reveal>
+    <section className="py-24 md:py-32">
+      <Container>
+        <SectionHeading
+          eyebrow="What we do"
+          title="Three pillars, one accountable team."
+          lead="Most agencies hand you off between specialists, or send you elsewhere the moment the work leaves their lane. The team that builds your website can build the dashboards and the models that come after it."
+        />
 
-        <Reveal delay={0.08}>
-          <h1 className="mt-8 max-w-5xl text-balance font-display text-display tracking-display">
-            Not just a vendor.
-            <br />
-            <span className="italic text-paper-dim">A trusted</span> business
-            partner.
-          </h1>
-        </Reveal>
+        <ul className="mt-16 grid gap-px overflow-hidden rounded-2xl border border-line bg-line md:grid-cols-3">
+          {pillars.map((pillar, index) => (
+            <Reveal
+              as="li"
+              key={pillar.id}
+              delay={index * 0.06}
+              className="bg-ink-raised"
+            >
+              <Link
+                to={`/services/${pillar.id}`}
+                className="group flex h-full flex-col p-8 transition-colors duration-300 hover:bg-ink-overlay md:p-10"
+              >
+                <p className="font-mono text-xs text-paper-faint">
+                  {String(index + 1).padStart(2, "0")}
+                </p>
 
-        <div className="mt-12 grid gap-10 md:grid-cols-12 md:items-end">
-          <Reveal delay={0.16} className="md:col-span-6">
-            <p className="max-w-prose text-pretty text-lg leading-relaxed text-paper-dim">
-              Anyone can generate a website now. Almost nobody will tell you
-              whether it is the right thing to build, or answer the phone when
-              it breaks. We diagnose first, build second, and stay as you grow
-              into software, AI, and analytics.
-            </p>
-          </Reveal>
+                <h3 className="mt-6 font-display text-title tracking-display">
+                  {pillar.title}
+                </h3>
 
-          <Reveal
-            delay={0.24}
-            className="flex flex-wrap gap-3 md:col-span-5 md:col-start-8 md:justify-end"
-          >
-            <Button to="/contact">Start a conversation</Button>
-            <Button to="/work" variant="secondary" withArrow={false}>
-              See our work
-            </Button>
-          </Reveal>
-        </div>
+                <p className="mt-3 text-pretty leading-relaxed text-paper-dim">
+                  {pillar.tagline}
+                </p>
+
+                <span className="mt-10 inline-flex items-center gap-2 text-sm text-paper-dim transition-colors group-hover:text-paper">
+                  Learn more
+                  <FiArrowUpRight
+                    aria-hidden="true"
+                    className="transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+                  />
+                </span>
+              </Link>
+            </Reveal>
+          ))}
+        </ul>
       </Container>
-
-      <Marquee items={capabilities} />
     </section>
   );
 }
 
-function SelectedWork() {
+function WhyUs() {
+  return (
+    <section className="border-t border-line py-24 md:py-32">
+      <Container className="grid gap-16 md:grid-cols-12">
+        <SectionHeading
+          className="md:col-span-5"
+          eyebrow="Why us"
+          title="What software alone cannot give you."
+        />
+
+        <ul className="md:col-span-6 md:col-start-7">
+          {principles.map((principle, index) => (
+            <Reveal
+              as="li"
+              key={principle.title}
+              delay={index * 0.06}
+              className="border-t border-line py-8 first:border-t-0 first:pt-0"
+            >
+              <h3 className="text-lg font-medium">{principle.title}</h3>
+              <p className="mt-2 text-pretty leading-relaxed text-paper-dim">
+                {principle.body}
+              </p>
+            </Reveal>
+          ))}
+        </ul>
+      </Container>
+    </section>
+  );
+}
+
+function FeaturedWork() {
   const featured = work.slice(0, 3);
 
   return (
-    <section className="py-24 md:py-32">
+    <section className="border-t border-line py-24 md:py-32">
       <Container>
         <div className="flex flex-wrap items-end justify-between gap-6">
           <SectionHeading
@@ -99,7 +136,7 @@ function SelectedWork() {
                     {item.client}
                   </h3>
                   <p className="mt-1 font-mono text-xs text-paper-faint">
-                    {item.sector} · {item.tier} · {item.year}
+                    {item.sector} · {item.category} · {item.year}
                   </p>
                 </div>
 
@@ -121,145 +158,34 @@ function SelectedWork() {
   );
 }
 
-function Capabilities() {
+function TeamTeaser() {
   return (
-    <section className="border-t border-line bg-ink-raised py-24 md:py-32">
+    <section className="border-t border-line py-24 md:py-32">
       <Container>
-        <SectionHeading
-          eyebrow="What we do"
-          title="Five capabilities, one accountable team."
-          lead="Most agencies hand you off between specialists, or send you elsewhere the moment the work leaves their lane. The team that builds your first website can build the software, the models, and the dashboards that come after it."
-        />
-
-        <ul className="mt-16 grid gap-px overflow-hidden rounded-2xl border border-line bg-line md:grid-cols-2 lg:grid-cols-3">
-          {services.map((service, index) => (
-            <Reveal
-              as="li"
-              key={service.id}
-              delay={index * 0.05}
-              className="bg-ink-raised p-8 transition-colors duration-300 hover:bg-ink-overlay"
-            >
-              <p className="font-mono text-xs text-paper-faint">
-                {String(index + 1).padStart(2, "0")}
-              </p>
-              <h3 className="mt-6 font-display text-2xl tracking-display">
-                {service.title}
-              </h3>
-              <p className="mt-3 text-pretty text-sm leading-relaxed text-paper-dim">
-                {service.summary}
-              </p>
-            </Reveal>
-          ))}
-
-          <Reveal
-            as="li"
-            delay={services.length * 0.05}
-            className="flex items-end bg-ink-raised p-8"
-          >
+        <div className="flex flex-wrap items-end justify-between gap-6">
+          <SectionHeading
+            eyebrow="Who you work with"
+            title="A small team you can actually talk to."
+            lead="No account managers relaying messages. You work directly with the people building the thing."
+          />
+          <Reveal delay={0.1}>
             <Link
-              to="/services"
-              className="group inline-flex items-center gap-2 text-sm transition-colors hover:text-paper-dim"
+              to="/about"
+              className="group inline-flex items-center gap-2 text-sm text-paper-dim transition-colors hover:text-paper"
             >
-              Explore services and pricing
+              Meet the team
               <FiArrowUpRight
                 aria-hidden="true"
                 className="transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
               />
             </Link>
           </Reveal>
-        </ul>
-      </Container>
-    </section>
-  );
-}
+        </div>
 
-function Process() {
-  return (
-    <section className="py-24 md:py-32">
-      <Container>
-        <SectionHeading
-          eyebrow="How we work"
-          title="We diagnose before we build."
-          lead="This is a process, not a slogan. Every engagement runs through the same five steps, and the first one is the one most agencies skip."
-        />
-
-        <ol className="mt-16 grid gap-px overflow-hidden border-y border-line bg-line md:grid-cols-5">
-          {process.map((phase, index) => (
-            <Reveal
-              as="li"
-              key={phase.step}
-              delay={index * 0.06}
-              className="bg-ink p-8"
-            >
-              <p className="font-mono text-xs text-paper-faint">{phase.step}</p>
-              <h3 className="mt-6 font-display text-2xl tracking-display">
-                {phase.title}
-              </h3>
-              <p className="mt-3 text-pretty text-sm leading-relaxed text-paper-dim">
-                {phase.body}
-              </p>
-            </Reveal>
-          ))}
-        </ol>
-      </Container>
-    </section>
-  );
-}
-
-function Principles() {
-  return (
-    <section className="border-t border-line py-24 md:py-32">
-      <Container className="grid gap-16 md:grid-cols-12">
-        <SectionHeading
-          className="md:col-span-5"
-          eyebrow="Why us"
-          title="What software alone cannot give you."
-        />
-
-        <ul className="space-y-px md:col-span-6 md:col-start-7">
-          {principles.map((principle, index) => (
-            <Reveal
-              as="li"
-              key={principle.title}
-              delay={index * 0.06}
-              className="border-t border-line py-8 first:border-t-0 first:pt-0"
-            >
-              <h3 className="text-lg font-medium">{principle.title}</h3>
-              <p className="mt-2 text-pretty leading-relaxed text-paper-dim">
-                {principle.body}
-              </p>
-            </Reveal>
-          ))}
-        </ul>
-      </Container>
-    </section>
-  );
-}
-
-function Regions() {
-  return (
-    <section className="border-t border-line py-24 md:py-32">
-      <Container>
-        <SectionHeading
-          eyebrow="Where we are"
-          title="Founded across three markets, native to all of them."
-          lead="Pixel Kriti was built by a team spanning India, Nepal, and Pakistan. We are not an offshore vendor learning your market from a deck — we already live in it."
-        />
-
-        <ul className="mt-16 grid gap-px overflow-hidden border-y border-line bg-line sm:grid-cols-3">
-          {regions.map((region, index) => (
-            <Reveal
-              as="li"
-              key={region.country}
-              delay={index * 0.08}
-              className="bg-ink p-10"
-            >
-              <h3 className="font-display text-4xl tracking-display">
-                {region.country}
-              </h3>
-              <p className="mt-2 font-mono text-xs text-paper-faint">
-                {region.note}
-              </p>
+        <ul className="mt-16 grid gap-6 sm:grid-cols-3">
+          {founders.map((person, index) => (
+            <Reveal as="li" key={person.name} delay={index * 0.06}>
+              <TeamCard person={person} />
             </Reveal>
           ))}
         </ul>
@@ -269,19 +195,17 @@ function Regions() {
 }
 
 function HomePage() {
-  usePageMeta(
-    null,
-    "Pixel Kriti is a technology and consultancy partner across India, Nepal, and Pakistan. We diagnose before we build.",
-  );
+  usePageMeta(null, site.subheadline);
 
   return (
     <>
-      <Hero />
-      <SelectedWork />
-      <Capabilities />
-      <Process />
-      <Principles />
-      <Regions />
+      <Splash />
+      <Showreel />
+      <ServicesOverview />
+      <WhyUs />
+      <FeaturedWork />
+      <Testimonials />
+      <TeamTeaser />
       <CallToAction />
     </>
   );

@@ -5,7 +5,8 @@ import reactHooks from "eslint-plugin-react-hooks";
 import reactRefresh from "eslint-plugin-react-refresh";
 
 export default [
-  { ignores: ["dist"] },
+  // .wrangler holds generated scratch workers that are not ours to lint.
+  { ignores: ["dist", ".wrangler"] },
   {
     files: ["**/*.{js,jsx}"],
     languageOptions: {

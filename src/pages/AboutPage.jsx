@@ -2,9 +2,11 @@ import Container from "@/components/Container.jsx";
 import Reveal from "@/components/Reveal.jsx";
 import SectionHeading from "@/components/SectionHeading.jsx";
 import CallToAction from "@/components/CallToAction.jsx";
+import TeamCard from "@/components/TeamCard.jsx";
 import usePageMeta from "@/hooks/usePageMeta.js";
-import { regions, site } from "@/data/site.js";
+import { site } from "@/data/site.js";
 import { principles } from "@/data/process.js";
+import { founders, team } from "@/data/team.js";
 
 const comparisons = [
   {
@@ -15,10 +17,10 @@ const comparisons = [
   {
     them: "Freelance marketplaces",
     they: "The lowest price you will find anywhere.",
-    us: "One team across design, software, and data — and someone still there in month six.",
+    us: "One team across websites, analytics, and AI - and someone still there in month six.",
   },
   {
-    them: "Large regional agencies",
+    them: "Large agencies",
     they: "Established reputation and a thick portfolio.",
     us: "More agile, more personal, consultancy-first, and priced for businesses your size.",
   },
@@ -32,7 +34,7 @@ const comparisons = [
 function AboutPage() {
   usePageMeta(
     "About",
-    "Pixel Kriti is a consultancy-first technology partner founded across India, Nepal, and Pakistan.",
+    "Pixel Kriti is a small, hands-on team that works inside your business, not just for it.",
   );
 
   return (
@@ -65,9 +67,10 @@ function AboutPage() {
                   what {site.name} sells.
                 </p>
                 <p className="text-pretty leading-relaxed text-paper-dim">
-                  We were founded by a team spanning three South Asian markets,
-                  which means we serve clients across them without being foreign
-                  to any. We are not learning your market from a research deck.
+                  We are not a faceless outsourcing shop. We embed with the
+                  businesses we work with, learn how they actually operate, and
+                  treat their growth as the measure of our work. That is what we
+                  mean by growing with you rather than delivering to you.
                 </p>
               </div>
             </div>
@@ -78,23 +81,26 @@ function AboutPage() {
       <section className="border-t border-line py-24 md:py-32">
         <Container>
           <SectionHeading
-            eyebrow="Where we are"
-            title="Three countries. One team."
+            eyebrow="Founders"
+            title="The people you will actually be talking to."
           />
-          <ul className="mt-16 grid gap-px overflow-hidden border-y border-line bg-line sm:grid-cols-3">
-            {regions.map((region, index) => (
-              <Reveal
-                as="li"
-                key={region.country}
-                delay={index * 0.08}
-                className="bg-ink p-10"
-              >
-                <h3 className="font-display text-4xl tracking-display">
-                  {region.country}
-                </h3>
-                <p className="mt-2 font-mono text-xs text-paper-faint">
-                  {region.note}
-                </p>
+          <ul className="mt-16 grid gap-6 md:grid-cols-3">
+            {founders.map((person, index) => (
+              <Reveal as="li" key={person.name} delay={index * 0.08}>
+                <TeamCard person={person} size="large" />
+              </Reveal>
+            ))}
+          </ul>
+        </Container>
+      </section>
+
+      <section className="border-t border-line py-24 md:py-32">
+        <Container>
+          <SectionHeading eyebrow="The team" title="One team, no handoffs." />
+          <ul className="mt-16 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {team.map((person, index) => (
+              <Reveal as="li" key={person.name} delay={index * 0.06}>
+                <TeamCard person={person} />
               </Reveal>
             ))}
           </ul>

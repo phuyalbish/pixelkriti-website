@@ -7,9 +7,15 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
+# Secrets. Every .env variant is ignored; only the committed template escapes.
 .env
+.env.*
+!.env.example
 
-*.mp4 
+# Stray video files stay out of the repo, but the showreel in public/ must be
+# committed or the deploy build will ship without it.
+*.mp4
+!public/*.mp4
 node_modules
 dist
 dist-ssr

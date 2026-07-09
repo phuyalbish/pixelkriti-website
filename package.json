@@ -8,14 +8,18 @@
     "preview": "vite preview",
     "lint": "eslint .",
     "serve": "serve -s dist -l tcp://0.0.0.0:5171",
-    "cf:deploy": "vite build && wrangler deploy",
-    "cf:preview": "vite build && wrangler dev",
+    "deploy:worker": "vite build && wrangler deploy",
+    "preview:worker": "vite build && wrangler dev",
     "cf:login": "wrangler login"
   },
   "pnpm": {
-    "onlyBuiltDependencies": ["esbuild", "workerd"]
+    "onlyBuiltDependencies": [
+      "esbuild",
+      "workerd"
+    ]
   },
   "dependencies": {
+    "@cloudflare/kv-asset-handler": "^0.5.0",
     "framer-motion": "^12.4.7",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",

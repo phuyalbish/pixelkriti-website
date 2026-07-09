@@ -3,11 +3,11 @@ import { site } from "@/data/site.js";
 
 /**
  * Sets the document title and meta description per route. The site is a static
- * SPA, so this is client-side only — crawlers that execute JS will pick it up.
+ * SPA, so this is client-side only - crawlers that execute JS will pick it up.
  */
 function usePageMeta(title, description) {
   useEffect(() => {
-    document.title = title ? `${title} — ${site.name}` : site.titleDefault;
+    document.title = title ? `${title} - ${site.name}` : site.titleDefault;
   }, [title]);
 
   useEffect(() => {

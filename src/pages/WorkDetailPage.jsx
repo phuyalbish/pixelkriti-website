@@ -62,8 +62,8 @@ function WorkDetailPage() {
                   <dd className="mt-2">{item.sector}</dd>
                 </div>
                 <div>
-                  <dt className="eyebrow">Engagement</dt>
-                  <dd className="mt-2">{item.tier}</dd>
+                  <dt className="eyebrow">Discipline</dt>
+                  <dd className="mt-2">{item.category}</dd>
                 </div>
                 <div>
                   <dt className="eyebrow">Year</dt>
@@ -110,6 +110,21 @@ function WorkDetailPage() {
                 ))}
               </ul>
             </Chapter>
+
+            {item.clientQuote && (
+              <Chapter label="Client">
+                <blockquote>
+                  <p className="text-pretty font-display text-2xl leading-snug tracking-display md:text-3xl">
+                    &ldquo;{item.clientQuote.quote}&rdquo;
+                  </p>
+                  <footer className="mt-4 font-mono text-xs text-paper-faint">
+                    {item.clientQuote.attribution}
+                    <span aria-hidden="true"> · </span>
+                    {item.client}
+                  </footer>
+                </blockquote>
+              </Chapter>
+            )}
 
             <Chapter label="Services">
               <ul className="flex flex-wrap gap-2">

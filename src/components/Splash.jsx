@@ -26,35 +26,31 @@ function Splash() {
 
   return (
     <section
-      aria-label={`${site.name} — introduction`}
+      aria-label={`${site.name} - introduction`}
       className="relative flex min-h-[100svh] flex-col justify-center overflow-hidden pb-28 pt-24"
     >
       <Container>
-        <motion.p {...rise(0)} className="eyebrow">
-          Est. {site.foundedYear}
-        </motion.p>
-
         {/*
-          The wordmark, not a heading of the page's content — but it is the
+          The wordmark, not a heading of the page's content - but it is the
           page's h1, and the most accurate description of what this site is.
         */}
         <motion.h1
-          {...rise(0.1)}
-          className="mt-6 font-display leading-[0.9] tracking-display"
+          {...rise(0)}
+          className="font-display leading-[0.9] tracking-display"
           style={{ fontSize: "clamp(3.5rem, 15vw, 13rem)" }}
         >
           {site.name}
         </motion.h1>
 
         <motion.p
-          {...rise(0.24)}
+          {...rise(0.14)}
           className="mt-8 max-w-3xl text-balance font-display text-title italic text-paper-dim"
         >
           {site.motto}
         </motion.p>
 
         <motion.div
-          {...rise(0.36)}
+          {...rise(0.26)}
           className="mt-12 flex flex-wrap items-center gap-3"
         >
           <Button to="/contact">Book a Free Consultation</Button>
@@ -63,14 +59,14 @@ function Splash() {
           </Button>
         </motion.div>
 
-        <motion.div {...rise(0.48)} className="mt-14">
+        <motion.div {...rise(0.38)} className="mt-14">
           <SocialLinks size="large" />
         </motion.div>
       </Container>
 
       {/* Scroll cue. Decorative: the page scrolls whether or not it is read. */}
       <motion.div
-        {...rise(0.6)}
+        {...rise(0.5)}
         aria-hidden="true"
         className="pointer-events-none absolute inset-x-0 bottom-8 flex justify-center"
       >

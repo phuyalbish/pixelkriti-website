@@ -9,7 +9,6 @@ export const site = {
   // TODO: confirm these before launch.
   email: "info@pixelkriti.com",
   bookingUrl: null, // e.g. a Calendly link; falls back to the contact page.
-  foundedYear: 2025,
 };
 
 /**

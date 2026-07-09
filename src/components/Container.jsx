@@ -1,10 +1,11 @@
-
-function Container({children}) {
+function Container({ as: Tag = "div", className = "", children }) {
   return (
-    <div className="relative w-full flex flex-col px-5 md:px-[4rem] max-w-[100em] mx-auto gap-5 ">
-        {children}
-    </div>
-  )
+    <Tag
+      className={`mx-auto w-full max-w-shell px-6 sm:px-10 md:px-16 lg:px-24 ${className}`}
+    >
+      {children}
+    </Tag>
+  );
 }
 
-export default Container
+export default Container;

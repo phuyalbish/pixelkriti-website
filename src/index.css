@@ -10,7 +10,8 @@
 
   --paper: #f2f2f0;
   --paper-dim: #a1a1a6;
-  --paper-faint: #74747b;
+  /* Faint, but never below 4.5:1 on any of the three ink surfaces. */
+  --paper-faint: #8b8b93;
 
   --line: rgba(242, 242, 240, 0.1);
   --line-strong: rgba(242, 242, 240, 0.24);

@@ -1,4 +1,10 @@
+# Pixel Kriti - https://pixelkriti.com
+# All crawlers welcome; the whole site is public.
+
 User-agent: *
-Disallow:
+Allow: /
 
 Sitemap: https://pixelkriti.com/sitemap.xml
+
+# A structured, LLM-friendly summary of the company and site lives at:
+# https://pixelkriti.com/llms.txt

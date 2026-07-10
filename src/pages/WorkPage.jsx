@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { FiArrowUpRight } from "react-icons/fi";
 import Container from "@/components/Container.jsx";
 import Reveal from "@/components/Reveal.jsx";
+import WordReveal from "@/components/WordReveal.jsx";
 import CallToAction from "@/components/CallToAction.jsx";
 import usePageMeta from "@/hooks/usePageMeta.js";
 import { work, workCategories } from "@/data/work.js";
@@ -12,7 +13,12 @@ const filters = ["All", ...workCategories];
 function WorkPage() {
   usePageMeta(
     "Work",
-    "Case studies from Pixel Kriti, written diagnosis-first: problem, investigation, solution, result.",
+    "Real projects, real solutions. See how Pixel Kriti helps businesses solve problems through Web Development, AI, and BI.",
+    {
+      title: "Our Work - Case Studies & Solutions",
+      description:
+        "See how Pixel Kriti helps businesses solve problems through Web Development, AI, and BI. Real projects, real results.",
+    },
   );
 
   const [category, setCategory] = useState("All");
@@ -32,11 +38,12 @@ function WorkPage() {
           <Reveal>
             <p className="eyebrow">Work</p>
           </Reveal>
-          <Reveal delay={0.06}>
-            <h1 className="mt-6 max-w-4xl text-balance font-display text-display tracking-display">
-              Every project starts with a wrong assumption.
-            </h1>
-          </Reveal>
+          <h1 className="mt-6 max-w-4xl text-balance font-display text-display tracking-display">
+            <WordReveal
+              text="Every project starts with a wrong assumption."
+              delay={0.06}
+            />
+          </h1>
           <Reveal delay={0.12}>
             <p className="mt-8 max-w-prose text-pretty text-lg leading-relaxed text-paper-dim">
               Usually the client&apos;s. Sometimes ours. These are the ones

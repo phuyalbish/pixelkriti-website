@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import {
   motion,
+  useInView,
   useReducedMotion,
   useScroll,
   useSpring,
@@ -31,6 +32,16 @@ function Showreel() {
   const reduceMotion = useReducedMotion();
   const [muted, setMuted] = useState(true);
   const isYouTube = Boolean(showreel.youtubeId);
+
+  /*
+   * The embed pulls well over a megabyte of player and video. Mounting it only
+   * as the section approaches keeps all of that off the critical path - the
+   * aspect-ratio box below holds the layout either way, so nothing shifts.
+   */
+  const nearViewport = useInView(sectionRef, {
+    once: true,
+    margin: "0px 0px 600px 0px",
+  });
 
   /**
    * React does not serialise the `muted` attribute, so a `muted` prop alone can
@@ -96,14 +107,17 @@ function Showreel() {
                 can never appear, and clicks fall through to the page. The
                 mute button below is the whole control surface.
               */}
-              <iframe
-                ref={iframeRef}
-                src={youtubeSrc}
-                title="Portfolio showreel"
-                allow="autoplay; encrypted-media"
-                tabIndex={-1}
-                className="pointer-events-none absolute inset-0 h-full w-full"
-              />
+              {nearViewport && (
+                <iframe
+                  ref={iframeRef}
+                  src={youtubeSrc}
+                  title="Portfolio showreel"
+                  allow="autoplay; encrypted-media"
+                  loading="lazy"
+                  tabIndex={-1}
+                  className="pointer-events-none absolute inset-0 h-full w-full"
+                />
+              )}
             </div>
           ) : (
             <video

@@ -14,3 +14,16 @@ export function scrollToInstant(top) {
   if (lenis) lenis.scrollTo(top, { immediate: true });
   else window.scrollTo({ top, behavior: "instant" });
 }
+
+/**
+ * Scroll a hash target into view, offset so it lands below the sticky header
+ * (Lenis ignores CSS scroll-padding-top, so the offset is passed explicitly).
+ */
+export function scrollToElement(element) {
+  const offset = -96;
+  if (lenis) lenis.scrollTo(element, { offset, immediate: true });
+  else {
+    const top = element.getBoundingClientRect().top + window.scrollY + offset;
+    window.scrollTo({ top, behavior: "instant" });
+  }
+}

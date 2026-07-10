@@ -10,6 +10,7 @@ import Button from "@/components/Button.jsx";
 import SocialLinks from "@/components/SocialLinks.jsx";
 import SplashMark from "@/components/SplashMark.jsx";
 import Wordmark from "@/components/Wordmark.jsx";
+import WordReveal from "@/components/WordReveal.jsx";
 import { site } from "@/data/site.js";
 
 /**
@@ -67,12 +68,9 @@ function Splash() {
             />
           </motion.div>
 
-          <motion.p
-            {...rise(0.14)}
-            className="mt-8 max-w-xl text-balance font-display text-title italic text-paper-dim"
-          >
-            {site.motto}
-          </motion.p>
+          <p className="mt-8 max-w-xl text-balance font-display text-title italic text-paper-dim">
+            <WordReveal text={site.motto} delay={0.2} />
+          </p>
 
           <motion.div
             {...rise(0.26)}

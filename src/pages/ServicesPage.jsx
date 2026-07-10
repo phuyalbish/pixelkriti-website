@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { FiArrowUpRight } from "react-icons/fi";
 import Container from "@/components/Container.jsx";
 import Reveal from "@/components/Reveal.jsx";
+import WordReveal from "@/components/WordReveal.jsx";
 import Accordion from "@/components/Accordion.jsx";
 import CallToAction from "@/components/CallToAction.jsx";
 import usePageMeta from "@/hooks/usePageMeta.js";
@@ -12,7 +13,12 @@ import SectionHeading from "@/components/SectionHeading.jsx";
 function ServicesPage() {
   usePageMeta(
     "Services",
-    "Websites, analytics and business intelligence, and AI/ML - delivered by one accountable team.",
+    "Web & Software Development, Artificial Intelligence, and Business Intelligence - solutions designed to solve your specific business problems. One accountable team.",
+    {
+      title: "Our Services - Web, AI & BI Solutions",
+      description:
+        "Web & Software Development, Artificial Intelligence, and Business Intelligence. Solutions designed to solve real business problems.",
+    },
   );
 
   return (
@@ -22,11 +28,9 @@ function ServicesPage() {
           <Reveal>
             <p className="eyebrow">Services</p>
           </Reveal>
-          <Reveal delay={0.06}>
-            <h1 className="mt-6 max-w-4xl text-balance font-display text-display tracking-display">
-              You don&apos;t need a website. You need customers.
-            </h1>
-          </Reveal>
+          <h1 className="mt-6 max-w-4xl text-balance font-display text-display tracking-display">
+            <WordReveal text="You don't need a website. You need customers." delay={0.06} />
+          </h1>
           <Reveal delay={0.12}>
             <p className="mt-8 max-w-prose text-pretty text-lg leading-relaxed text-paper-dim">
               A website is a means. So is a dashboard, a model, or an internal
@@ -53,11 +57,9 @@ function ServicesPage() {
                     Pillar {String(pillarIndex + 1).padStart(2, "0")}
                   </p>
                 </Reveal>
-                <Reveal delay={0.06}>
-                  <h2 className="mt-5 text-balance font-display text-headline tracking-display">
-                    {pillar.title}
-                  </h2>
-                </Reveal>
+                <h2 className="mt-5 text-balance font-display text-headline tracking-display">
+                  <WordReveal text={pillar.title} delay={0.06} />
+                </h2>
                 <Reveal delay={0.12}>
                   <p className="mt-6 max-w-prose text-pretty leading-relaxed text-paper-dim">
                     {pillar.outcome}

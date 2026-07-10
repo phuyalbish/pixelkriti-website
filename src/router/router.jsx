@@ -1,26 +1,83 @@
+import { lazy, Suspense } from "react";
 import { Routes, Route } from "react-router-dom";
 import PageLayout from "@/components/PageLayout.jsx";
 import HomePage from "@/pages/HomePage.jsx";
-import WorkPage from "@/pages/WorkPage.jsx";
-import WorkDetailPage from "@/pages/WorkDetailPage.jsx";
-import ServicesPage from "@/pages/ServicesPage.jsx";
-import ServiceDetailPage from "@/pages/ServiceDetailPage.jsx";
-import AboutPage from "@/pages/AboutPage.jsx";
-import ContactPage from "@/pages/ContactPage.jsx";
-import NotFoundPage from "@/pages/NotFoundPage.jsx";
+
+/*
+ * Only the landing page ships in the main bundle; every other route loads on
+ * navigation. The fallback is nothing at all: the shell (header/footer) stays
+ * mounted, chunks arrive in tens of milliseconds, and a flashed spinner would
+ * be more visible than the wait.
+ */
+const WorkPage = lazy(() => import("@/pages/WorkPage.jsx"));
+const WorkDetailPage = lazy(() => import("@/pages/WorkDetailPage.jsx"));
+const ServicesPage = lazy(() => import("@/pages/ServicesPage.jsx"));
+const ServiceDetailPage = lazy(() => import("@/pages/ServiceDetailPage.jsx"));
+const AboutPage = lazy(() => import("@/pages/AboutPage.jsx"));
+const ContactPage = lazy(() => import("@/pages/ContactPage.jsx"));
+const NotFoundPage = lazy(() => import("@/pages/NotFoundPage.jsx"));
 
 function AppRoutes() {
   return (
     <Routes>
       <Route element={<PageLayout />}>
         <Route path="/" element={<HomePage />} />
-        <Route path="/work" element={<WorkPage />} />
-        <Route path="/work/:slug" element={<WorkDetailPage />} />
-        <Route path="/services" element={<ServicesPage />} />
-        <Route path="/services/:slug" element={<ServiceDetailPage />} />
-        <Route path="/about" element={<AboutPage />} />
-        <Route path="/contact" element={<ContactPage />} />
-        <Route path="*" element={<NotFoundPage />} />
+        <Route
+          path="/work"
+          element={
+            <Suspense fallback={null}>
+              <WorkPage />
+            </Suspense>
+          }
+        />
+        <Route
+          path="/work/:slug"
+          element={
+            <Suspense fallback={null}>
+              <WorkDetailPage />
+            </Suspense>
+          }
+        />
+        <Route
+          path="/services"
+          element={
+            <Suspense fallback={null}>
+              <ServicesPage />
+            </Suspense>
+          }
+        />
+        <Route
+          path="/services/:slug"
+          element={
+            <Suspense fallback={null}>
+              <ServiceDetailPage />
+            </Suspense>
+          }
+        />
+        <Route
+          path="/about"
+          element={
+            <Suspense fallback={null}>
+              <AboutPage />
+            </Suspense>
+          }
+        />
+        <Route
+          path="/contact"
+          element={
+            <Suspense fallback={null}>
+              <ContactPage />
+            </Suspense>
+          }
+        />
+        <Route
+          path="*"
+          element={
+            <Suspense fallback={null}>
+              <NotFoundPage />
+            </Suspense>
+          }
+        />
       </Route>
     </Routes>
   );

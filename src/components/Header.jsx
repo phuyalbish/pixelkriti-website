@@ -58,8 +58,18 @@ function Header() {
 
   return (
     <header
+      /*
+       * The blur must drop while the drawer is open: backdrop-filter makes the
+       * header the containing block for fixed descendants, which would pin the
+       * drawer's `top-20 bottom-0` to the header's own 80px box - a 1px-tall
+       * background with the menu links spilling over the transparent page.
+       */
       className={`sticky top-0 z-50 transition-[background-color,border-color,transform] duration-500 ease-out ${
-        scrolled ? "border-b border-line bg-ink/85 backdrop-blur-md" : ""
+        menuOpen
+          ? "border-b border-line bg-ink"
+          : scrolled
+            ? "border-b border-line bg-ink/85 backdrop-blur-md"
+            : ""
       } ${hidden && !menuOpen && !reduceMotion ? "-translate-y-full" : ""}`}
     >
       <Container className="flex h-20 items-center justify-between">

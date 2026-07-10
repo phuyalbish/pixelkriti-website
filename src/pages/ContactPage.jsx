@@ -2,6 +2,7 @@ import { useState } from "react";
 import { FiArrowUpRight, FiChevronDown } from "react-icons/fi";
 import Container from "@/components/Container.jsx";
 import Reveal from "@/components/Reveal.jsx";
+import WordReveal from "@/components/WordReveal.jsx";
 import usePageMeta from "@/hooks/usePageMeta.js";
 import { site, socials } from "@/data/site.js";
 import { serviceGroups } from "@/data/services.js";
@@ -20,7 +21,12 @@ const emptyForm = {
 function ContactPage() {
   usePageMeta(
     "Contact",
-    "Tell us the problem. A first conversation with Pixel Kriti costs nothing and ends with a straight answer.",
+    "Tell us your business problem. A first conversation with Pixel Kriti costs nothing and ends with a straight answer.",
+    {
+      title: "Contact Pixel Kriti - Start with a Free Consultation",
+      description:
+        "Tell us your business problem. A first conversation with Pixel Kriti costs nothing and ends with a straight answer.",
+    },
   );
 
   const [form, setForm] = useState(emptyForm);
@@ -63,11 +69,9 @@ function ContactPage() {
           <Reveal>
             <p className="eyebrow">Contact</p>
           </Reveal>
-          <Reveal delay={0.06}>
-            <h1 className="mt-6 text-balance font-display text-display tracking-display">
-              Start with the problem.
-            </h1>
-          </Reveal>
+          <h1 className="mt-6 text-balance font-display text-display tracking-display">
+            <WordReveal text="Start with the problem." delay={0.06} />
+          </h1>
           <Reveal delay={0.12}>
             <p className="mt-8 max-w-prose text-pretty leading-relaxed text-paper-dim">
               Not the solution you have in mind, and not the budget. Tell us

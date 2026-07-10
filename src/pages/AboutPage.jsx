@@ -1,6 +1,7 @@
 import Container from "@/components/Container.jsx";
 import LogoOutline from "@/components/LogoOutline.jsx";
 import Reveal from "@/components/Reveal.jsx";
+import WordReveal from "@/components/WordReveal.jsx";
 import SectionHeading from "@/components/SectionHeading.jsx";
 import CallToAction from "@/components/CallToAction.jsx";
 import TeamCard from "@/components/TeamCard.jsx";
@@ -35,7 +36,12 @@ const comparisons = [
 function AboutPage() {
   usePageMeta(
     "About",
-    "Pixel Kriti is a small, hands-on team that works inside your business, not just for it.",
+    "Pixel Kriti is a technology partner that delivers solutions you can trust. Meet the team behind Web Development, AI, and BI.",
+    {
+      title: "About Pixel Kriti - The Team Behind the Solutions",
+      description:
+        "Pixel Kriti delivers technology people trust. Meet the team that solves business problems through Web, AI, and BI.",
+    },
   );
 
   return (
@@ -48,13 +54,14 @@ function AboutPage() {
           <Reveal>
             <p className="eyebrow">About</p>
           </Reveal>
-          <Reveal delay={0.06}>
-            <h1 className="mt-6 max-w-4xl text-balance font-display text-display tracking-display">
-              The tools got cheap.
-              <br />
-              <span className="italic text-paper-dim">Judgement</span> did not.
-            </h1>
-          </Reveal>
+          <h1 className="mt-6 max-w-4xl text-balance font-display text-display tracking-display">
+            <WordReveal text="The tools got cheap." delay={0.06} />
+            <br />
+            <span className="italic text-paper-dim">
+              <WordReveal text="Judgement" delay={0.32} />
+            </span>{" "}
+            <WordReveal text="did not." delay={0.42} />
+          </h1>
           <Reveal delay={0.12}>
             <div className="mt-10 grid gap-6 md:grid-cols-12">
               <div className="space-y-6 md:col-span-6">

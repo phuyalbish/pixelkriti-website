@@ -4,6 +4,7 @@ import Header from "@/components/Header.jsx";
 import Footer from "@/components/Footer.jsx";
 import ScrollToTop from "@/components/ScrollToTop.jsx";
 import SmoothScroll from "@/components/SmoothScroll.jsx";
+import StickyCta from "@/components/StickyCta.jsx";
 
 function PageLayout() {
   const { pathname } = useLocation();
@@ -37,6 +38,7 @@ function PageLayout() {
         <Outlet />
       </motion.main>
       <Footer />
+      <StickyCta />
     </div>
   );
 }

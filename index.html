@@ -28,12 +28,63 @@
     <meta property="og:url" content="https://pixelkriti.com/" />
     <meta name="twitter:card" content="summary_large_image" />
 
+    <!--
+      Structured data for rich search results. One document serves every
+      route of this SPA, so both blocks ship globally: Organization describes
+      the company, LocalBusiness adds the contact/locale details Google wants
+      for the home and contact listings.
+    -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        "name": "Pixel Kriti",
+        "description": "Technology and consultancy partner across Web Development, Artificial Intelligence, and Business Intelligence for businesses in Nepal, India, and Pakistan.",
+        "url": "https://pixelkriti.com/",
+        "email": "info@pixelkriti.com",
+        "contactPoint": {
+          "@type": "ContactPoint",
+          "contactType": "Sales",
+          "email": "info@pixelkriti.com"
+        },
+        "sameAs": ["https://www.linkedin.com/company/pixel-kriti"]
+      }
+    </script>
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "LocalBusiness",
+        "name": "Pixel Kriti",
+        "description": "Web Development, Artificial Intelligence, and Business Intelligence solutions for businesses across Nepal, India, and Pakistan.",
+        "url": "https://pixelkriti.com/",
+        "email": "info@pixelkriti.com",
+        "address": {
+          "@type": "PostalAddress",
+          "addressCountry": "Nepal"
+        },
+        "openingHours": "Mo-Fr 09:00-17:00"
+      }
+    </script>
+
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <!--
+      Loaded without blocking render: `media="print"` keeps the stylesheet out
+      of the critical path, then onload flips it live. Text paints immediately
+      in the fallback stack and swaps when the webfonts arrive (display=swap).
+    -->
     <link
       href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&family=Manrope:wght@300..700&display=swap"
       rel="stylesheet"
+      media="print"
+      onload="this.media='all'"
     />
+    <noscript>
+      <link
+        href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&family=Manrope:wght@300..700&display=swap"
+        rel="stylesheet"
+      />
+    </noscript>
   </head>
   <body>
     <div id="root"></div>

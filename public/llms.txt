@@ -1,0 +1,66 @@
+# Pixel Kriti
+
+> Pixel Kriti is a technology and consultancy agency delivering technology people trust - and a partner clients can count on. We help businesses solve their problems through three core solution pillars: Web & Software Development, Artificial Intelligence (AI), and Business Intelligence (BI). We serve businesses across Nepal, India, and Pakistan.
+
+Positioning: your growth partner, not your vendor. We do not just sell outcomes - we sell the right answer, tailored to each business. We diagnose before we build, we are accountable after we ship, and we recommend the smallest thing that solves the problem, even when that means telling a client not to hire us.
+
+Key facts:
+- Company: Pixel Kriti
+- Website: https://pixelkriti.com
+- Email: info@pixelkriti.com (we reply within 24 hours)
+- A first consultation is free and ends with a straight answer
+- Region: Nepal, India, and Pakistan
+- LinkedIn: https://www.linkedin.com/company/pixel-kriti
+
+## Services
+
+We organise everything we sell under three pillars, delivered by one accountable team - the team that builds your website can build the dashboards and models that come after it.
+
+- [Web & Software Development](https://pixelkriti.com/services/websites): Corporate, business, e-commerce, SaaS, and startup websites; custom and headless CMS; progressive web apps; website redesign (UI/UX, performance, mobile, accessibility, conversion); ongoing website management (maintenance, security, backups, uptime, hosting); custom software and CRM development, web applications and portals, booking and scheduling systems, inventory management, internal tools, and API integrations.
+- [Artificial Intelligence & Machine Learning](https://pixelkriti.com/services/ai): AI chatbots, assistants, and voice AI; customer support and sales AI; AI search and knowledge bases; AI agents and workflow automation. Machine learning use-cases: predictive lead scoring, demand forecasting, anomaly detection in manufacturing, customer churn prediction, intelligent document processing, sentiment analysis for customer feedback, automated report generation, supply chain optimization, fraud detection, and personalized recommendation engines.
+- [Analytics & Business Intelligence](https://pixelkriti.com/services/analytics): Power BI, Tableau, and Looker Studio dashboards; executive, KPI, financial, sales, marketing, HR, and manufacturing dashboards; data pipelines and shared metric definitions so every system agrees on the numbers.
+
+## Process
+
+Every engagement runs through five steps, and the first one is free:
+
+1. Diagnose - work out what the business actually needs; often it is not the thing that was asked for.
+2. Define - scope, timeline, and price agreed in writing before work starts.
+3. Design - interface and identity shaped together and tested against real behaviour.
+4. Build - shipped in visible weekly increments, not one large reveal.
+5. Grow - launch is the midpoint; we measure and keep improving as the business changes.
+
+## Principles
+
+- Diagnosis over order-taking: we will say when what was asked for is the wrong thing to build.
+- Accountability, not just delivery: when something breaks, there is a name and a number.
+- Transparent, scope-based pricing: ranges published, scope agreed up front, no surprises at invoice time.
+- One partner as you scale: the team that builds your first site can build your software, models, and dashboards.
+
+## Work
+
+Case studies are written diagnosis-first: problem, investigation, solution, result.
+
+- [All case studies](https://pixelkriti.com/work): Filterable by Websites, Analytics, and AI & ML.
+- [A regional retail chain](https://pixelkriti.com/work/regional-retail-storefront): Replacing three disconnected systems with one storefront and inventory view.
+- [A multi-location clinic](https://pixelkriti.com/work/clinic-booking-platform): A booking flow patients finish, and a schedule the front desk trusts.
+- [A freight operator](https://pixelkriti.com/work/logistics-analytics): Six years of dormant delivery data turned into a dashboard dispatch opens daily.
+- [A regional distributor](https://pixelkriti.com/work/demand-forecasting): A next-day demand forecast with a clear owner and a measurable accuracy target.
+- [An independent restaurant](https://pixelkriti.com/work/restaurant-first-presence): A first website that answers hours, menu, and directions before anything else loads.
+
+## Team
+
+A small team you work with directly - no account managers relaying messages.
+
+- [About Pixel Kriti](https://pixelkriti.com/about): Philosophy, founders, team, and an honest comparison against the alternatives (AI builders, freelance marketplaces, large agencies, global consultancies).
+- Founders: Amitesh (Analytics, AI/ML & Management), Bishal (Website & Design), Muzammil (Marketing, Sales & Analytics).
+
+## Contact
+
+- [Contact page](https://pixelkriti.com/contact): Start with the problem, not the solution or the budget. Tell us what is not working and we will tell you what we would build - even when the answer is nothing at all.
+- Email: info@pixelkriti.com
+
+## Optional
+
+- [Services overview](https://pixelkriti.com/services): All three pillars with full service lists and the five-step process.
+- [Sitemap](https://pixelkriti.com/sitemap.xml)

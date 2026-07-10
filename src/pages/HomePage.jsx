@@ -10,11 +10,17 @@ import Showreel from "@/components/Showreel.jsx";
 import Testimonials from "@/components/Testimonials.jsx";
 import TeamCard from "@/components/TeamCard.jsx";
 import usePageMeta from "@/hooks/usePageMeta.js";
-import { site } from "@/data/site.js";
 import { pillars } from "@/data/services.js";
 import { principles } from "@/data/process.js";
 import { work } from "@/data/work.js";
 import { founders } from "@/data/team.js";
+
+/*
+ * Inline links inside running copy: quieter than a button, but clearly live.
+ * The green arrives only on hover, keeping the paragraph monochrome at rest.
+ */
+const pillarLinkClass =
+  "text-paper underline decoration-line-strong underline-offset-4 transition-colors duration-300 hover:text-brand hover:decoration-brand";
 
 function ServicesOverview() {
   return (
@@ -23,7 +29,25 @@ function ServicesOverview() {
         <SectionHeading
           eyebrow="What we do"
           title="Three pillars, one accountable team."
-          lead="Most agencies hand you off between specialists, or send you elsewhere the moment the work leaves their lane. The team that builds your website can build the dashboards and the models that come after it."
+          lead={
+            <>
+              We don&apos;t just sell outcomes. We sell the right answer -
+              tailored for you. We help businesses solve their problems through
+              three core solution pillars:{" "}
+              <Link to="/services#websites" className={pillarLinkClass}>
+                Web &amp; Software Development
+              </Link>
+              ,{" "}
+              <Link to="/services#ai" className={pillarLinkClass}>
+                Artificial Intelligence (AI)
+              </Link>
+              , and{" "}
+              <Link to="/services#analytics" className={pillarLinkClass}>
+                Business Intelligence (BI)
+              </Link>
+              .
+            </>
+          }
         />
 
         <ul className="mt-16 grid gap-px overflow-hidden rounded-2xl border border-line bg-line md:grid-cols-3">
@@ -207,7 +231,15 @@ function TeamTeaser() {
 }
 
 function HomePage() {
-  usePageMeta(null, site.subheadline);
+  usePageMeta(
+    null,
+    "Pixel Kriti delivers technology people trust. We solve business problems through Web Development, AI, and BI - with solutions tailored to your needs.",
+    {
+      title: "Pixel Kriti - Technology You Can Trust",
+      description:
+        "Delivering technology people trust. Web Development, AI, and BI solutions tailored to your business problems.",
+    },
+  );
 
   return (
     <>

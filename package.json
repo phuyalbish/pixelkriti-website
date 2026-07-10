@@ -7,7 +7,6 @@
     "build": "vite build",
     "preview": "vite preview",
     "lint": "eslint .",
-    "serve": "serve -s dist -l tcp://0.0.0.0:5171",
     "deploy:worker": "vite build && wrangler deploy",
     "preview:worker": "vite build && wrangler dev",
     "cf:login": "wrangler login"

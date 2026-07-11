@@ -2,6 +2,8 @@ import Container from "@/components/Container.jsx";
 import Reveal from "@/components/Reveal.jsx";
 import Button from "@/components/Button.jsx";
 import LogoOutline from "@/components/LogoOutline.jsx";
+import WordReveal from "@/components/WordReveal.jsx";
+import { cta } from "@/data/content.js";
 
 function CallToAction() {
   return (
@@ -11,17 +13,14 @@ function CallToAction() {
 
       <Container className="relative text-center">
         <Reveal>
-          <p className="eyebrow">Start here</p>
+          <p className="eyebrow">{cta.eyebrow}</p>
         </Reveal>
-        <Reveal delay={0.06}>
-          <h2 className="mx-auto mt-6 max-w-4xl text-balance font-display text-headline tracking-display">
-            Let&apos;s build something that grows.
-          </h2>
-        </Reveal>
+        <h2 className="mx-auto mt-6 max-w-4xl text-balance font-display text-headline tracking-display">
+          <WordReveal text={cta.title} delay={0.06} />
+        </h2>
         <Reveal delay={0.12}>
           <p className="mx-auto mt-6 max-w-prose text-pretty leading-relaxed text-paper-dim">
-            A first conversation costs nothing and ends with a straight answer -
-            even when that answer is that you do not need us.
+            {cta.body}
           </p>
         </Reveal>
         <Reveal delay={0.18}>

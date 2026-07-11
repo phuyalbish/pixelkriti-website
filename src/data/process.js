@@ -32,19 +32,19 @@ export const process = [
 
 export const principles = [
   {
-    title: "Diagnosis over order-taking",
-    body: "An AI builder will make whatever you ask for. We will tell you when what you asked for is the wrong thing to build.",
+    title: "We build, we do not resell",
+    body: "Built for you, not configured for you - written by us, one business at a time.",
   },
   {
-    title: "Accountability, not just delivery",
-    body: "When something breaks, there is a name and a number. That is the part software alone cannot give you.",
+    title: "Diagnosis first, quote second",
+    body: "We look inside your business - who touches a lead, where jobs stall - and scope around what we find. Priced in writing; no meter you did not sign off on.",
   },
   {
-    title: "Transparent, scope-based pricing",
-    body: "Ranges published, scope agreed up front, no surprises at invoice time.",
+    title: "Honest about what you do not need",
+    body: "Sometimes the answer is an off-the-shelf tool, or nothing at all. You will hear it in the first conversation. It costs us projects; it is why clients stay.",
   },
   {
-    title: "One partner as you scale",
-    body: "The team that builds your first site can build your software, your models, and your dashboards.",
+    title: "A name and a number when it breaks",
+    body: "When something goes wrong at 7am, you reach the person who wrote the code - not a ticket queue.",
   },
 ];

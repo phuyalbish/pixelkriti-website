@@ -8,9 +8,9 @@ export const pillars = [
   {
     id: "websites",
     title: "Websites & Custom Software",
-    tagline: "Sites and systems that earn customers, not just exist.",
+    tagline: "One system built around how you work.",
     outcome:
-      "A website is a means, not an end. We build the site - and the software behind it - that moves your business forward, then keep it fast, secure, and current long after launch.",
+      "A website is the front door - custom software is the building behind it: CRM platforms (one system that remembers every customer), scheduling, internal tools, and full operating systems like Keystone, which runs a roofing company's pipeline from first call to finished job. Everything built to move a lead from click to customer.",
     groups: [
       {
         title: "Website Development",
@@ -76,9 +76,9 @@ export const pillars = [
   {
     id: "analytics",
     title: "Analytics & Business Intelligence",
-    tagline: "The numbers you can act on this quarter.",
+    tagline: "Know your numbers before you spend a dollar.",
     outcome:
-      "Most businesses already collect the data they need and cannot see it. We turn what you have into dashboards your team opens every morning, and metrics everyone defines the same way.",
+      "You cannot fix what you cannot see. Dashboards that answer real questions - where leads come from, where they stall, which jobs make money - so decisions become arithmetic, not arguments.",
     groups: [
       {
         title: "Dashboards & Reporting",
@@ -95,6 +95,19 @@ export const pillars = [
           "Manufacturing Dashboards",
         ],
       },
+      {
+        // The unglamorous half of every dashboard project - and usually the
+        // half that decides whether anyone trusts the numbers.
+        title: "Data Foundations",
+        items: [
+          "Data Pipelines & Integration",
+          "Shared Metric Definitions",
+          "Source-of-Truth Reconciliation",
+          "Data Cleaning & Migration",
+          "Report Automation",
+          "Data Quality Monitoring",
+        ],
+      },
     ],
     useCase: {
       title: "Six years of data nobody could read",
@@ -104,9 +117,9 @@ export const pillars = [
   {
     id: "ai",
     title: "AI & Machine Learning",
-    tagline: "Applied models with a business case attached.",
+    tagline: "AI employees working alongside your employees.",
     outcome:
-      "We start from the decision you want to improve, not the model we want to build. If a rule beats a model, we will tell you - and save you the maintenance.",
+      "Custom AI agents pick up the work nobody has time for - after-hours leads, unpaid invoices, follow-ups drafted for approval - with a human in the loop wherever judgment matters.",
     groups: [
       {
         title: "AI Solutions",

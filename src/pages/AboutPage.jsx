@@ -66,22 +66,15 @@ function AboutPage() {
             <div className="mt-10 grid gap-6 md:grid-cols-12">
               <div className="space-y-6 md:col-span-6">
                 <p className="text-pretty text-lg leading-relaxed text-paper-dim">
-                  Producing a basic website no longer requires skill or money.
-                  That is a genuinely good thing, and it has quietly made most
-                  agencies redundant.
+                  Producing a basic website no longer requires skill or money -
+                  which has quietly made most agencies redundant.
                 </p>
-                <p className="text-pretty leading-relaxed text-paper-dim">
-                  What has not been automated is the part that comes before the
-                  building: working out what the business actually needs, being
-                  answerable for whether it works, and still being there when
-                  the company outgrows its first solution. That is the whole of
-                  what {site.name} sells.
-                </p>
-                <p className="text-pretty leading-relaxed text-paper-dim">
-                  We are not a faceless outsourcing shop. We embed with the
-                  businesses we work with, learn how they actually operate, and
-                  treat their growth as the measure of our work. That is what we
-                  mean by growing with you rather than delivering to you.
+                <p className="text-pretty text-sm leading-relaxed text-paper-dim">
+                  What cannot be automated: working out what a business
+                  actually needs, being answerable for whether it works, and
+                  still being there when it outgrows its first solution. That
+                  is what {site.name} sells - we grow with you rather than
+                  deliver to you.
                 </p>
               </div>
             </div>
@@ -173,7 +166,7 @@ function AboutPage() {
                 className="border-t border-line py-8 first:border-t-0 first:pt-0"
               >
                 <h3 className="text-lg font-medium">{principle.title}</h3>
-                <p className="mt-2 text-pretty leading-relaxed text-paper-dim">
+                <p className="mt-2 max-w-lg text-pretty text-sm leading-relaxed text-paper-dim">
                   {principle.body}
                 </p>
               </Reveal>

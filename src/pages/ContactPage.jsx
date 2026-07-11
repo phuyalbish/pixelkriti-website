@@ -80,10 +80,37 @@ function ContactPage() {
             </p>
           </Reveal>
 
+          {/*
+            The consultation buttons all land here, so this page carries the
+            booking flow itself: what happens after you write, stated as a
+            promise. Swap for a scheduler embed when site.bookingUrl exists.
+          */}
           <Reveal delay={0.16}>
-            <p className="mt-6 font-mono text-xs leading-relaxed text-paper-faint">
-              We reply within 24 hours - real humans, not a bot.
-            </p>
+            <ol className="mt-10 space-y-5 border-t border-line pt-8">
+              {[
+                {
+                  step: "01",
+                  text: "A real person replies within 24 hours - not a bot, not an autoresponder.",
+                },
+                {
+                  step: "02",
+                  text: "We book a free consultation call and go through how the work actually flows - where leads enter, who touches them, what gets retyped.",
+                },
+                {
+                  step: "03",
+                  text: "You leave with a straight diagnosis: what we would build, what we would not, and the numbers to decide with.",
+                },
+              ].map((item) => (
+                <li key={item.step} className="flex gap-4">
+                  <span className="font-mono text-xs text-brand">
+                    {item.step}
+                  </span>
+                  <p className="text-pretty text-sm leading-relaxed text-paper-dim">
+                    {item.text}
+                  </p>
+                </li>
+              ))}
+            </ol>
           </Reveal>
 
           <Reveal delay={0.18}>

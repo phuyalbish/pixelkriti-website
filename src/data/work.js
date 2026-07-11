@@ -1,12 +1,14 @@
 /**
  * ─────────────────────────────────────────────────────────────────────────────
- * PLACEHOLDER CONTENT - REPLACE BEFORE LAUNCH.
+ * Entries marked `isPlaceholder: false` are real systems, described only by
+ * what they do - no metrics or quotes until a client signs them off.
  *
- * Every entry below is `isPlaceholder: true`. They exist to establish the shape
- * of a case study, not to make claims. Client names are deliberately generic and
- * no outcome carries an invented number: publishing fabricated results would
- * undercut the accountability the brand is positioned on. The same goes for
- * `clientQuote` - attributed to a role, never to an invented person.
+ * Entries marked `isPlaceholder: true` REMAIN TO BE REPLACED BEFORE LAUNCH.
+ * They exist to establish the shape of a case study, not to make claims.
+ * Client names there are deliberately generic and no outcome carries an
+ * invented number: publishing fabricated results would undercut the
+ * accountability the brand is positioned on. The same goes for `clientQuote` -
+ * attributed to a role, never to an invented person.
  *
  * Each case study is written diagnosis-first: problem, investigation, solution,
  * result. `category` drives the filter on the Work page and must be one of
@@ -16,31 +18,62 @@
  * ─────────────────────────────────────────────────────────────────────────────
  */
 export const work = [
+  /*
+   * The first two entries are real systems, described strictly by what they
+   * do. No metrics, no quotes: none have been supplied, and inventing either
+   * is forbidden. Add measured outcomes only when the client signs them off.
+   */
   {
-    slug: "regional-retail-storefront",
-    client: "A regional retail chain",
-    sector: "Retail",
+    slug: "keystone-roofing-crm",
+    client: "Keystone",
+    sector: "Roofing",
     category: "Websites",
-    year: "2025",
-    isPlaceholder: true,
+    year: "In production",
+    isPlaceholder: false,
     summary:
-      "Replacing three disconnected systems with one storefront and inventory view.",
-    services: ["Custom CMS Development", "UI Redesign", "E-commerce"],
-    problem:
-      "Stock counts lived in a spreadsheet, orders arrived by phone, and the website was a brochure that had not been updated in two years.",
-    investigation:
-      "Two weeks shadowing store staff showed the real bottleneck was not the website at all - it was the nightly reconciliation between the spreadsheet and the till.",
-    solution:
-      "A single inventory service feeding both the till and a new storefront, so a sale in either place updates the other immediately.",
-    result: [
-      "Reconciliation moved from a nightly manual task to a background job",
-      "Store staff manage stock from one screen instead of three",
+      "A custom CRM platform that runs a roofing company's pipeline from first call to finished job.",
+    services: [
+      "Custom CRM Development",
+      "Booking & Scheduling Systems",
+      "Sales Automation & Workflows",
     ],
-    clientQuote: {
-      quote:
-        "They spent two weeks understanding how we actually worked before proposing anything.",
-      attribution: "Operations Lead",
-    },
+    problem:
+      "Roofing sales run on speed and follow-through: leads arrive by phone, web form, and referral, then pass through estimates, crews, and invoicing - each step traditionally living in a different tool with a different login.",
+    investigation:
+      "Rather than gluing the existing tools together with workflow patches, we mapped the pipeline end to end - who touches a lead, where jobs are handed over, what the office retypes twice - and found the handoffs, not the tools, were the problem.",
+    solution:
+      "Keystone: one platform - in the mould of GoHighLevel, but built for this business - where a lead becomes an estimate, an estimate becomes a scheduled job, and a finished job becomes an invoice, without leaving the system.",
+    result: [
+      "The whole pipeline - first call to finished job - lives in one system",
+      "Estimates, scheduling, and invoicing share one customer record, so nothing is retyped between stages",
+      "The company owns the platform outright - no per-seat licenses, no vendor roadmap",
+    ],
+  },
+  {
+    slug: "lawn-care-operating-system",
+    client: "A lawn-care operating system",
+    sector: "Field Services",
+    category: "Websites",
+    year: "In production",
+    isPlaceholder: false,
+    summary:
+      "The operating system behind a lawn-care business's whole day-to-day: scheduling, crews, and invoicing in one place.",
+    services: [
+      "Custom Software",
+      "Booking & Scheduling Systems",
+      "Internal & Admin Tools",
+    ],
+    problem:
+      "A lawn-care business lives and dies by its schedule: recurring routes, weather reshuffles, crews in the field, and invoices that have to follow the work the same day.",
+    investigation:
+      "The day-to-day ran across separate tools for scheduling, crew coordination, and billing - the same jobs entered more than once, and the office spent its mornings reconciling them.",
+    solution:
+      "One operating system for the whole day: routes and recurring jobs scheduled in one calendar, crews dispatched from it, and invoicing generated from the same records the moment work is done.",
+    result: [
+      "Scheduling, crews, and invoicing run from a single system of record",
+      "A job is entered once and carries through to dispatch and billing",
+      "The business owns its operating system instead of renting three subscriptions",
+    ],
   },
   {
     slug: "clinic-booking-platform",
@@ -118,30 +151,6 @@ export const work = [
       quote:
         "They told us where a spreadsheet would have been enough. Then built the part that wasn't.",
       attribution: "Supply Chain Director",
-    },
-  },
-  {
-    slug: "restaurant-first-presence",
-    client: "An independent restaurant",
-    sector: "Hospitality",
-    category: "Websites",
-    year: "2025",
-    isPlaceholder: true,
-    summary: "A first website, and a reason for it to exist beyond having one.",
-    services: ["Landing Pages", "Performance Optimization", "Brand Refresh"],
-    problem:
-      "The restaurant had no site, and a social profile with an outdated menu and no way to find opening hours.",
-    investigation:
-      "Most searches were people checking whether the kitchen was open right now, on a phone, standing outside.",
-    solution:
-      "A single fast page that answers hours, menu, and directions before anything else loads.",
-    result: [
-      "Hours and menu answerable in one glance on a phone",
-      "The owner updates the menu without calling anyone",
-    ],
-    clientQuote: {
-      quote: "It answers the only question our customers were actually asking.",
-      attribution: "Owner",
     },
   },
 ];

@@ -72,6 +72,13 @@ function Splash() {
             <WordReveal text={site.motto} delay={0.2} />
           </p>
 
+          <motion.p
+            {...rise(0.34)}
+            className="mt-6 max-w-md text-pretty text-sm leading-relaxed text-paper-dim"
+          >
+            {site.subheadline}
+          </motion.p>
+
           <motion.div
             {...rise(0.26)}
             className="mt-12 flex flex-wrap items-center gap-3"

@@ -1,8 +1,8 @@
 # Pixel Kriti
 
-> Pixel Kriti is a technology and consultancy agency delivering technology people trust - and a partner clients can count on. We help businesses solve their problems through three core solution pillars: Web & Software Development, Artificial Intelligence (AI), and Business Intelligence (BI). We serve businesses across Nepal, India, and Pakistan.
+> Pixel Kriti is a custom software company delivering technology people trust - and a partner clients can count on. We build the software a business runs on: custom CRM platforms, business operating systems, booking and scheduling tools, dashboards, SaaS products, and AI sub-agents - one system a business owns, instead of a stack of subscriptions it rents. Its job is to turn more of the leads a business already gets into customers.
 
-Positioning: your growth partner, not your vendor. We do not just sell outcomes - we sell the right answer, tailored to each business. We diagnose before we build, we are accountable after we ship, and we recommend the smallest thing that solves the problem, even when that means telling a client not to hire us.
+Positioning: your growth partner, not your vendor. Businesses without a central platform typically run on ten to thirty disconnected tools; we consolidate that patchwork into one system built around how the business actually works. We also build AI sub-agents - small, specialized AIs with one job each (answering leads after hours, chasing invoices, keeping records current) - that work alongside employees, not instead of them, with a human in the loop wherever judgment matters. We diagnose before we build, we are accountable after we ship, and we recommend the smallest thing that solves the problem, even when that means telling a client not to hire us. Real systems shipped include Keystone, a CRM that runs a roofing company's pipeline from first call to finished job, and a full operating system for a lawn-care business covering scheduling, crews, and invoicing.
 
 Key facts:
 - Company: Pixel Kriti
@@ -18,7 +18,7 @@ We organise everything we sell under three pillars, delivered by one accountable
 
 - [Web & Software Development](https://pixelkriti.com/services/websites): Corporate, business, e-commerce, SaaS, and startup websites; custom and headless CMS; progressive web apps; website redesign (UI/UX, performance, mobile, accessibility, conversion); ongoing website management (maintenance, security, backups, uptime, hosting); custom software and CRM development, web applications and portals, booking and scheduling systems, inventory management, internal tools, and API integrations.
 - [Artificial Intelligence & Machine Learning](https://pixelkriti.com/services/ai): AI chatbots, assistants, and voice AI; customer support and sales AI; AI search and knowledge bases; AI agents and workflow automation. Machine learning use-cases: predictive lead scoring, demand forecasting, anomaly detection in manufacturing, customer churn prediction, intelligent document processing, sentiment analysis for customer feedback, automated report generation, supply chain optimization, fraud detection, and personalized recommendation engines.
-- [Analytics & Business Intelligence](https://pixelkriti.com/services/analytics): Power BI, Tableau, and Looker Studio dashboards; executive, KPI, financial, sales, marketing, HR, and manufacturing dashboards; data pipelines and shared metric definitions so every system agrees on the numbers.
+- [Analytics & Business Intelligence](https://pixelkriti.com/services/analytics): Power BI, Tableau, and Looker Studio dashboards; executive, KPI, financial, sales, marketing, HR, and manufacturing dashboards; data foundations - pipelines and integration, shared metric definitions, source-of-truth reconciliation, data cleaning and migration, report automation, and data quality monitoring - so every system agrees on the numbers.
 
 ## Process
 
@@ -39,14 +39,14 @@ Every engagement runs through five steps, and the first one is free:
 
 ## Work
 
-Case studies are written diagnosis-first: problem, investigation, solution, result.
+Case studies are written diagnosis-first: problem, investigation, solution, result. Real systems are described by what they do; no metrics are published without client sign-off.
 
 - [All case studies](https://pixelkriti.com/work): Filterable by Websites, Analytics, and AI & ML.
-- [A regional retail chain](https://pixelkriti.com/work/regional-retail-storefront): Replacing three disconnected systems with one storefront and inventory view.
+- [Keystone](https://pixelkriti.com/work/keystone-roofing-crm): A custom CRM platform (real, in production) that runs a roofing company's pipeline from first call to finished job - estimates, scheduling, and invoicing on one customer record.
+- [Lawn-care operating system](https://pixelkriti.com/work/lawn-care-operating-system): A real, in-production operating system behind a lawn-care business's day-to-day - routes, crews, and invoicing in one system of record.
 - [A multi-location clinic](https://pixelkriti.com/work/clinic-booking-platform): A booking flow patients finish, and a schedule the front desk trusts.
 - [A freight operator](https://pixelkriti.com/work/logistics-analytics): Six years of dormant delivery data turned into a dashboard dispatch opens daily.
 - [A regional distributor](https://pixelkriti.com/work/demand-forecasting): A next-day demand forecast with a clear owner and a measurable accuracy target.
-- [An independent restaurant](https://pixelkriti.com/work/restaurant-first-presence): A first website that answers hours, menu, and directions before anything else loads.
 
 ## Team
 

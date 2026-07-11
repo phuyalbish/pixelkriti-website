@@ -7,11 +7,15 @@ import CallToAction from "@/components/CallToAction.jsx";
 import LogoOutline from "@/components/LogoOutline.jsx";
 import Splash from "@/components/Splash.jsx";
 import Showreel from "@/components/Showreel.jsx";
+import PointsSection from "@/components/PointsSection.jsx";
+import StatStrip from "@/components/StatStrip.jsx";
+import Faq from "@/components/Faq.jsx";
 import Testimonials from "@/components/Testimonials.jsx";
 import TeamCard from "@/components/TeamCard.jsx";
 import usePageMeta from "@/hooks/usePageMeta.js";
 import { pillars } from "@/data/services.js";
 import { principles } from "@/data/process.js";
+import { consolidation, subAgents } from "@/data/content.js";
 import { work } from "@/data/work.js";
 import { founders } from "@/data/team.js";
 
@@ -28,22 +32,22 @@ function ServicesOverview() {
       <Container>
         <SectionHeading
           eyebrow="What we do"
-          title="Three pillars, one accountable team."
+          title="Where leads stop leaking."
           lead={
             <>
-              We don&apos;t just sell outcomes. We sell the right answer -
-              tailored for you. We help businesses solve their problems through
-              three core solution pillars:{" "}
+              Most lost customers slip through the gaps between tools - the
+              enquiry nobody saw, the quote nobody chased. We close those gaps
+              with{" "}
               <Link to="/services#websites" className={pillarLinkClass}>
-                Web &amp; Software Development
+                Websites &amp; Custom Software
               </Link>
               ,{" "}
-              <Link to="/services#ai" className={pillarLinkClass}>
-                Artificial Intelligence (AI)
+              <Link to="/services#analytics" className={pillarLinkClass}>
+                Analytics &amp; BI
               </Link>
               , and{" "}
-              <Link to="/services#analytics" className={pillarLinkClass}>
-                Business Intelligence (BI)
+              <Link to="/services#ai" className={pillarLinkClass}>
+                AI &amp; Machine Learning
               </Link>
               .
             </>
@@ -120,7 +124,7 @@ function WhyUs() {
               className="border-t border-line py-8 first:border-t-0 first:pt-0"
             >
               <h3 className="text-lg font-medium">{principle.title}</h3>
-              <p className="mt-2 text-pretty leading-relaxed text-paper-dim">
+              <p className="mt-2 max-w-lg text-pretty text-sm leading-relaxed text-paper-dim">
                 {principle.body}
               </p>
             </Reveal>
@@ -233,11 +237,11 @@ function TeamTeaser() {
 function HomePage() {
   usePageMeta(
     null,
-    "Pixel Kriti delivers technology people trust. We solve business problems through Web Development, AI, and BI - with solutions tailored to your needs.",
+    "Pixel Kriti builds custom software for businesses - CRM platforms, business operating systems, dashboards, and AI sub-agents. One system you own that turns leads into customers.",
     {
-      title: "Pixel Kriti - Technology You Can Trust",
+      title: "Pixel Kriti - Custom Software, CRM & AI Sub-Agents",
       description:
-        "Delivering technology people trust. Web Development, AI, and BI solutions tailored to your business problems.",
+        "One system you own instead of thirty subscriptions you rent. Custom CRM platforms, business operating systems, and AI agents that turn leads into customers.",
     },
   );
 
@@ -246,10 +250,14 @@ function HomePage() {
       <Splash />
       <Showreel />
       <ServicesOverview />
+      <PointsSection data={consolidation} raised />
+      <PointsSection data={subAgents} />
+      <StatStrip />
       <WhyUs />
       <FeaturedWork />
       <Testimonials />
       <TeamTeaser />
+      <Faq />
       <CallToAction />
     </>
   );

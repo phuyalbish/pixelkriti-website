@@ -2,7 +2,7 @@ export const site = {
   name: "Pixel Kriti",
   motto: "Delivering technology people trust. And a partner they can count on.",
   subheadline:
-    "Websites, analytics, and AI solutions built by a small team that works inside your business, not just for it.",
+    "Custom software your business runs on - one system you own, built to turn leads into customers.",
   positioning: "Your growth partner, not your vendor.",
   /** Used for the document title on routes that set none of their own. */
   titleDefault: "Pixel Kriti - Delivering technology people trust.",
@@ -26,7 +26,9 @@ export const showreel = {
   youtubeId: "NCa9fMtIpLg",
   src: "/showreel.mp4",
   poster: null,
-  caption: "Selected work, 2025-2026",
+  // No caption while the video is a stock stand-in: labelling stock footage
+  // "Selected work" would be exactly the invented proof the site forswears.
+  caption: null,
 };
 
 /** `icon` keys map to components in Footer.jsx - data stays free of JSX. */

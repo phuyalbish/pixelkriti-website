@@ -32,10 +32,10 @@ function ServicesPage() {
             <WordReveal text="You don't need a website. You need customers." delay={0.06} />
           </h1>
           <Reveal delay={0.12}>
-            <p className="mt-8 max-w-prose text-pretty text-lg leading-relaxed text-paper-dim">
-              A website is a means. So is a dashboard, a model, or an internal
-              tool. We work backwards from the outcome you are actually paying
-              for, and recommend the smallest thing that gets you there.
+            <p className="mt-8 max-w-prose text-pretty leading-relaxed text-paper-dim">
+              A website is a means - so is a dashboard or an internal tool. We
+              work backwards from the outcome you are paying for, and recommend
+              the smallest thing that gets you there.
             </p>
           </Reveal>
         </Container>

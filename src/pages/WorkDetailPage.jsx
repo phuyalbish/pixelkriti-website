@@ -1,5 +1,5 @@
 import { Link, Navigate, useParams } from "react-router-dom";
-import { FiArrowLeft } from "react-icons/fi";
+import { FiArrowLeft, FiDownload } from "react-icons/fi";
 import Container from "@/components/Container.jsx";
 import Reveal from "@/components/Reveal.jsx";
 import CallToAction from "@/components/CallToAction.jsx";
@@ -11,6 +11,69 @@ function Chapter({ label, children }) {
     <Reveal className="grid gap-4 border-t border-line py-10 md:grid-cols-12 md:gap-8">
       <h2 className="eyebrow md:col-span-3 md:pt-2">{label}</h2>
       <div className="md:col-span-8">{children}</div>
+    </Reveal>
+  );
+}
+
+function CaseImage({ image, className = "" }) {
+  return (
+    <figure className={className}>
+      <img
+        src={image.src}
+        alt={image.alt}
+        loading="lazy"
+        className={`w-full rounded-2xl border border-line ${
+          // `contain` is for transparent product renders, which crop badly.
+          image.contain
+            ? "bg-ink-raised object-contain p-6"
+            : "object-cover"
+        }`}
+      />
+      {image.caption && (
+        <figcaption className="mt-3 font-mono text-xs leading-relaxed text-paper-faint">
+          {image.caption}
+        </figcaption>
+      )}
+    </figure>
+  );
+}
+
+/*
+ * The long-form layout for case studies that carry a `story`: numbered
+ * chapters with the prose and its image side by side, alternating sides so
+ * the page reads as a narrative rather than a spec sheet.
+ */
+function StoryChapter({ chapter, index }) {
+  const imageFirst = index % 2 === 1;
+
+  return (
+    <Reveal className="grid gap-8 border-t border-line py-14 md:grid-cols-12 md:gap-12 md:py-20">
+      <div
+        className={`md:col-span-6 ${imageFirst ? "md:order-2 md:col-start-7" : ""}`}
+      >
+        <p className="font-mono text-xs text-paper-faint">
+          {String(index + 1).padStart(2, "0")}
+          <span aria-hidden="true"> · </span>
+          <span className="uppercase tracking-[0.12em]">{chapter.label}</span>
+        </p>
+        <h2 className="mt-4 text-balance font-display text-title tracking-display">
+          {chapter.title}
+        </h2>
+        {chapter.body.map((paragraph) => (
+          <p
+            key={paragraph.slice(0, 32)}
+            className="mt-5 text-pretty leading-relaxed text-paper-dim"
+          >
+            {paragraph}
+          </p>
+        ))}
+      </div>
+      {chapter.image && (
+        <CaseImage
+          image={chapter.image}
+          className={`self-center md:col-span-6 ${imageFirst ? "md:order-1" : ""}`}
+        />
+      )}
     </Reveal>
   );
 }
@@ -74,42 +137,155 @@ function WorkDetailPage() {
           </Container>
         </section>
 
-        <section className="pb-24 md:pb-32">
-          <Container>
-            <Chapter label="The problem">
-              <p className="text-pretty text-xl leading-relaxed">
-                {item.problem}
-              </p>
-            </Chapter>
+        {item.heroImage && (
+          <section className="pb-8">
+            <Container>
+              <Reveal>
+                <img
+                  src={item.heroImage.src}
+                  alt={item.heroImage.alt}
+                  className="max-h-[32rem] w-full rounded-2xl border border-line object-cover"
+                />
+              </Reveal>
+            </Container>
+          </section>
+        )}
 
-            <Chapter label="The investigation">
-              <p className="text-pretty leading-relaxed text-paper-dim">
-                {item.investigation}
-              </p>
-            </Chapter>
+        {item.stats && (
+          <section className="pb-8 pt-8">
+            <Container>
+              <Reveal>
+                <dl className="grid gap-px overflow-hidden rounded-2xl border border-line bg-line sm:grid-cols-3">
+                  {item.stats.map((stat) => (
+                    <div key={stat.label} className="bg-ink-raised p-8">
+                      <dt className="order-last mt-2 text-pretty text-sm leading-relaxed text-paper-dim">
+                        {stat.label}
+                      </dt>
+                      <dd className="font-display text-headline tracking-display">
+                        {stat.value}
+                      </dd>
+                    </div>
+                  ))}
+                </dl>
+              </Reveal>
+            </Container>
+          </section>
+        )}
 
-            <Chapter label="The solution">
-              <p className="text-pretty leading-relaxed text-paper-dim">
-                {item.solution}
-              </p>
-            </Chapter>
+        {item.story && (
+          <section className="pt-8">
+            <Container>
+              {item.story.map((chapter, index) => (
+                <StoryChapter
+                  key={chapter.label}
+                  chapter={chapter}
+                  index={index}
+                />
+              ))}
+            </Container>
+          </section>
+        )}
 
-            <Chapter label="The result">
-              <ul className="space-y-4">
-                {item.result.map((point) => (
-                  <li
-                    key={point}
-                    className="flex gap-4 text-pretty leading-relaxed"
-                  >
-                    <span
-                      aria-hidden="true"
-                      className="mt-3 h-px w-6 shrink-0 bg-line-strong"
+        {item.gallery && (
+          <section className="pb-8 pt-4">
+            <Container>
+              <Reveal>
+                <p className="eyebrow border-t border-line pt-10">
+                  {item.galleryLabel ?? "Gallery"}
+                </p>
+              </Reveal>
+              <ul className="mt-8 grid gap-4 sm:grid-cols-2 md:grid-cols-3">
+                {item.gallery.map((image, index) => (
+                  <Reveal as="li" key={image.src} delay={(index % 3) * 0.06}>
+                    <img
+                      src={image.src}
+                      alt={image.alt}
+                      loading="lazy"
+                      className={`aspect-[4/3] w-full rounded-2xl border border-line ${
+                        image.contain
+                          ? "bg-ink-raised object-contain p-6"
+                          : "object-cover"
+                      }`}
                     />
-                    {point}
-                  </li>
+                  </Reveal>
                 ))}
               </ul>
-            </Chapter>
+            </Container>
+          </section>
+        )}
+
+        {item.download && (
+          <section className="pb-8 pt-8">
+            <Container>
+              <Reveal>
+                <a
+                  href={item.download.href}
+                  download
+                  className="group flex flex-col gap-6 rounded-2xl border border-line bg-ink-raised p-8 transition-colors duration-300 hover:bg-ink-overlay sm:flex-row sm:items-center sm:justify-between md:p-10"
+                >
+                  <span>
+                    <span className="flex items-center gap-3 text-lg font-medium">
+                      <FiDownload
+                        aria-hidden="true"
+                        className="text-paper-dim transition-colors group-hover:text-brand"
+                      />
+                      {item.download.label}
+                    </span>
+                    {item.download.note && (
+                      <span className="mt-2 block max-w-xl text-pretty text-sm leading-relaxed text-paper-dim">
+                        {item.download.note}
+                      </span>
+                    )}
+                  </span>
+                  <span className="shrink-0 rounded-full border border-line-strong px-5 py-2 font-mono text-xs uppercase tracking-[0.12em] text-paper-dim transition-colors group-hover:border-paper group-hover:text-paper">
+                    Download
+                  </span>
+                </a>
+              </Reveal>
+            </Container>
+          </section>
+        )}
+
+        <section className="pb-24 md:pb-32">
+          <Container>
+            {!item.story && (
+              <>
+                <Chapter label="The problem">
+                  <p className="text-pretty text-xl leading-relaxed">
+                    {item.problem}
+                  </p>
+                </Chapter>
+
+                <Chapter label="The investigation">
+                  <p className="text-pretty leading-relaxed text-paper-dim">
+                    {item.investigation}
+                  </p>
+                </Chapter>
+
+                <Chapter label="The solution">
+                  <p className="text-pretty leading-relaxed text-paper-dim">
+                    {item.solution}
+                  </p>
+                </Chapter>
+
+                <Chapter label="The result">
+                  <ul className="space-y-4">
+                    {item.result.map((point) => (
+                      <li
+                        key={point}
+                        className="flex gap-4 text-pretty leading-relaxed"
+                      >
+                        <span
+                          aria-hidden="true"
+                          className="mt-3 h-px w-6 shrink-0 bg-line-strong"
+                        />
+                        {point}
+                      </li>
+                    ))}
+                  </ul>
+                </Chapter>
+              </>
+            )}
 
             {item.clientQuote && (
               <Chapter label="Client">

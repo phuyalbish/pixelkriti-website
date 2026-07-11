@@ -37,6 +37,18 @@
     <priority>0.9</priority>
   </url>
   <url>
+    <loc>https://pixelkriti.com/work/hellotrekkers</loc>
+    <lastmod>2026-07-11</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://pixelkriti.com/work/tailg-nepal</loc>
+    <lastmod>2026-07-11</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://pixelkriti.com/work/keystone-roofing-crm</loc>
     <lastmod>2026-07-11</lastmod>
     <changefreq>yearly</changefreq>

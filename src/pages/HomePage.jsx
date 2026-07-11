@@ -54,13 +54,18 @@ function ServicesOverview() {
           }
         />
 
-        <ul className="mt-16 grid gap-px overflow-hidden rounded-2xl border border-line bg-line md:grid-cols-3">
+        {/*
+          Mobile: a full-bleed snap slider - one card per swipe, the next one
+          peeking in from the right. Desktop keeps the joined three-column
+          grid, where gap-px over bg-line draws the hairline dividers.
+        */}
+        <ul className="no-scrollbar -mx-6 mt-16 flex snap-x snap-mandatory gap-3 overflow-x-auto px-6 pb-2 sm:-mx-10 sm:px-10 md:mx-0 md:grid md:snap-none md:grid-cols-3 md:gap-px md:overflow-hidden md:rounded-2xl md:border md:border-line md:bg-line md:px-0 md:pb-0">
           {pillars.map((pillar, index) => (
             <Reveal
               as="li"
               key={pillar.id}
               delay={index * 0.06}
-              className="bg-ink-raised"
+              className="w-[82%] shrink-0 snap-center overflow-hidden rounded-2xl border border-line bg-ink-raised md:w-auto md:shrink md:snap-align-none md:rounded-none md:border-0"
             >
               <Link
                 to={`/services/${pillar.id}`}

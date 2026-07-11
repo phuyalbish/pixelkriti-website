@@ -137,3 +137,13 @@
 ::-webkit-scrollbar-thumb:hover {
   background: var(--line-strong);
 }
+
+/* Horizontal sliders hide their scrollbar; the snap points and the peeking
+   next card communicate that the row swipes. */
+.no-scrollbar {
+  scrollbar-width: none;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}

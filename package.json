@@ -4,11 +4,11 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "vite build && node scripts/prerender.mjs",
     "preview": "vite preview",
     "lint": "eslint .",
-    "deploy:worker": "vite build && wrangler deploy",
-    "preview:worker": "vite build && wrangler dev",
+    "deploy:worker": "pnpm run build && wrangler deploy",
+    "preview:worker": "pnpm run build && wrangler dev",
     "cf:login": "wrangler login"
   },
   "pnpm": {

@@ -5,7 +5,7 @@ export const site = {
     "Custom software your business runs on - one system you own, built to turn leads into customers.",
   positioning: "Your growth partner, not your vendor.",
   /** Used for the document title on routes that set none of their own. */
-  titleDefault: "Pixel Kriti - Delivering technology people trust.",
+  titleDefault: "Pixel Kriti - Custom Software, CRM & AI Sub-Agents",
   // TODO: confirm these before launch.
   email: "info@pixelkriti.com",
   bookingUrl: null, // e.g. a Calendly link; falls back to the contact page.

@@ -3,14 +3,19 @@
   "name": "pixelkriti",
   "compatibility_date": "2026-07-09",
 
-  // Assets-only Worker: the site is fully static, so there is no `main` entry
-  // point and no ASSETS binding (both are only valid alongside a Worker script).
+  // A minimal script sits in front of the assets purely to 301 the
+  // workers.dev alias onto pixelkriti.com. `run_worker_first` is required:
+  // without it, requests that match an asset never reach the script, so the
+  // redirect would only fire on misses.
+  "main": "worker/index.js",
   "assets": {
     "directory": "./dist",
+    "binding": "ASSETS",
+    "run_worker_first": true,
 
-    // Routing is client-side. Without this, a hard refresh or a shared link to
-    // a deep path such as /work/logistics-analytics would 404, because no file
-    // exists at that path — every unmatched request must fall back to index.html.
+    // Routing is client-side for anything not prerendered. Without this, a
+    // hard refresh on an unprerendered deep path would 404 — every unmatched
+    // request must fall back to index.html.
     "not_found_handling": "single-page-application"
   },
 

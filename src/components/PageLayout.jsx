@@ -20,7 +20,8 @@ function PageLayout() {
       >
         Skip to content
       </a>
-      <Header />
+      {/* The home hero carries its own nav; the global header stands down there. */}
+      {pathname !== "/" && <Header />}
       {/*
         Keyed by pathname so each navigation remounts the wrapper and replays
         the entrance. Enter-only on purpose: exit animations with a router mean

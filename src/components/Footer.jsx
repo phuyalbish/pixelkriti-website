@@ -50,7 +50,11 @@ function Footer() {
           </div>
         </div>
 
-        <div className="mt-16 border-t border-line pt-8">
+        <div className="mt-16 flex flex-col gap-3 border-t border-line pt-8 md:flex-row md:items-baseline md:justify-between">
+          {/* Locked boilerplate (brand guide 2.5). */}
+          <p className="max-w-md text-pretty text-sm leading-relaxed text-paper-dim">
+            {site.boilerplate}
+          </p>
           <p className="font-mono text-xs text-paper-faint">
             © {new Date().getFullYear()} {site.name}. All rights reserved.
           </p>

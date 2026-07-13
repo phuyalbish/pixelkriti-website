@@ -81,17 +81,6 @@ function Header() {
               {item.label}
             </NavLink>
           ))}
-          <Link
-            to="/contact"
-            className="group relative isolate overflow-hidden rounded-full bg-paper px-5 py-2.5 text-sm font-medium text-ink transition-transform duration-300 active:scale-[0.97]"
-          >
-            {/* Same green wipe as the primary Button, kept in step with it. */}
-            <span
-              aria-hidden="true"
-              className="absolute inset-0 -z-10 -translate-x-full bg-brand transition-transform duration-300 ease-out group-hover:translate-x-0"
-            />
-            Book a Free Consultation
-          </Link>
         </nav>
 
         <button

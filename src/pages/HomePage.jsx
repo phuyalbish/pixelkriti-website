@@ -1,103 +1,22 @@
 import { Link } from "react-router-dom";
 import { FiArrowUpRight } from "react-icons/fi";
+import ArrowLink from "@/components/ArrowLink.jsx";
 import Container from "@/components/Container.jsx";
 import Reveal from "@/components/Reveal.jsx";
 import SectionHeading from "@/components/SectionHeading.jsx";
 import CallToAction from "@/components/CallToAction.jsx";
 import LogoOutline from "@/components/LogoOutline.jsx";
-import Splash from "@/components/Splash.jsx";
+import HomeHero from "@/components/HomeHero.jsx";
 import Showreel from "@/components/Showreel.jsx";
 import PointsSection from "@/components/PointsSection.jsx";
-import StatStrip from "@/components/StatStrip.jsx";
 import Faq from "@/components/Faq.jsx";
 import Testimonials from "@/components/Testimonials.jsx";
 import TeamCard from "@/components/TeamCard.jsx";
 import usePageMeta from "@/hooks/usePageMeta.js";
-import { pillars } from "@/data/services.js";
 import { principles } from "@/data/process.js";
 import { consolidation, subAgents } from "@/data/content.js";
 import { work } from "@/data/work.js";
 import { founders } from "@/data/team.js";
-
-/*
- * Inline links inside running copy: quieter than a button, but clearly live.
- * The green arrives only on hover, keeping the paragraph monochrome at rest.
- */
-const pillarLinkClass =
-  "text-paper underline decoration-line-strong underline-offset-4 transition-colors duration-300 hover:text-brand hover:decoration-brand";
-
-function ServicesOverview() {
-  return (
-    <section className="py-24 md:py-32">
-      <Container>
-        <SectionHeading
-          eyebrow="What we do"
-          title="Where leads stop leaking."
-          lead={
-            <>
-              Most lost customers slip through the gaps between tools - the
-              enquiry nobody saw, the quote nobody chased. We close those gaps
-              with{" "}
-              <Link to="/services#websites" className={pillarLinkClass}>
-                Websites &amp; Custom Software
-              </Link>
-              ,{" "}
-              <Link to="/services#analytics" className={pillarLinkClass}>
-                Analytics &amp; BI
-              </Link>
-              , and{" "}
-              <Link to="/services#ai" className={pillarLinkClass}>
-                AI &amp; Machine Learning
-              </Link>
-              .
-            </>
-          }
-        />
-
-        {/*
-          Mobile: a full-bleed snap slider - one card per swipe, the next one
-          peeking in from the right. Desktop keeps the joined three-column
-          grid, where gap-px over bg-line draws the hairline dividers.
-        */}
-        <ul className="no-scrollbar -mx-6 mt-16 flex snap-x snap-mandatory gap-3 overflow-x-auto px-6 pb-2 sm:-mx-10 sm:px-10 md:mx-0 md:grid md:snap-none md:grid-cols-3 md:gap-px md:overflow-hidden md:rounded-2xl md:border md:border-line md:bg-line md:px-0 md:pb-0">
-          {pillars.map((pillar, index) => (
-            <Reveal
-              as="li"
-              key={pillar.id}
-              delay={index * 0.06}
-              className="w-[82%] shrink-0 snap-center overflow-hidden rounded-2xl border border-line bg-ink-raised md:w-auto md:shrink md:snap-align-none md:rounded-none md:border-0"
-            >
-              <Link
-                to={`/services/${pillar.id}`}
-                className="group flex h-full flex-col p-8 transition-colors duration-300 hover:bg-ink-overlay md:p-10"
-              >
-                <p className="font-mono text-xs text-paper-faint transition-colors duration-300 group-hover:text-brand">
-                  {String(index + 1).padStart(2, "0")}
-                </p>
-
-                <h3 className="mt-6 font-display text-title tracking-display">
-                  {pillar.title}
-                </h3>
-
-                <p className="mt-3 text-pretty leading-relaxed text-paper-dim">
-                  {pillar.tagline}
-                </p>
-
-                <span className="mt-10 inline-flex items-center gap-2 text-sm text-paper-dim transition-colors group-hover:text-paper">
-                  Learn more
-                  <FiArrowUpRight
-                    aria-hidden="true"
-                    className="transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
-                  />
-                </span>
-              </Link>
-            </Reveal>
-          ))}
-        </ul>
-      </Container>
-    </section>
-  );
-}
 
 function WhyUs() {
   return (
@@ -129,9 +48,6 @@ function WhyUs() {
               className="border-t border-line py-8 first:border-t-0 first:pt-0"
             >
               <h3 className="text-lg font-medium">{principle.title}</h3>
-              <p className="mt-2 max-w-lg text-pretty text-sm leading-relaxed text-paper-dim">
-                {principle.body}
-              </p>
             </Reveal>
           ))}
         </ul>
@@ -152,16 +68,7 @@ function FeaturedWork() {
             title="Problem, investigation, solution, result."
           />
           <Reveal delay={0.1}>
-            <Link
-              to="/work"
-              className="group inline-flex items-center gap-2 text-sm text-paper-dim transition-colors hover:text-paper"
-            >
-              All case studies
-              <FiArrowUpRight
-                aria-hidden="true"
-                className="transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
-              />
-            </Link>
+            <ArrowLink to="/work">All case studies</ArrowLink>
           </Reveal>
         </div>
 
@@ -211,19 +118,9 @@ function TeamTeaser() {
           <SectionHeading
             eyebrow="Who you work with"
             title="A small team you can actually talk to."
-            lead="No account managers relaying messages. You work directly with the people building the thing."
           />
           <Reveal delay={0.1}>
-            <Link
-              to="/about"
-              className="group inline-flex items-center gap-2 text-sm text-paper-dim transition-colors hover:text-paper"
-            >
-              Meet the team
-              <FiArrowUpRight
-                aria-hidden="true"
-                className="transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
-              />
-            </Link>
+            <ArrowLink to="/about">Meet the team</ArrowLink>
           </Reveal>
         </div>
 
@@ -252,12 +149,10 @@ function HomePage() {
 
   return (
     <>
-      <Splash />
+      <HomeHero />
       <Showreel />
-      <ServicesOverview />
       <PointsSection data={consolidation} raised />
       <PointsSection data={subAgents} />
-      <StatStrip />
       <WhyUs />
       <FeaturedWork />
       <Testimonials />

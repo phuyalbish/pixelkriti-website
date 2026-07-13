@@ -1,9 +1,10 @@
 export const site = {
   name: "Pixel Kriti",
   motto: "Delivering technology people trust. And a partner they can count on.",
-  subheadline:
-    "Custom software your business runs on - one system you own, built to turn leads into customers.",
   positioning: "Your growth partner, not your vendor.",
+  /** Locked footer copy (brand guide 2.5) - changes need Brand Guardian sign-off. */
+  boilerplate:
+    "We build, we do not resell. Built for you, not configured for you - written by us, one business at a time.",
   /** Used for the document title on routes that set none of their own. */
   titleDefault: "Pixel Kriti - Custom Software, CRM & AI Sub-Agents",
   // TODO: confirm these before launch.

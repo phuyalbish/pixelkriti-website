@@ -318,36 +318,13 @@ export const work = [
     },
   },
   /*
-   * The next two entries are real systems, described strictly by what they
-   * do. No metrics, no quotes: none have been supplied, and inventing either
+   * The next entry is a real system, described strictly by what it does.
+   * No metrics, no quotes: none have been supplied, and inventing either
    * is forbidden. Add measured outcomes only when the client signs them off.
+   *
+   * NOTE: the Keystone roofing-CRM case study was removed at the owner's
+   * request and must NOT be re-added.
    */
-  {
-    slug: "keystone-roofing-crm",
-    client: "Keystone",
-    sector: "Roofing",
-    category: "Websites",
-    year: "In production",
-    isPlaceholder: false,
-    summary:
-      "A custom CRM platform that runs a roofing company's pipeline from first call to finished job.",
-    services: [
-      "Custom CRM Development",
-      "Booking & Scheduling Systems",
-      "Sales Automation & Workflows",
-    ],
-    problem:
-      "Roofing sales run on speed and follow-through: leads arrive by phone, web form, and referral, then pass through estimates, crews, and invoicing - each step traditionally living in a different tool with a different login.",
-    investigation:
-      "Rather than gluing the existing tools together with workflow patches, we mapped the pipeline end to end - who touches a lead, where jobs are handed over, what the office retypes twice - and found the handoffs, not the tools, were the problem.",
-    solution:
-      "Keystone: one platform - in the mould of GoHighLevel, but built for this business - where a lead becomes an estimate, an estimate becomes a scheduled job, and a finished job becomes an invoice, without leaving the system.",
-    result: [
-      "The whole pipeline - first call to finished job - lives in one system",
-      "Estimates, scheduling, and invoicing share one customer record, so nothing is retyped between stages",
-      "The company owns the platform outright - no per-seat licenses, no vendor roadmap",
-    ],
-  },
   {
     slug: "lawn-care-operating-system",
     client: "A lawn-care operating system",

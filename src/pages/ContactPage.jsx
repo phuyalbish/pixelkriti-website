@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { FiArrowUpRight, FiChevronDown } from "react-icons/fi";
+import ArrowLink from "@/components/ArrowLink.jsx";
 import Container from "@/components/Container.jsx";
 import Reveal from "@/components/Reveal.jsx";
 import WordReveal from "@/components/WordReveal.jsx";
@@ -102,7 +103,7 @@ function ContactPage() {
                 },
               ].map((item) => (
                 <li key={item.step} className="flex gap-4">
-                  <span className="font-mono text-xs text-brand">
+                  <span className="font-mono text-xs text-paper-faint">
                     {item.step}
                   </span>
                   <p className="text-pretty text-sm leading-relaxed text-paper-dim">
@@ -134,15 +135,14 @@ function ContactPage() {
             <Reveal delay={0.22}>
               <div className="mt-8 border-t border-line pt-8">
                 <p className="eyebrow">Book a call</p>
-                <a
+                <ArrowLink
                   href={site.bookingUrl}
                   target="_blank"
                   rel="noreferrer"
-                  className="mt-3 inline-flex items-center gap-2 text-sm text-paper-dim transition-colors hover:text-paper"
+                  className="mt-3"
                 >
                   Find a time that suits you
-                  <FiArrowUpRight aria-hidden="true" />
-                </a>
+                </ArrowLink>
               </div>
             </Reveal>
           )}
@@ -270,7 +270,7 @@ function ContactPage() {
 
             <button
               type="submit"
-              className="group inline-flex w-full items-center justify-center gap-2 rounded-full bg-paper px-6 py-4 text-sm font-medium text-ink transition-colors duration-300 hover:bg-white sm:w-auto"
+              className="group inline-flex w-full items-center justify-center gap-2 rounded-full bg-paper px-6 py-4 text-sm font-medium text-ink transition-colors duration-300 hover:bg-paper-dim sm:w-auto"
             >
               Send enquiry
               <FiArrowUpRight

@@ -43,7 +43,7 @@ function StickyCta() {
               aria-hidden="true"
               className="absolute inset-0 -z-10 -translate-x-full bg-brand transition-transform duration-300 ease-out group-hover:translate-x-0"
             />
-            Free Consultation
+            Book a Free Consultation
             <FiArrowUpRight
               aria-hidden="true"
               className="transition-transform duration-300 ease-out group-hover:translate-x-0.5 group-hover:-translate-y-0.5"

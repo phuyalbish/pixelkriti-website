@@ -2,7 +2,7 @@
 
 > Pixel Kriti is a custom software company delivering technology people trust - and a partner clients can count on. We build the software a business runs on: custom CRM platforms, business operating systems, booking and scheduling tools, dashboards, SaaS products, and AI sub-agents - one system a business owns, instead of a stack of subscriptions it rents. Its job is to turn more of the leads a business already gets into customers.
 
-Positioning: your growth partner, not your vendor. Businesses without a central platform typically run on ten to thirty disconnected tools; we consolidate that patchwork into one system built around how the business actually works. We also build AI sub-agents - small, specialized AIs with one job each (answering leads after hours, chasing invoices, keeping records current) - that work alongside employees, not instead of them, with a human in the loop wherever judgment matters. We diagnose before we build, we are accountable after we ship, and we recommend the smallest thing that solves the problem, even when that means telling a client not to hire us. Real systems shipped include Keystone, a CRM that runs a roofing company's pipeline from first call to finished job, and a full operating system for a lawn-care business covering scheduling, crews, and invoicing.
+Positioning: your growth partner, not your vendor. Businesses without a central platform typically run on ten to thirty disconnected tools; we consolidate that patchwork into one system built around how the business actually works. We also build AI sub-agents - small, specialized AIs with one job each (answering leads after hours, chasing invoices, keeping records current) - that work alongside employees, not instead of them, with a human in the loop wherever judgment matters. We diagnose before we build, we are accountable after we ship, and we recommend the smallest thing that solves the problem, even when that means telling a client not to hire us. Real systems shipped include a full operating system for a lawn-care business covering scheduling, crews, and invoicing.
 
 Key facts:
 - Company: Pixel Kriti
@@ -42,7 +42,6 @@ Every engagement runs through five steps, and the first one is free:
 Case studies are written diagnosis-first: problem, investigation, solution, result. Real systems are described by what they do; no metrics are published without client sign-off.
 
 - [All case studies](https://pixelkriti.com/work): Filterable by Websites, Analytics, and AI & ML.
-- [Keystone](https://pixelkriti.com/work/keystone-roofing-crm): A custom CRM platform (real, in production) that runs a roofing company's pipeline from first call to finished job - estimates, scheduling, and invoicing on one customer record.
 - [Lawn-care operating system](https://pixelkriti.com/work/lawn-care-operating-system): A real, in-production operating system behind a lawn-care business's day-to-day - routes, crews, and invoicing in one system of record.
 - [A multi-location clinic](https://pixelkriti.com/work/clinic-booking-platform): A booking flow patients finish, and a schedule the front desk trusts.
 - [A freight operator](https://pixelkriti.com/work/logistics-analytics): Six years of dormant delivery data turned into a dashboard dispatch opens daily.

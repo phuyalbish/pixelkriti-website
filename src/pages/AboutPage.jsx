@@ -6,32 +6,8 @@ import SectionHeading from "@/components/SectionHeading.jsx";
 import CallToAction from "@/components/CallToAction.jsx";
 import TeamCard from "@/components/TeamCard.jsx";
 import usePageMeta from "@/hooks/usePageMeta.js";
-import { site } from "@/data/site.js";
 import { principles } from "@/data/process.js";
 import { founders, team } from "@/data/team.js";
-
-const comparisons = [
-  {
-    them: "AI website builders",
-    they: "Fast, cheap, and will build exactly what you ask for.",
-    us: "We tell you when what you asked for is the wrong thing, and we are accountable when it breaks.",
-  },
-  {
-    them: "Freelance marketplaces",
-    they: "The lowest price you will find anywhere.",
-    us: "One team across websites, analytics, and AI - and someone still there in month six.",
-  },
-  {
-    them: "Large agencies",
-    they: "Established reputation and a thick portfolio.",
-    us: "More agile, more personal, consultancy-first, and priced for businesses your size.",
-  },
-  {
-    them: "Global consultancies",
-    they: "Brand recognition and very large teams.",
-    us: "Direct founder access, faster turnaround, and a fraction of the engagement cost.",
-  },
-];
 
 function AboutPage() {
   usePageMeta(
@@ -55,30 +31,8 @@ function AboutPage() {
             <p className="eyebrow">About</p>
           </Reveal>
           <h1 className="mt-6 max-w-4xl text-balance font-display text-display tracking-display">
-            <WordReveal text="The tools got cheap." delay={0.06} />
-            <br />
-            <span className="italic text-paper-dim">
-              <WordReveal text="Judgement" delay={0.32} />
-            </span>{" "}
-            <WordReveal text="did not." delay={0.42} />
+            <WordReveal text="About us" delay={0.06} />
           </h1>
-          <Reveal delay={0.12}>
-            <div className="mt-10 grid gap-6 md:grid-cols-12">
-              <div className="space-y-6 md:col-span-6">
-                <p className="text-pretty text-lg leading-relaxed text-paper-dim">
-                  Producing a basic website no longer requires skill or money -
-                  which has quietly made most agencies redundant.
-                </p>
-                <p className="text-pretty text-sm leading-relaxed text-paper-dim">
-                  What cannot be automated: working out what a business
-                  actually needs, being answerable for whether it works, and
-                  still being there when it outgrows its first solution. That
-                  is what {site.name} sells - we grow with you rather than
-                  deliver to you.
-                </p>
-              </div>
-            </div>
-          </Reveal>
         </Container>
       </section>
 
@@ -105,45 +59,6 @@ function AboutPage() {
             {team.map((person, index) => (
               <Reveal as="li" key={person.name} delay={index * 0.06}>
                 <TeamCard person={person} />
-              </Reveal>
-            ))}
-          </ul>
-        </Container>
-      </section>
-
-      <section className="border-t border-line bg-ink-raised py-24 md:py-32">
-        <Container>
-          <SectionHeading
-            eyebrow="The alternatives"
-            title="Be honest about who else you could hire."
-            lead="Every one of these is a reasonable choice for some businesses. Here is where each of them beats us, and where we think we earn the difference."
-          />
-
-          <ul className="mt-16 border-t border-line">
-            {comparisons.map((row, index) => (
-              <Reveal
-                as="li"
-                key={row.them}
-                delay={index * 0.05}
-                className="grid gap-6 border-b border-line py-10 md:grid-cols-12 md:gap-8"
-              >
-                <h3 className="font-display text-2xl tracking-display md:col-span-3">
-                  {row.them}
-                </h3>
-                {/*
-                  On desktop the three columns explain themselves by position.
-                  Stacked on mobile, the two paragraphs need naming.
-                */}
-                <div className="md:col-span-4">
-                  <p className="eyebrow mb-2 md:hidden">Where they win</p>
-                  <p className="text-pretty text-sm leading-relaxed text-paper-faint">
-                    {row.they}
-                  </p>
-                </div>
-                <div className="md:col-span-5">
-                  <p className="eyebrow mb-2 md:hidden">Where we earn it</p>
-                  <p className="text-pretty leading-relaxed">{row.us}</p>
-                </div>
               </Reveal>
             ))}
           </ul>

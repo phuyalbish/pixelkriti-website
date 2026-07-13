@@ -31,13 +31,6 @@ function ServicesPage() {
           <h1 className="mt-6 max-w-4xl text-balance font-display text-display tracking-display">
             <WordReveal text="You don't need a website. You need customers." delay={0.06} />
           </h1>
-          <Reveal delay={0.12}>
-            <p className="mt-8 max-w-prose text-pretty leading-relaxed text-paper-dim">
-              A website is a means - so is a dashboard or an internal tool. We
-              work backwards from the outcome you are paying for, and recommend
-              the smallest thing that gets you there.
-            </p>
-          </Reveal>
         </Container>
       </section>
 
@@ -60,11 +53,6 @@ function ServicesPage() {
                 <h2 className="mt-5 text-balance font-display text-headline tracking-display">
                   <WordReveal text={pillar.title} delay={0.06} />
                 </h2>
-                <Reveal delay={0.12}>
-                  <p className="mt-6 max-w-prose text-pretty leading-relaxed text-paper-dim">
-                    {pillar.outcome}
-                  </p>
-                </Reveal>
                 <Reveal delay={0.18}>
                   <Link
                     to={`/services/${pillar.id}`}
@@ -117,7 +105,7 @@ function ServicesPage() {
         <Container>
           <SectionHeading
             eyebrow="The process"
-            title="Five steps, and the first one is free."
+            title="The five step process"
           />
 
           <ol className="mt-16 border-t border-line">

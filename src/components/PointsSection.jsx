@@ -35,12 +35,7 @@ function PointsSection({ data, raised = false, children }) {
                 <span className="font-mono text-xs text-paper-faint">
                   {String(index + 1).padStart(2, "0")}
                 </span>
-                <div>
-                  <h3 className="text-lg font-medium">{point.title}</h3>
-                  <p className="mt-2 max-w-lg text-pretty text-sm leading-relaxed text-paper-dim">
-                    {point.body}
-                  </p>
-                </div>
+                <h3 className="text-lg font-medium">{point.title}</h3>
               </div>
             </Reveal>
           ))}

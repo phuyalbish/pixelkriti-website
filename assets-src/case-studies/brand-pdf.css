@@ -1,0 +1,158 @@
+/* Pixel Kriti case-study PDF stylesheet — brand guide v1.3.
+   Tokens only: Ink #0b0b0c, Paper #f2f2f0, Paper Dim #a1a1a6, Paper Faint
+   #8b8b93, Brand #31ae49. Print runs on Paper, so the divider is an
+   ink-alpha tint (the print counterpart of --line, which is paper-alpha
+   on dark surfaces). Green appears only on links — the one thing in a
+   PDF that responds to you. */
+:root {
+  --ink: #0b0b0c;
+  --paper: #f2f2f0;
+  --paper-dim: #a1a1a6;
+  --paper-faint: #8b8b93;
+  --brand: #31ae49;
+  --line-print: rgba(11, 11, 12, 0.14);
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: "Manrope", system-ui, sans-serif;
+  background: var(--paper);
+  color: var(--ink);
+  font-size: 10.5pt;
+  line-height: 1.7;
+  font-weight: 400;
+}
+.cover {
+  height: 96vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  page-break-after: always;
+}
+.cover img.hero { width: 100%; height: 340px; object-fit: cover; border-radius: 14px; }
+.eyebrow {
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+  font-size: 8pt;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--paper-faint);
+}
+h1 {
+  font-family: "Instrument Serif", Georgia, serif;
+  font-weight: 400;
+  font-size: 30pt;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  margin: 14px 0 10px;
+}
+.subtitle {
+  font-family: "Instrument Serif", Georgia, serif;
+  font-style: italic;
+  font-size: 13pt;
+  color: var(--ink);
+  opacity: 0.75;
+  max-width: 60ch;
+}
+h2 {
+  font-family: "Instrument Serif", Georgia, serif;
+  font-weight: 400;
+  font-size: 17pt;
+  letter-spacing: -0.01em;
+  margin: 34px 0 10px;
+  page-break-after: avoid;
+}
+h2 .num {
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+  font-size: 9pt;
+  color: var(--paper-faint);
+  margin-right: 12px;
+  vertical-align: 2px;
+}
+h3 {
+  font-family: "Manrope", system-ui, sans-serif;
+  font-size: 10.5pt;
+  font-weight: 700;
+  margin: 18px 0 6px;
+  page-break-after: avoid;
+}
+p { margin: 0 0 11px; }
+strong { font-weight: 700; }
+ul { margin: 0 0 11px 20px; }
+li { margin-bottom: 5px; }
+a { color: var(--brand); text-decoration: none; }
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 12px 0 18px;
+  font-size: 9pt;
+  page-break-inside: avoid;
+}
+th {
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+  text-align: left;
+  font-size: 7.5pt;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--paper-faint);
+  border-bottom: 1.5px solid var(--ink);
+  padding: 6px 10px 6px 0;
+  font-weight: 400;
+}
+td { border-bottom: 1px solid var(--line-print); padding: 7px 10px 7px 0; vertical-align: top; }
+.meta {
+  display: flex;
+  gap: 36px;
+  border-top: 1px solid var(--line-print);
+  padding-top: 14px;
+  margin-top: 18px;
+  font-size: 8.5pt;
+}
+.meta b {
+  display: block;
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+  font-size: 7pt;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--paper-faint);
+  margin-bottom: 3px;
+  font-weight: 400;
+}
+.pull {
+  border-left: 2px solid var(--ink);
+  padding: 4px 0 4px 16px;
+  margin: 18px 0;
+  font-family: "Instrument Serif", Georgia, serif;
+  font-style: italic;
+  font-size: 14pt;
+  line-height: 1.4;
+  page-break-inside: avoid;
+}
+figure { margin: 16px 0; page-break-inside: avoid; }
+figure img { width: 100%; height: 250px; object-fit: cover; border-radius: 12px; }
+figure.pair { display: flex; gap: 10px; }
+figure.pair img { width: 50%; height: 210px; }
+figcaption {
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+  font-size: 7.5pt;
+  color: var(--paper-faint);
+  margin-top: 6px;
+}
+.footer-note {
+  font-size: 8.5pt;
+  color: var(--paper-faint);
+  margin-top: 24px;
+  border-top: 1px solid var(--line-print);
+  padding-top: 12px;
+}
+.brand-mark {
+  font-family: "Instrument Serif", Georgia, serif;
+  font-size: 12pt;
+}
+.brand-mark span {
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+  font-size: 8pt;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--paper-faint);
+  margin-left: 10px;
+}
+hr.sec { border: none; border-top: 1px solid var(--line-print); margin: 26px 0; }

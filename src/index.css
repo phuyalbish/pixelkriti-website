@@ -93,17 +93,6 @@
     letter-spacing: -0.02em;
   }
 
-  /*
-   * Chunks a letter into visible blocks on hover. There is no CSS pixelate
-   * filter, so this leans on the SVG filter defined in <PixelateFilter />:
-   * `image-rendering: pixelated` only applies to raster images, never to text.
-   *
-   * The filter must exist in the same document, which is why the component
-   * renders it rather than a static file.
-   */
-  .pixel-letter:hover {
-    filter: url(#wordmark-pixelate);
-  }
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -11,7 +11,8 @@ import { FiVolume2, FiVolumeX } from "react-icons/fi";
 import { showreel } from "@/data/site.js";
 
 /**
- * The full-bleed video after the splash. Two sources, one look: a YouTube
+ * The video section after the hero: a half-width clip on a paper ground.
+ * Two sources, one look: a YouTube
  * embed when `showreel.youtubeId` is set, a self-hosted file otherwise. Either
  * way it behaves as a background - autoplaying, muted, looped, no player
  * chrome - with our own unmute button as the only control.
@@ -67,11 +68,31 @@ function Showreel() {
   });
 
   const rotateX = useTransform(progress, [0, 1], [7, 0]);
-  const scale = useTransform(progress, [0, 1], [0.94, 1]);
+  // The container itself grows from its half-width footprint to full width
+  // as you scroll; the height follows through the aspect ratio. Real width,
+  // not a scale transform, so the video is never stretched or cropped.
+  const width = useTransform(progress, [0, 1], ["55%", "100%"]);
   const y = useTransform(progress, [0, 1], [40, 0]);
   const opacity = useTransform(progress, [0, 0.6], [0.55, 1]);
 
-  const motionStyle = reduceMotion ? undefined : { rotateX, scale, y, opacity };
+  /*
+   * The width animation only applies on desktop, where the resting footprint
+   * is half the row; on mobile the video is already full width.
+   */
+  const [desktop, setDesktop] = useState(false);
+  useEffect(() => {
+    const query = window.matchMedia("(min-width: 768px)");
+    const update = () => setDesktop(query.matches);
+    update();
+    query.addEventListener("change", update);
+    return () => query.removeEventListener("change", update);
+  }, []);
+
+  const motionStyle = reduceMotion
+    ? undefined
+    : desktop
+      ? { rotateX, y, opacity, width }
+      : { rotateX, y, opacity };
 
   if (!showreel.youtubeId && !showreel.src) return null;
 
@@ -88,20 +109,21 @@ function Showreel() {
     <section
       ref={sectionRef}
       aria-label="Portfolio showreel"
-      className="relative"
+      className="relative bg-paper py-10 md:py-32"
     >
       {/*
-        Full-bleed: no Container, no border, no radius. `overflow-hidden` stays
-        so the tilt cannot push the video's corners past the viewport and
-        introduce a horizontal scrollbar.
+        A paper interlude between ink sections: the video sits contained at
+        half width, not full-bleed. `overflow-hidden` stays so the tilt cannot
+        push the video's corners past the viewport and introduce a horizontal
+        scrollbar.
       */}
-      <div style={{ perspective: "1200px" }} className="overflow-hidden">
+      <div style={{ perspective: "1200px" }} className="overflow-hidden px-6">
         <motion.div
           style={motionStyle}
-          className="relative origin-center bg-ink-raised will-change-transform"
+          className="relative mx-auto w-full origin-center bg-ink-raised will-change-transform md:w-[55%]"
         >
           {isYouTube ? (
-            <div className="relative mx-auto aspect-video max-h-[85vh] w-full">
+            <div className="relative aspect-video w-full">
               {/*
                 pointer-events-none makes it scenery: YouTube's own hover UI
                 can never appear, and clicks fall through to the page. The
@@ -122,7 +144,7 @@ function Showreel() {
           ) : (
             <video
               ref={videoRef}
-              className="block aspect-video max-h-[85vh] w-full object-cover"
+              className="block aspect-video w-full object-cover"
               autoPlay
               loop
               muted
@@ -136,22 +158,7 @@ function Showreel() {
             </video>
           )}
 
-          {/*
-            Blends the video into the page: the page colour at the top edge, and
-            back to it at the bottom edge, so a full-bleed clip has no hard seam.
-            Non-interactive so it never eats a click.
-          */}
-          <div
-            aria-hidden="true"
-            className="pointer-events-none absolute inset-x-0 top-0 h-10 bg-gradient-to-b from-ink to-transparent sm:h-24 md:h-32"
-          />
-          <div
-            aria-hidden="true"
-            className="pointer-events-none absolute inset-x-0 bottom-0 h-10 bg-gradient-to-t from-ink to-transparent sm:h-24 md:h-32"
-          />
-
-          {/* Gutters match Container, so the caption lines up with page copy. */}
-          <div className="pointer-events-none absolute inset-x-0 bottom-0 flex items-end justify-between gap-4 px-6 pb-6 sm:px-10 md:px-16 md:pb-8 lg:px-24">
+          <div className="pointer-events-none absolute inset-x-0 bottom-0 flex items-end justify-between gap-4 px-5 pb-5">
             {showreel.caption && (
               <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-paper-dim">
                 {showreel.caption}

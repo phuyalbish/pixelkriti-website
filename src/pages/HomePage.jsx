@@ -5,56 +5,13 @@ import Container from "@/components/Container.jsx";
 import Reveal from "@/components/Reveal.jsx";
 import SectionHeading from "@/components/SectionHeading.jsx";
 import CallToAction from "@/components/CallToAction.jsx";
-import LogoOutline from "@/components/LogoOutline.jsx";
 import HomeHero from "@/components/HomeHero.jsx";
 import Showreel from "@/components/Showreel.jsx";
-import PointsSection from "@/components/PointsSection.jsx";
-import Faq from "@/components/Faq.jsx";
+import ServicesShowcase from "@/components/ServicesShowcase.jsx";
+import AgentShowcase from "@/components/AgentShowcase.jsx";
 import Testimonials from "@/components/Testimonials.jsx";
-import TeamCard from "@/components/TeamCard.jsx";
 import usePageMeta from "@/hooks/usePageMeta.js";
-import { principles } from "@/data/process.js";
-import { consolidation, subAgents } from "@/data/content.js";
 import { work } from "@/data/work.js";
-import { founders } from "@/data/team.js";
-
-function WhyUs() {
-  return (
-    <section className="relative overflow-hidden border-t border-line py-24 md:py-32">
-      {/* Watermark, bleeding off the left edge behind the heading. */}
-      <LogoOutline
-        interactive
-        className="absolute -left-24 top-[57%] hidden h-[30rem] w-[30rem] -translate-y-1/2 -rotate-12 md:block"
-      />
-
-      {/*
-        `pointer-events-none` lets the pointer reach the petals underneath. This
-        wrapper paints above them and would otherwise swallow every hover across
-        its full box. Safe here only because this section holds nothing to click.
-      */}
-      <Container className="pointer-events-none relative grid gap-16 md:grid-cols-12">
-        <SectionHeading
-          className="md:col-span-5"
-          eyebrow="Why us"
-          title="What software alone cannot give you."
-        />
-
-        <ul className="md:col-span-6 md:col-start-7">
-          {principles.map((principle, index) => (
-            <Reveal
-              as="li"
-              key={principle.title}
-              delay={index * 0.06}
-              className="border-t border-line py-8 first:border-t-0 first:pt-0"
-            >
-              <h3 className="text-lg font-medium">{principle.title}</h3>
-            </Reveal>
-          ))}
-        </ul>
-      </Container>
-    </section>
-  );
-}
 
 function FeaturedWork() {
   const featured = work.slice(0, 3);
@@ -63,10 +20,7 @@ function FeaturedWork() {
     <section className="border-t border-line py-24 md:py-32">
       <Container>
         <div className="flex flex-wrap items-end justify-between gap-6">
-          <SectionHeading
-            eyebrow="Selected work"
-            title="Problem, investigation, solution, result."
-          />
+          <SectionHeading title="Selected Work" />
           <Reveal delay={0.1}>
             <ArrowLink to="/work">All case studies</ArrowLink>
           </Reveal>
@@ -110,32 +64,6 @@ function FeaturedWork() {
   );
 }
 
-function TeamTeaser() {
-  return (
-    <section className="border-t border-line py-24 md:py-32">
-      <Container>
-        <div className="flex flex-wrap items-end justify-between gap-6">
-          <SectionHeading
-            eyebrow="Who you work with"
-            title="A small team you can actually talk to."
-          />
-          <Reveal delay={0.1}>
-            <ArrowLink to="/about">Meet the team</ArrowLink>
-          </Reveal>
-        </div>
-
-        <ul className="mt-16 grid gap-6 sm:grid-cols-3">
-          {founders.map((person, index) => (
-            <Reveal as="li" key={person.name} delay={index * 0.06}>
-              <TeamCard person={person} />
-            </Reveal>
-          ))}
-        </ul>
-      </Container>
-    </section>
-  );
-}
-
 function HomePage() {
   usePageMeta(
     null,
@@ -151,13 +79,10 @@ function HomePage() {
     <>
       <HomeHero />
       <Showreel />
-      <PointsSection data={consolidation} raised />
-      <PointsSection data={subAgents} />
-      <WhyUs />
+      <ServicesShowcase />
+      <AgentShowcase />
       <FeaturedWork />
       <Testimonials />
-      <TeamTeaser />
-      <Faq />
       <CallToAction />
     </>
   );

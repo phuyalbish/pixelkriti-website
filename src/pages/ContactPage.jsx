@@ -73,47 +73,6 @@ function ContactPage() {
           <h1 className="mt-6 text-balance font-display text-display tracking-display">
             <WordReveal text="Start with the problem." delay={0.06} />
           </h1>
-          <Reveal delay={0.12}>
-            <p className="mt-8 max-w-prose text-pretty leading-relaxed text-paper-dim">
-              Not the solution you have in mind, and not the budget. Tell us
-              what is not working, and we will tell you what we would build -
-              even when the answer is nothing at all.
-            </p>
-          </Reveal>
-
-          {/*
-            The consultation buttons all land here, so this page carries the
-            booking flow itself: what happens after you write, stated as a
-            promise. Swap for a scheduler embed when site.bookingUrl exists.
-          */}
-          <Reveal delay={0.16}>
-            <ol className="mt-10 space-y-5 border-t border-line pt-8">
-              {[
-                {
-                  step: "01",
-                  text: "A real person replies within 24 hours - not a bot, not an autoresponder.",
-                },
-                {
-                  step: "02",
-                  text: "We book a free consultation call and go through how the work actually flows - where leads enter, who touches them, what gets retyped.",
-                },
-                {
-                  step: "03",
-                  text: "You leave with a straight diagnosis: what we would build, what we would not, and the numbers to decide with.",
-                },
-              ].map((item) => (
-                <li key={item.step} className="flex gap-4">
-                  <span className="font-mono text-xs text-paper-faint">
-                    {item.step}
-                  </span>
-                  <p className="text-pretty text-sm leading-relaxed text-paper-dim">
-                    {item.text}
-                  </p>
-                </li>
-              ))}
-            </ol>
-          </Reveal>
-
           <Reveal delay={0.18}>
             <div className="mt-12 border-t border-line pt-8">
               <p className="eyebrow">Email</p>

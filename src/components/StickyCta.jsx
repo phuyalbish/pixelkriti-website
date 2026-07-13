@@ -36,16 +36,17 @@ function StickyCta() {
         >
           <Link
             to="/contact"
-            className="group relative isolate inline-flex items-center gap-2 overflow-hidden rounded-full bg-paper px-5 py-3 text-sm font-medium text-ink shadow-[0_8px_30px_rgba(0,0,0,0.45)] transition-transform duration-300 active:scale-[0.97]"
+            aria-label="Book a Free Consultation"
+            className="group relative isolate flex h-14 w-14 items-center justify-center overflow-hidden rounded-full bg-paper text-ink shadow-[0_8px_30px_rgba(0,0,0,0.45)] transition-transform duration-300 active:scale-[0.97]"
           >
             {/* Same green wipe as the primary Button, kept in step with it. */}
             <span
               aria-hidden="true"
               className="absolute inset-0 -z-10 -translate-x-full bg-brand transition-transform duration-300 ease-out group-hover:translate-x-0"
             />
-            Book a Free Consultation
             <FiArrowUpRight
               aria-hidden="true"
+              size={22}
               className="transition-transform duration-300 ease-out group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
             />
           </Link>

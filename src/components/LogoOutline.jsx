@@ -26,7 +26,13 @@ import { petals, PETAL_VIEWBOX } from "@/lib/petals.js";
  * nothing to click. That is why the footer and the call to action leave this
  * off: their wrappers hold links and buttons.
  */
-function LogoOutline({ className = "", strokeWidth = 3, interactive = false }) {
+function LogoOutline({
+  className = "",
+  strokeWidth = 3,
+  interactive = false,
+  // Paper-toned sections pass the ink hairline; the hover green is shared.
+  lineClass = "text-line",
+}) {
   const reduceMotion = useReducedMotion();
   const lean = 9;
 
@@ -70,7 +76,7 @@ function LogoOutline({ className = "", strokeWidth = 3, interactive = false }) {
               strokeWidth={strokeWidth}
               fill="currentColor"
               fillOpacity={0}
-              className="text-line transition-colors duration-500 ease-out group-hover/petal:text-brand-soft"
+              className={`${lineClass} transition-colors duration-500 ease-out group-hover/petal:text-brand-soft`}
               variants={{
                 hidden: { pathLength: 0, opacity: 0 },
                 visible: {

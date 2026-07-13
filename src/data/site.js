@@ -20,11 +20,11 @@ export const site = {
  * file at `src` (drop one at `public/showreel.mp4` - already un-ignored in
  * .gitignore). With neither, the section does not render.
  *
- * TODO: the current ID is a stock ink-in-water loop, standing in until the
+ * TODO: the current ID is Blender's Big Buck Bunny, standing in until the
  * real Pixel Kriti reel is uploaded to youtube.com/@pixelkriti.
  */
 export const showreel = {
-  youtubeId: "NCa9fMtIpLg",
+  youtubeId: "aqz-KE-bpKQ",
   src: "/showreel.mp4",
   poster: null,
   // No caption while the video is a stock stand-in: labelling stock footage

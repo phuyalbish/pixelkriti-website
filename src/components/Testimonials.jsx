@@ -23,13 +23,10 @@ function Testimonials() {
   };
 
   return (
-    <section className="border-t border-line py-24 md:py-32">
+    <section className="py-24 md:py-32">
       <Container>
         <div className="flex flex-wrap items-end justify-between gap-6">
-          <SectionHeading
-            eyebrow="In their words"
-            title="What it is like to work with us."
-          />
+          <SectionHeading title="Testimonials" />
 
           <Reveal delay={0.1}>
             <div className="flex gap-2">

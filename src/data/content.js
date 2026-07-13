@@ -57,5 +57,5 @@ export const faq = [
 
 export const cta = {
   eyebrow: "Start with a conversation",
-  title: "Bring us your stack, we will bring the math",
+  title: "Let's have a chat",
 };

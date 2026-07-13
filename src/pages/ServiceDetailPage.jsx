@@ -1,8 +1,17 @@
 import { Link, Navigate, useParams } from "react-router-dom";
-import { FiArrowLeft } from "react-icons/fi";
+import {
+  FiArrowLeft,
+  FiBarChart2,
+  FiCpu,
+  FiDatabase,
+  FiGlobe,
+  FiLayers,
+  FiMessageSquare,
+  FiRefreshCw,
+  FiTool,
+} from "react-icons/fi";
 import Container from "@/components/Container.jsx";
 import Reveal from "@/components/Reveal.jsx";
-import Accordion from "@/components/Accordion.jsx";
 import CallToAction from "@/components/CallToAction.jsx";
 import usePageMeta from "@/hooks/usePageMeta.js";
 import { getPillarById, pillars } from "@/data/services.js";
@@ -13,6 +22,19 @@ const categoryForPillar = {
   websites: "Websites",
   analytics: "Analytics",
   ai: "AI & ML",
+};
+
+/** One icon per service group - the groups present themselves at a glance
+    instead of expanding into their full item lists. */
+const groupIcons = {
+  "Website Development": FiGlobe,
+  "Website Redesign": FiRefreshCw,
+  "Website Management": FiTool,
+  "Custom Software & CRM": FiDatabase,
+  "Dashboards & Reporting": FiBarChart2,
+  "Data Foundations": FiLayers,
+  "AI Solutions": FiMessageSquare,
+  "Machine Learning": FiCpu,
 };
 
 function ServiceDetailPage() {
@@ -66,31 +88,28 @@ function ServiceDetailPage() {
               <h2 className="eyebrow">What we build</h2>
             </Reveal>
 
-            <div className="mt-10 border-t border-line">
-              {pillar.groups.map((group, index) => (
-                <Accordion
-                  key={group.title}
-                  title={group.title}
-                  count={group.items.length}
-                  defaultOpen={index === 0}
-                >
-                  <ul className="grid gap-x-8 gap-y-3 sm:grid-cols-2 lg:grid-cols-3">
-                    {group.items.map((item) => (
-                      <li
-                        key={item}
-                        className="flex gap-3 text-sm text-paper-dim"
-                      >
-                        <span
+            <ul className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+              {pillar.groups.map((group, index) => {
+                const Icon = groupIcons[group.title];
+
+                return (
+                  <Reveal as="li" key={group.title} delay={index * 0.06}>
+                    <div className="flex h-full flex-col gap-5 rounded-2xl border border-line p-6 transition-colors duration-300 hover:border-line-strong md:p-7">
+                      {Icon && (
+                        <Icon
                           aria-hidden="true"
-                          className="mt-2.5 h-px w-3 shrink-0 bg-line-strong"
+                          size={24}
+                          className="text-paper-dim"
                         />
-                        {item}
-                      </li>
-                    ))}
-                  </ul>
-                </Accordion>
-              ))}
-            </div>
+                      )}
+                      <h3 className="font-display text-2xl tracking-display">
+                        {group.title}
+                      </h3>
+                    </div>
+                  </Reveal>
+                );
+              })}
+            </ul>
           </Container>
         </section>
 

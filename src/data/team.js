@@ -33,7 +33,6 @@ export const founders = [
 
 export const team = [
   { name: "Rumi", role: null, photo: null, tagline: null, linkedin: null },
-  { name: "Crish", role: null, photo: null, tagline: null, linkedin: null },
   { name: "Adithi", role: null, photo: null, tagline: null, linkedin: null },
   { name: "Aakriti", role: null, photo: null, tagline: null, linkedin: null },
 ];

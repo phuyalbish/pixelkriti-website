@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
-import { FiSend, FiX } from "react-icons/fi";
+import { FiMoreHorizontal, FiSend, FiX } from "react-icons/fi";
 import LogoMark from "@/components/LogoMark.jsx";
 import { nav, site } from "@/data/site.js";
 
@@ -123,6 +123,7 @@ function HomeHero() {
   const [brief, setBrief] = useState("");
   const [handoff, setHandoff] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
 
   /*
    * The motto types itself out on load. Under reduced motion (which is also
@@ -213,7 +214,7 @@ function HomeHero() {
       <motion.p
         {...rise(0.05)}
         aria-label={site.motto}
-        className="absolute left-6 top-6 max-w-[17rem] text-4xl font-light leading-tight text-paper sm:max-w-xl md:left-12 md:top-10 md:max-w-3xl md:text-6xl lg:text-7xl"
+        className="absolute left-6 right-6 top-6 text-4xl font-light leading-tight text-paper md:left-12 md:right-auto md:top-10 md:max-w-3xl md:text-6xl lg:text-7xl"
         style={{
           mixBlendMode: "difference",
           fontFamily: "'Montserrat', 'Manrope', system-ui, sans-serif",
@@ -239,7 +240,8 @@ function HomeHero() {
       {/* The hidden ops terminal, bottom-left ink quadrant. */}
       <OpsFeed reduceMotion={reduceMotion} />
 
-      {/* Corner mark + stacked nav, on the ink quadrant. */}
+      {/* Corner mark + stacked nav, on the ink quadrant. On mobile the list
+          gives way to a dots button that opens the full-screen menu below. */}
       <motion.nav
         {...rise(0.1)}
         aria-label="Primary"
@@ -252,16 +254,76 @@ function HomeHero() {
         >
           <LogoMark className="h-7 w-7 md:h-8 md:w-8" />
         </Link>
+        <button
+          type="button"
+          onClick={() => setMenuOpen(true)}
+          aria-label="Open menu"
+          aria-expanded={menuOpen}
+          className="-mr-1 p-1 text-paper transition-colors duration-200 hover:text-brand md:hidden"
+        >
+          <FiMoreHorizontal size={26} />
+        </button>
         {nav.map((item) => (
           <Link
             key={item.to}
             to={item.to}
-            className="py-1 text-lg text-paper transition-colors duration-200 hover:text-brand md:text-2xl"
+            className="hidden py-1 text-lg text-paper transition-colors duration-200 hover:text-brand md:block md:text-2xl"
           >
             {item.label}
           </Link>
         ))}
       </motion.nav>
+
+      {/* The full-screen mobile menu. */}
+      <AnimatePresence>
+        {menuOpen && (
+          <motion.div
+            initial={reduceMotion ? false : { opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={reduceMotion ? undefined : { opacity: 0 }}
+            transition={{ duration: 0.25, ease: "easeOut" }}
+            className="fixed inset-0 z-50 flex flex-col bg-ink p-6 md:hidden"
+          >
+            <div className="flex items-center justify-between">
+              <LogoMark className="h-7 w-7 text-paper" />
+              <button
+                type="button"
+                onClick={() => setMenuOpen(false)}
+                aria-label="Close menu"
+                className="-mr-1 p-1 text-paper transition-colors duration-200 hover:text-brand"
+              >
+                <FiX size={26} />
+              </button>
+            </div>
+
+            <nav
+              aria-label="Primary, expanded"
+              className="flex flex-1 flex-col items-start justify-center gap-2"
+            >
+              {nav.map((item, index) => (
+                <motion.span
+                  key={item.to}
+                  initial={reduceMotion ? false : { opacity: 0, y: 14 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{
+                    duration: 0.4,
+                    delay: 0.08 + index * 0.06,
+                    ease: [0.22, 1, 0.36, 1],
+                  }}
+                >
+                  <Link
+                    to={item.to}
+                    onClick={() => setMenuOpen(false)}
+                    className="block py-2 font-display text-5xl tracking-display text-paper transition-colors duration-200 hover:text-brand"
+                  >
+                    {item.label}
+                  </Link>
+                </motion.span>
+              ))}
+            </nav>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/*
         The lockup, pinned to the crossing. Centered with flex, NOT a

@@ -8,6 +8,7 @@ export default {
           DEFAULT: "var(--ink)",
           raised: "var(--ink-raised)",
           overlay: "var(--ink-overlay)",
+          faint: "var(--ink-faint)",
         },
         paper: {
           DEFAULT: "var(--paper)",
@@ -17,6 +18,7 @@ export default {
         line: {
           DEFAULT: "var(--line)",
           strong: "var(--line-strong)",
+          ink: "var(--line-ink)",
         },
         brand: {
           DEFAULT: "var(--brand)",

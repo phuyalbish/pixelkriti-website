@@ -15,6 +15,9 @@
 
   --line: rgba(242, 242, 240, 0.1);
   --line-strong: rgba(242, 242, 240, 0.24);
+  /* Ink counterparts for paper-toned sections. */
+  --line-ink: rgba(11, 11, 12, 0.12);
+  --ink-faint: rgba(11, 11, 12, 0.55);
 
   /* The one saturated colour on an otherwise monochrome site. */
   --brand: #31ae49;
@@ -77,6 +80,11 @@
     letter-spacing: 0.18em;
     color: var(--paper-faint);
   }
+
+  /* Paper-toned sections need the ink counterpart of the faint label. */
+  [data-tone="paper"] .eyebrow {
+    color: rgba(11, 11, 12, 0.55);
+  }
 }
 
 @layer utilities {
@@ -93,6 +101,48 @@
     letter-spacing: -0.02em;
   }
 
+}
+
+/* The looping motion inside the dark showcase tiles. Both animate transform
+   only, and both fall still under the reduced-motion override below. */
+@keyframes wave {
+  0%,
+  100% {
+    transform: scaleY(0.35);
+  }
+  50% {
+    transform: scaleY(1);
+  }
+}
+
+.animate-wave {
+  animation: wave 1.3s ease-in-out infinite;
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes breathe {
+  0%,
+  100% {
+    transform: scaleY(0.82);
+  }
+  50% {
+    transform: scaleY(1);
+  }
+}
+
+.animate-breathe {
+  transform-origin: bottom;
+  animation: breathe 2.6s ease-in-out infinite;
 }
 
 @media (prefers-reduced-motion: reduce) {

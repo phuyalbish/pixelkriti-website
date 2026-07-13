@@ -44,13 +44,6 @@ function WorkPage() {
               delay={0.06}
             />
           </h1>
-          <Reveal delay={0.12}>
-            <p className="mt-8 max-w-prose text-pretty text-lg leading-relaxed text-paper-dim">
-              Usually the client&apos;s. Sometimes ours. These are the ones
-              worth writing down - what was asked for, what we found, and what
-              we built instead.
-            </p>
-          </Reveal>
         </Container>
       </section>
 

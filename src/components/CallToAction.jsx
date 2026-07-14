@@ -18,7 +18,12 @@ function CallToAction() {
         <h2 className="mx-auto mt-6 max-w-4xl text-balance font-display text-headline tracking-display">
           <WordReveal text={cta.title} delay={0.06} />
         </h2>
-        <Reveal delay={0.18}>
+        <Reveal delay={0.14}>
+          <p className="mx-auto mt-6 max-w-prose text-pretty leading-relaxed text-paper-dim">
+            {cta.lead}
+          </p>
+        </Reveal>
+        <Reveal delay={0.22}>
           <div className="mt-10 flex justify-center">
             <Button to="/contact">Book a Free Consultation</Button>
           </div>

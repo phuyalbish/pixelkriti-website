@@ -31,9 +31,21 @@ export default {
         mono: "var(--font-mono)",
       },
       fontSize: {
+        /*
+         * Display type is the whole difference between a confident page and a
+         * timid one. `mega` is reserved for the promise and its echo in the
+         * footer - the two moments the page is allowed to shout.
+         */
+        mega: ["clamp(3rem, 11vw, 9.5rem)", { lineHeight: "0.92" }],
         display: ["clamp(2.75rem, 7vw, 6.25rem)", { lineHeight: "0.96" }],
         headline: ["clamp(2rem, 4.5vw, 3.5rem)", { lineHeight: "1.04" }],
         title: ["clamp(1.5rem, 2.4vw, 2.125rem)", { lineHeight: "1.15" }],
+        /*
+         * The watermark word behind a section heading. Never read, only felt -
+         * and sized to stay inside its own column, since it is set `nowrap` and
+         * would otherwise run out across whatever sits beside it.
+         */
+        ghost: ["clamp(3.25rem, 7vw, 6.5rem)", { lineHeight: "1" }],
       },
       maxWidth: {
         shell: "84rem",

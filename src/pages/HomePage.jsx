@@ -5,11 +5,15 @@ import Container from "@/components/Container.jsx";
 import Reveal from "@/components/Reveal.jsx";
 import SectionHeading from "@/components/SectionHeading.jsx";
 import CallToAction from "@/components/CallToAction.jsx";
-import HomeHero from "@/components/HomeHero.jsx";
-import Showreel from "@/components/Showreel.jsx";
+import SplashHero from "@/components/SplashHero.jsx";
+import PromiseSection from "@/components/PromiseSection.jsx";
+import ProofBar from "@/components/ProofBar.jsx";
+import GrowthPaths from "@/components/GrowthPaths.jsx";
+import Method from "@/components/Method.jsx";
 import ServicesShowcase from "@/components/ServicesShowcase.jsx";
 import AgentShowcase from "@/components/AgentShowcase.jsx";
 import Testimonials from "@/components/Testimonials.jsx";
+import Faq from "@/components/Faq.jsx";
 import usePageMeta from "@/hooks/usePageMeta.js";
 import { work } from "@/data/work.js";
 
@@ -75,14 +79,31 @@ function HomePage() {
     },
   );
 
+  /*
+   * The page is an argument, and the order is the argument:
+   *
+   *   claim -> proof -> self-sort -> method -> what we build -> the dull work
+   *   -> results -> voices -> objections -> close (and the footer repeats the
+   *   claim, so the page shuts the loop it opened).
+   *
+   * Showreel is deliberately absent. It currently points at a stock clip
+   * standing in for a reel we have not shot, and a stock video on a page whose
+   * whole argument is "we do not resell other people's work" is the one thing
+   * that would give the game away. It comes back the day there is real footage
+   * - the component and its config in data/site.js are untouched.
+   */
   return (
     <>
-      <HomeHero />
-      <Showreel />
+      <SplashHero />
+      <PromiseSection />
+      <ProofBar />
+      <GrowthPaths />
+      <Method />
       <ServicesShowcase />
       <AgentShowcase />
       <FeaturedWork />
       <Testimonials />
+      <Faq />
       <CallToAction />
     </>
   );

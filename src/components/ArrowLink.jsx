@@ -5,15 +5,23 @@ import { FiArrowUpRight } from "react-icons/fi";
  * The quiet text link with the nudging arrow, used wherever a section offers
  * a side exit ("All case studies", "Meet the team"). Renders a router Link
  * for internal `to` targets and a plain anchor for external `href` ones.
+ *
+ * `tone="ink"` is the counterpart for paper-ground sections, where the default
+ * paper-toned text would sit invisible on the light surface.
  */
-function ArrowLink({ to, href, children, className = "", ...rest }) {
+const TONES = {
+  paper: "text-paper-dim hover:text-paper",
+  ink: "text-ink/60 hover:text-ink",
+};
+
+function ArrowLink({ to, href, children, tone = "paper", className = "", ...rest }) {
   const Tag = to ? Link : "a";
 
   return (
     <Tag
       to={to}
       href={href}
-      className={`group inline-flex items-center gap-2 text-sm text-paper-dim transition-colors hover:text-paper ${className}`}
+      className={`group inline-flex items-center gap-2 text-sm transition-colors ${TONES[tone]} ${className}`}
       {...rest}
     >
       {children}

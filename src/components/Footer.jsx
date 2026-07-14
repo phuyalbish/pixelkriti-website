@@ -5,12 +5,27 @@ import Logo from "@/components/Logo.jsx";
 import SocialLinks from "@/components/SocialLinks.jsx";
 import LogoOutline from "@/components/LogoOutline.jsx";
 import { nav, site } from "@/data/site.js";
+import { promise } from "@/data/content.js";
 
 function Footer() {
   return (
     <footer className="relative overflow-hidden border-t border-line">
       {/* Watermark, cropped by the bottom-right corner. */}
       <LogoOutline className="absolute -bottom-32 -right-24 hidden h-[26rem] w-[26rem] rotate-6 sm:block" />
+
+      {/*
+        The page opened on this sentence and it closes on it. Outlined rather
+        than filled, so it signs off without competing with the promise section
+        that stated it - the same word, quieter, at the end of the argument.
+      */}
+      <Container className="relative pt-20 md:pt-28">
+        <p
+          aria-hidden="true"
+          className="select-none whitespace-pre-line font-display text-mega tracking-display text-transparent [-webkit-text-stroke:1px_var(--line-strong)]"
+        >
+          {promise.line}
+        </p>
+      </Container>
 
       <Container className="relative py-16 md:py-20">
         <div className="grid gap-12 md:grid-cols-12">

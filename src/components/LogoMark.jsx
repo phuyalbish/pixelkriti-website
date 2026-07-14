@@ -8,7 +8,7 @@ import { LOGO_PATH, LOGO_SIZE } from "@/lib/logoPath.js";
  * colour. Same geometry as the splash mark and the outline watermark - all
  * three read from one path.
  */
-function LogoMark({ className = "" }) {
+function LogoMark({ className = "", style }) {
   return (
     <svg
       viewBox={`0 0 ${LOGO_SIZE} ${LOGO_SIZE}`}
@@ -16,6 +16,7 @@ function LogoMark({ className = "" }) {
       aria-hidden="true"
       focusable="false"
       className={className}
+      style={style}
     >
       <path d={LOGO_PATH} fill="currentColor" />
     </svg>

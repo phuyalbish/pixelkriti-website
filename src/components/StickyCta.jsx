@@ -15,12 +15,44 @@ function StickyCta() {
   const reduceMotion = useReducedMotion();
   const [pastHero, setPastHero] = useState(false);
 
+  /*
+   * On the home page the hero is the billboard splash: nothing may float over
+   * it, so the button waits until the whole pinned section has passed. Its
+   * height is the section's own, read from the DOM rather than hard-coded.
+   */
+  const onHome = pathname === "/";
+
   useEffect(() => {
-    const onScroll = () => setPastHero(window.scrollY > 500);
+    /*
+     * The threshold is measured once per layout, never inside the scroll
+     * handler: Lenis drives that handler every frame, and reading offsetHeight
+     * there would force a layout on the hottest path in the app.
+     */
+    let threshold = 500;
+
+    const measure = () => {
+      const splash = onHome
+        ? document.querySelector("[data-splash]")
+        : null;
+      // Not one pixel of the splash may still be on screen behind the button.
+      threshold = splash ? splash.offsetHeight : 500;
+    };
+
+    const onScroll = () => setPastHero(window.scrollY > threshold);
+    const onResize = () => {
+      measure();
+      onScroll();
+    };
+
+    measure();
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
+    window.addEventListener("resize", onResize);
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onResize);
+    };
+  }, [onHome]);
 
   const visible = pastHero && pathname !== "/contact";
 

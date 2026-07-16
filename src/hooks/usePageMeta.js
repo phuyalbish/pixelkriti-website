@@ -21,6 +21,11 @@ function setAttr(selector, attribute, value) {
  *
  * `og` overrides the social-share title/description where the search snippet
  * and the share card should read differently.
+ *
+ * `og.noindex` keeps a route out of search results. It is the belt to the
+ * Worker's braces - the authoritative signal is the X-Robots-Tag header the
+ * Worker sets on /dashboard, because that one reaches crawlers which never run
+ * this JavaScript. Do not rely on this hook alone to hide anything.
  */
 function usePageMeta(title, description, og = {}) {
   const { pathname } = useLocation();
@@ -34,6 +39,19 @@ function usePageMeta(title, description, og = {}) {
     setAttr('link[rel="canonical"]', "href", url);
     setAttr('meta[property="og:url"]', "content", url);
   }, [pathname]);
+
+  useEffect(() => {
+    if (!og.noindex) return;
+
+    const tag = document.createElement("meta");
+    tag.name = "robots";
+    tag.content = "noindex, nofollow";
+    document.head.appendChild(tag);
+
+    /* Removed on unmount: this is an SPA, and a robots tag left behind would
+       follow the user onto the next route and deindex a public page. */
+    return () => tag.remove();
+  }, [og.noindex]);
 
   useEffect(() => {
     if (description) {

@@ -10,10 +10,7 @@ function NotFoundPage() {
     <section className="flex min-h-[70vh] items-center py-24">
       <Container>
         <Reveal>
-          <p className="eyebrow">404</p>
-        </Reveal>
-        <Reveal delay={0.06}>
-          <h1 className="mt-6 max-w-3xl text-balance font-display text-display tracking-display">
+          <h1 className="max-w-3xl text-balance font-display text-display tracking-display">
             This page was not the right thing to build.
           </h1>
         </Reveal>

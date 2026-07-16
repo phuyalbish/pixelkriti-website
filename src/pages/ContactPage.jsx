@@ -31,36 +31,37 @@ function ContactPage() {
   );
 
   const [form, setForm] = useState(emptyForm);
+  const [status, setStatus] = useState("idle"); // idle | sending | sent | error
 
   const update = (field) => (event) =>
     setForm((current) => ({ ...current, [field]: event.target.value }));
 
   /**
-   * The site is a static build with no backend, so submission hands off to the
-   * visitor's mail client with the enquiry prefilled. Swap this for a POST to a
-   * form endpoint (Formspree, Netlify Forms, or similar) when one exists.
+   * Posts to the Worker, which stores the enquiry and then emails it out.
+   *
+   * This replaced a `mailto:` handoff. That version depended on the visitor
+   * having a configured mail client and then choosing to press send in it -
+   * so an unknown share of enquiries were never sent, and none were ever
+   * recorded. Storage happens first in the Worker: an email provider outage
+   * can now cost a notification, but not the lead.
    */
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
+    setStatus("sending");
 
-    const subject = `New enquiry - ${form.name}${
-      form.company ? ` (${form.company})` : ""
-    }`;
+    try {
+      const response = await fetch("/api/enquiries", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      });
+      if (!response.ok) throw new Error("Request failed");
 
-    const body = [
-      `Name: ${form.name}`,
-      `Email: ${form.email}`,
-      form.company && `Company: ${form.company}`,
-      form.service && `Service interested in: ${form.service}`,
-      "",
-      form.message,
-    ]
-      .filter(Boolean)
-      .join("\n");
-
-    window.location.href = `mailto:${site.email}?subject=${encodeURIComponent(
-      subject,
-    )}&body=${encodeURIComponent(body)}`;
+      setForm(emptyForm);
+      setStatus("sent");
+    } catch {
+      setStatus("error");
+    }
   };
 
   return (
@@ -229,18 +230,36 @@ function ContactPage() {
 
             <button
               type="submit"
-              className="group inline-flex w-full items-center justify-center gap-2 rounded-full bg-paper px-6 py-4 text-sm font-medium text-ink transition-colors duration-300 hover:bg-paper-dim sm:w-auto"
+              disabled={status === "sending"}
+              className="group inline-flex w-full items-center justify-center gap-2 rounded-full bg-paper px-6 py-4 text-sm font-medium text-ink transition-colors duration-300 hover:bg-paper-dim disabled:opacity-60 sm:w-auto"
             >
-              Send enquiry
+              {status === "sending" ? "Sending…" : "Send enquiry"}
               <FiArrowUpRight
                 aria-hidden="true"
                 className="transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
               />
             </button>
 
-            <p className="font-mono text-[11px] leading-relaxed text-paper-faint">
-              This opens your email client with the enquiry prefilled. Prefer to
-              write directly? {site.email}
+            {/* aria-live so the outcome is announced, not just rendered - the
+                button is the only thing that visibly changed, and a screen
+                reader user would otherwise be left guessing. */}
+            <p
+              aria-live="polite"
+              className="font-mono text-[11px] leading-relaxed text-paper-faint"
+            >
+              {status === "sent" ? (
+                <span className="text-brand">
+                  Thank you - your enquiry has reached us, and a confirmation is
+                  on its way to your inbox. We will reply personally.
+                </span>
+              ) : status === "error" ? (
+                <span className="text-red-400">
+                  That did not send. Please email {site.email} directly - we do
+                  not want to lose it.
+                </span>
+              ) : (
+                <>Prefer to write directly? {site.email}</>
+              )}
             </p>
           </form>
         </Reveal>

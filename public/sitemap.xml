@@ -49,6 +49,30 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://pixelkriti.com/work/readnext</loc>
+    <lastmod>2026-07-16</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://pixelkriti.com/work/wafer-fault-detection</loc>
+    <lastmod>2026-07-16</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://pixelkriti.com/work/electronics-sales-dashboard</loc>
+    <lastmod>2026-07-16</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://pixelkriti.com/work/employee-attrition-dashboard</loc>
+    <lastmod>2026-07-16</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://pixelkriti.com/about</loc>
     <lastmod>2026-07-10</lastmod>
     <changefreq>monthly</changefreq>

@@ -21,5 +21,34 @@
 
   "observability": {
     "enabled": true
+  },
+
+  // Enquiries, dashboard accounts and sessions. APAC-primary: the people
+  // reading this dashboard and most of the people filling the form are in
+  // Nepal, and D1 reads are fastest near the primary.
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "pixelkriti-enquiries",
+      "database_id": "36d9b2de-5ff2-44f8-919c-7f1b941476f4"
+    }
+  ],
+
+  // NOT secrets - these are addresses, and they land in email headers every
+  // recipient can read anyway. The one secret is the Resend API key, set once
+  // and never written down:
+  //   npx wrangler secret put RESEND_API_KEY
+  "vars": {
+    // Must be on a domain VERIFIED in Resend. pixelkriti.com is added to the
+    // account but pending DNS - until those records resolve, Resend rejects
+    // every send, the catch in index.js logs it, and the enquiry still saves
+    // with notified = 0. Email waits on DNS; the dashboard does not.
+    "FROM_EMAIL": "Pixel Kriti <info@pixelkriti.com>",
+
+    // TODO: replace with the three real addresses, comma-separated
+    // (amitesh@..., bishal@..., muzammil@...). Standing in with the site's
+    // public address so nothing silently goes nowhere in the meantime -
+    // though site.js still marks that address itself as unconfirmed.
+    "NOTIFY_TO": "info@pixelkriti.com"
   }
 }

@@ -318,6 +318,160 @@ export const work = [
     },
   },
   /*
+   * ReadNext and Wafer Fault Detection are in-house AI/ML builds, not client
+   * engagements - there was no client, so nothing here says there was one.
+   * The `client` field carries the PROJECT name because the Work page needs a
+   * title; it is not an assertion that somebody paid for it.
+   *
+   * ReadNext's facts come from its own README (Rajat6110/ReadNext): the three
+   * problems, the datasets, TF-IDF + cosine similarity, popularity ranking,
+   * and the documented trade-offs. It carries NO `stats` block because the
+   * README reports no accuracy, no dataset size and no baseline - and a
+   * recommender case study with invented numbers is the one thing this file
+   * exists to prevent. Add stats when there is an evaluation to quote.
+   *
+   * The repository describes itself as an assignment set by a third party.
+   * That company is deliberately unnamed: it was not a client, and listing it
+   * on a Work page would say it was.
+   */
+  {
+    slug: "readnext",
+    client: "ReadNext",
+    sector: "Digital Reading",
+    category: "AI & ML",
+    year: "2026",
+    isPlaceholder: false,
+    summary:
+      "“Recommend the next thing to read” sounds like one problem. It is three, and they fail in different ways - which is why a single model was the wrong answer.",
+    services: [
+      "Recommendation Systems",
+      "Machine Learning",
+      "Data Analysis",
+      "Technical Documentation",
+    ],
+    problem:
+      "A reading platform serves chapters, not just books - and a reader mid-way through four titles at once does not want a homepage of bestsellers. It wants the next chapter. But the same product also has to introduce books a reader has never opened, and greet brand-new users it knows nothing about at all. One recommendation surface, three genuinely different questions.",
+    investigation:
+      "Pulling the interaction data apart made the split obvious. Continuing readers already tell you what they want through chapter sequence - no inference required, just order. Recommending an unread book is a content problem, answerable from tags, genres and authors. A new user with no history gives you nothing to personalise on, so any model that needs signal will fail precisely when a first impression matters most. Treating all three as one ranking problem would have meant a model that was mediocre at each and unexplainable at all of them.",
+    solution:
+      "Three lightweight strategies behind one hybrid system, each matched to the question it answers. Sequential progression through chapter order handles the reader who is already mid-book. Content-based filtering - TF-IDF over tags, genres and author metadata, compared by cosine similarity - surfaces unread books. Popularity-based ranking covers the cold start, where there is no history to personalise against. Deep sequence models were considered and deliberately declined: they cost more to run, and on this problem they would have traded away the ability to explain any given recommendation for accuracy the product did not need.",
+    result: [
+      "One hybrid system answers next-chapter, new-book and cold-start recommendation, instead of three disconnected features.",
+      "Every recommendation is traceable to a reason - a chapter's position, a shared tag, a popularity rank - so a product team can interrogate the output rather than trust it.",
+      "Runs on Pandas and scikit-learn with no GPU and no training infrastructure to maintain.",
+      "The trade-offs are written down, not buried: what was simplified, why, and what collaborative filtering would add when the interaction data is dense enough to support it.",
+    ],
+  },
+  /*
+   * Wafer Fault Detection: facts, including the 92% accuracy figure, are
+   * owner-supplied. That number is the ONLY published statistic here and it
+   * came from the person who built the system - if it is ever challenged, it
+   * needs the evaluation behind it (test split, baseline, and whether 92% is
+   * accuracy on a SMOTE-balanced set or on the real imbalanced distribution,
+   * because on imbalanced sensor data those are very different claims).
+   */
+  {
+    slug: "wafer-fault-detection",
+    client: "Wafer Fault Detection",
+    sector: "Semiconductor Manufacturing",
+    category: "AI & ML",
+    year: "Live",
+    isPlaceholder: false,
+    summary:
+      "Sensors on a semiconductor line generate far more readings from good wafers than bad ones. That imbalance is not a nuisance in the data - it is the whole problem.",
+    services: [
+      "Machine Learning",
+      "Predictive Maintenance",
+      "Dashboard & Monitoring",
+      "Power BI",
+    ],
+    problem:
+      "A wafer fabrication line is instrumented with hundreds of sensors, and the faults worth catching are rare by definition. A model that learns to call every wafer good scores well on paper and is worthless on the floor - it never raises the alarm it exists to raise. The job was to find the rare fault, and to do it somewhere an operator could actually see it.",
+    investigation:
+      "Two things surfaced early. The class imbalance meant headline accuracy was actively misleading as a measure of whether the model worked. And the sensor set was wide - many readings carrying little signal, adding noise and training cost without improving the decision. Both had to be handled before any model result could be believed.",
+    solution:
+      "A binary classification pipeline built to production standards rather than notebook standards: modular code, documented functions, and iterative testing throughout. SMOTE addressed the class imbalance so the rare fault carried real weight in training; feature selection cut the sensor set to the readings that actually separated good wafers from bad. The model ships behind a Streamlit dashboard for real-time monitoring, with logging and error handling so failures are observable instead of silent, and Power BI for the reporting view. Architecture decisions were made with mentor review, and the whole solution is documented for the team.",
+    result: [
+      "92% accuracy on semiconductor sensor data, with the class imbalance addressed rather than scored around.",
+      "Operators get a real-time Streamlit dashboard, not a model file - the prediction reaches the person who acts on it.",
+      "Logging and error handling built in from the start, so the system can be observed in production instead of trusted blindly.",
+      "Documented end to end and reviewed with mentors, so the pipeline outlives whoever wrote it.",
+    ],
+  },
+  /*
+   * The two dashboards below are in-house Analytics builds, same as the AI/ML
+   * pair above: no client, so nothing here says there was one.
+   *
+   * NEITHER carries a `stats` block or a figure from its dashboard, and this
+   * is deliberate. Both were built on demo datasets - the sales dashboard
+   * reports $33,007.3B of revenue across 127 orders, which is not a number
+   * about anything, and the attrition dashboard's exit table is synthetic.
+   * Screenshot figures are what the sample data happened to contain; publish
+   * them as outcomes and the site is claiming results that never happened to
+   * a business that never existed. Describe the instrument, not the readout.
+   *
+   * Both are also imageless. A BI dashboard case study wants a screenshot -
+   * see `heroImage` on the two Website studies - but it has to be a capture
+   * of the real, running report. See the note in the owner's brief before
+   * adding one.
+   */
+  {
+    slug: "electronics-sales-dashboard",
+    client: "Electronics Sales Dashboard",
+    sector: "Electronics Retail",
+    category: "Analytics",
+    year: "2026",
+    isPlaceholder: false,
+    summary:
+      "Every number a retailer needs already exists somewhere in its sales data. The problem is that answering one question means asking someone to go and build a report.",
+    services: [
+      "Power BI",
+      "Dashboard & Reporting",
+      "Data Modelling",
+      "Data Analysis",
+    ],
+    problem:
+      "A retail operation generates the same handful of questions every week - what sold, what did not, which category carries the margin, which customers came back, what is sitting in the warehouse going stale. The data holds all of it. But when each answer is a request to whoever owns the spreadsheet, the questions stop being asked, and decisions get made on instinct because instinct is faster than waiting.",
+    investigation:
+      "Laid out end to end, those questions turn out to be a small number of views over the same model rather than a long list of separate reports. Revenue over time, performance by product and category, customer segment and lifetime value, channel and rep, and stock against sales velocity - all off one set of sales records. The gap was never missing data. It was that nobody could interrogate it without a middleman.",
+    solution:
+      "One interactive Power BI report covering revenue trend, product and category performance, customer insight, channel breakdown, and inventory - with the headline measures kept on top as cards, and date range, product category, region or store, and sales channel wired as filters across the whole page. The design decision that matters is what earns space: best-sellers sit next to worst-performing and slow-moving inventory, because knowing what is not selling changes a purchasing decision more than confirming what is. Anybody can slice it themselves; no request, no queue.",
+    result: [
+      "Sales, product, customer, channel and inventory questions answered from a single report rather than five ad-hoc ones.",
+      "Dynamic filters let the person with the question answer it directly, instead of raising a ticket for a report.",
+      "Slow-moving inventory and worst performers are given equal billing to best-sellers, so the report supports what to stop as well as what to push.",
+      "Headline measures - revenue, units, average order value, gross margin, orders - stay visible on every slice.",
+    ],
+  },
+  {
+    slug: "employee-attrition-dashboard",
+    client: "Employee Attrition Dashboard",
+    sector: "People Analytics",
+    category: "Analytics",
+    year: "2026",
+    isPlaceholder: false,
+    summary:
+      "By the time attrition shows up in an annual report, the people are gone. The useful question is not how many left - it is which teams are losing people, and why.",
+    services: [
+      "Dashboard & Reporting",
+      "Data Analysis",
+      "People Analytics",
+      "Data Modelling",
+    ],
+    problem:
+      "Attrition usually reaches leadership as a single percentage, once a quarter, long after anything can be done about it. That number cannot distinguish a resignation the company should have prevented from a planned exit, and it cannot tell you where the loss is concentrated. It reports the weather after the storm.",
+    investigation:
+      "Pulling exits apart showed that the headline rate hides every decision worth making. Voluntary and involuntary exits are different problems with different owners. Regrettable attrition - the people the company wanted to keep - is the figure that should drive action, and it is invisible inside the total. Concentration matters more than volume: the same overall rate means something entirely different when it clusters in one department, one job level, or under one manager. And exit reasons are the only part of the data that says what to actually change.",
+    solution:
+      "A monitoring dashboard built around those distinctions rather than the headline. Overall, voluntary, involuntary and regrettable rates sit alongside headcount and average tenure at exit, filterable by date range, department, job level, location and manager. Underneath, the views that locate a problem: attrition trend against an industry benchmark, churn by department, reasons for exit, tenure at exit, attrition by job level, a manager risk heatmap, and a recent-exits table carrying tenure, reason, whether the exit was regrettable, and eNPS. The trend is plotted against a benchmark for a reason - a rate means nothing until you know what normal is for the industry.",
+    result: [
+      "Regrettable attrition is surfaced as its own measure, so the rate that should trigger action is not averaged away inside the total.",
+      "Voluntary and involuntary exits are separated, because they are different problems with different fixes.",
+      "Department, job level and manager views locate where attrition concentrates - the same overall rate can mean one failing team or a company-wide drift.",
+      "Exit reasons and tenure at exit are attached to the trend, so the dashboard points at a cause rather than only reporting a number.",
+    ],
+  },
+  /*
    * NOTE: the Keystone roofing-CRM case study was removed at the owner's
    * request and must NOT be re-added. The lawn-care, clinic-booking,
    * logistics-analytics, and demand-forecasting entries were likewise

@@ -17,9 +17,37 @@ const AboutPage = lazy(() => import("@/pages/AboutPage.jsx"));
 const ContactPage = lazy(() => import("@/pages/ContactPage.jsx"));
 const NotFoundPage = lazy(() => import("@/pages/NotFoundPage.jsx"));
 
+/*
+ * Deliberately outside PageLayout: an internal tool has no business wearing
+ * the marketing chrome. No header, no nav, no sticky CTA - and so no link back
+ * into it from anywhere a visitor can see, which is the point.
+ */
+const DashboardPage = lazy(() => import("@/pages/DashboardPage.jsx"));
+
 function AppRoutes() {
   return (
     <Routes>
+      {/* /dashboard lists, /dashboard/:id opens one. Same component and the
+          same chunk - the id just switches which view it draws. A real URL
+          rather than a modal so the back button works and a row can be
+          linked to. The Worker's noindex covers /dashboard and everything
+          under it. */}
+      <Route
+        path="/dashboard"
+        element={
+          <Suspense fallback={null}>
+            <DashboardPage />
+          </Suspense>
+        }
+      />
+      <Route
+        path="/dashboard/:id"
+        element={
+          <Suspense fallback={null}>
+            <DashboardPage />
+          </Suspense>
+        }
+      />
       <Route element={<PageLayout />}>
         <Route path="/" element={<HomePage />} />
         <Route

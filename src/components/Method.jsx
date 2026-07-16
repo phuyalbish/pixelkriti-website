@@ -92,7 +92,7 @@ const ITEM_ICONS = {
  * runs at full strength, which is what keeps it worth something.
  */
 
-const STAIRS_IMG = "/stairs.jpg";
+const STAIRS_IMG = "/stairs.png";
 
 /*
  * The walker's path, as fractions of the artwork (x across, y down).

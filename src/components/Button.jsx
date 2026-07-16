@@ -4,6 +4,9 @@ import { FiArrowUpRight } from "react-icons/fi";
 const styles = {
   base: "group relative isolate inline-flex items-center justify-center gap-2 overflow-hidden rounded-full px-6 py-3 text-sm font-medium transition-[background-color,border-color,color,transform] duration-300 ease-out active:scale-[0.97]",
   primary: "bg-paper text-ink",
+  // The primary button inverted, for paper-ground sections where a paper
+  // button would vanish. Keeps the same green sweep on hover.
+  inverse: "bg-ink text-paper",
   secondary: "border border-line-strong text-paper hover:bg-ink-overlay",
 };
 
@@ -32,7 +35,7 @@ function Button({
 
   const inner = (
     <>
-      {variant === "primary" && sweep}
+      {(variant === "primary" || variant === "inverse") && sweep}
       {children}
       {withArrow && (
         <FiArrowUpRight

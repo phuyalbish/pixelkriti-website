@@ -20,33 +20,28 @@ function PromiseSection() {
   return (
     <section
       aria-label="What we do"
-      className="border-t border-line py-24 md:py-36"
+      data-tone="paper"
+      className="bg-paper py-24 text-ink md:py-36"
     >
-      <Container>
+      <Container className="flex flex-col items-center text-center">
         <h2 className="max-w-5xl font-display text-mega tracking-display">
           <WordReveal text={owned} delay={0.04} />
-          {/* The second half carries the site's one saturated colour. Nowhere
-              else on this page does a headline take the green. */}
-          <span className="block text-paper-faint">
+          <span className="block text-ink-faint">
             <WordReveal text={rented} delay={0.16} />
           </span>
         </h2>
 
-        <div className="mt-14 grid gap-10 md:grid-cols-12 md:items-end">
-          <Reveal delay={0.1} className="md:col-span-6">
-            <p className="max-w-prose text-pretty text-lg leading-relaxed text-paper-dim">
-              {promise.lead}
-            </p>
-          </Reveal>
-
-          <Reveal
-            delay={0.2}
-            className="flex flex-wrap items-center gap-x-8 gap-y-4 md:col-span-5 md:col-start-8 md:justify-end"
-          >
-            <Button to="/contact">Book a Free Consultation</Button>
-            <ArrowLink to="/work">See what we have built</ArrowLink>
-          </Reveal>
-        </div>
+        <Reveal
+          delay={0.2}
+          className="mt-14 flex flex-wrap items-center justify-center gap-x-8 gap-y-4"
+        >
+          <Button to="/contact" variant="inverse">
+            Book a Free Consultation
+          </Button>
+          <ArrowLink to="/work" tone="ink">
+            See what we have built
+          </ArrowLink>
+        </Reveal>
       </Container>
     </section>
   );

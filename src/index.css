@@ -145,6 +145,76 @@
   animation: breathe 2.6s ease-in-out infinite;
 }
 
+/* The stick figure that walks down the fire-escape in the Method section.
+   The limbs swing in opposite phase and the body bobs a hair each stride;
+   all three fall still under the reduced-motion override below, leaving the
+   figure standing on the stairs. Origins are set inline (transform-box). */
+@keyframes walk-leg-front {
+  0%,
+  100% {
+    transform: rotate(24deg);
+  }
+  50% {
+    transform: rotate(-24deg);
+  }
+}
+
+@keyframes walk-leg-back {
+  0%,
+  100% {
+    transform: rotate(-24deg);
+  }
+  50% {
+    transform: rotate(24deg);
+  }
+}
+
+@keyframes walk-arm-front {
+  0%,
+  100% {
+    transform: rotate(-18deg);
+  }
+  50% {
+    transform: rotate(18deg);
+  }
+}
+
+@keyframes walk-arm-back {
+  0%,
+  100% {
+    transform: rotate(18deg);
+  }
+  50% {
+    transform: rotate(-18deg);
+  }
+}
+
+@keyframes walk-bob {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-1.5px);
+  }
+}
+
+.walker {
+  animation: walk-bob 0.5s ease-in-out infinite;
+}
+.walker-leg-front {
+  animation: walk-leg-front 0.5s ease-in-out infinite;
+}
+.walker-leg-back {
+  animation: walk-leg-back 0.5s ease-in-out infinite;
+}
+.walker-arm-front {
+  animation: walk-arm-front 0.5s ease-in-out infinite;
+}
+.walker-arm-back {
+  animation: walk-arm-back 0.5s ease-in-out infinite;
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;

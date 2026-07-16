@@ -7,7 +7,6 @@ import SectionHeading from "@/components/SectionHeading.jsx";
 import CallToAction from "@/components/CallToAction.jsx";
 import SplashHero from "@/components/SplashHero.jsx";
 import PromiseSection from "@/components/PromiseSection.jsx";
-import ProofBar from "@/components/ProofBar.jsx";
 import GrowthPaths from "@/components/GrowthPaths.jsx";
 import Method from "@/components/Method.jsx";
 import ServicesShowcase from "@/components/ServicesShowcase.jsx";
@@ -96,7 +95,6 @@ function HomePage() {
     <>
       <SplashHero />
       <PromiseSection />
-      <ProofBar />
       <GrowthPaths />
       <Method />
       <ServicesShowcase />

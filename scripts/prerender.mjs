@@ -59,6 +59,16 @@ try {
         .querySelectorAll('iframe[src*="youtube"]')
         .forEach((el) => el.remove());
 
+      // Lottie artwork draws itself into the page as SVG, and these documents
+      // carry their pictures as embedded base64 - hundreds of KB each. Left in,
+      // they would be inlined into this HTML, which every real browser then
+      // downloads only to throw away (see the createRoot note above). The
+      // artwork is decorative and the empty box keeps the layout, so bots lose
+      // nothing they were reading anyway.
+      document.querySelectorAll("[data-lottie]").forEach((el) => {
+        el.replaceChildren();
+      });
+
       // The async font trick flips media to "all" at runtime; restore the
       // non-blocking form so the snapshot keeps fonts off the critical path.
       const fontLink = document.querySelector(

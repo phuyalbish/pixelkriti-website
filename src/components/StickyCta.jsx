@@ -69,7 +69,7 @@ function StickyCta() {
           <Link
             to="/contact"
             aria-label="Book a Free Consultation"
-            className="group relative isolate flex h-14 w-14 items-center justify-center overflow-hidden rounded-full bg-paper text-ink shadow-[0_8px_30px_rgba(0,0,0,0.45)] transition-transform duration-300 active:scale-[0.97]"
+            className="group relative isolate flex h-14 w-14 items-center justify-center overflow-hidden rounded-full bg-paper text-ink shadow-[0_2px_8px_rgba(0,0,0,0.22)] transition-transform duration-300 active:scale-[0.97]"
           >
             {/* Same green wipe as the primary Button, kept in step with it. */}
             <span

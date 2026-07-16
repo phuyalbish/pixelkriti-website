@@ -1,172 +1,151 @@
+import { motion, useReducedMotion } from "framer-motion";
 import Container from "@/components/Container.jsx";
 import Reveal from "@/components/Reveal.jsx";
 import SectionHeading from "@/components/SectionHeading.jsx";
-import useTicker from "@/hooks/useTicker.js";
+import LottiePlayer from "@/components/LottiePlayer.jsx";
+import LottieCard from "@/components/LottieCard.jsx";
+import plane from "@/data/lottie/Plane.json";
 
 /**
  * The four shapes an AI agent takes here - sub-agent, voice, conversational,
  * chatbot - as cards on the paper ground, visually in step with the services
- * showcase above. Each visual is a brand-toned mock-up: decorative, so it
- * carries no figures or claims. Green appears only on hover, per the brand
- * guide.
+ * showcase above. Each visual is a decorative animation, so it carries no
+ * figures or claims.
+ *
+ * The artwork is loaded on demand rather than imported: the four documents come
+ * to ~410KB of JSON between them (SubAgent alone is 200KB of embedded PNGs),
+ * and importing them would put every byte in the bundle that renders the top of
+ * the page. They are fetched when the card is about to be seen - see
+ * LottieCard.
  */
-
-const SUB_AGENT_FEED = [
-  "> tidy the pipeline records",
-  "duplicates merged",
-  "> file the day's receipts",
-  "filed",
-  "> draft the follow-ups",
-  "queued for approval",
-  "> reconcile the invoices",
-  "nothing needs you.",
-];
-const SUB_AGENT_VISIBLE = 4;
-
-function SubAgentVisual() {
-  const tick = useTicker(1800);
-  const lines = Array.from({ length: SUB_AGENT_VISIBLE }, (_, i) => {
-    const index = (tick + i) % SUB_AGENT_FEED.length;
-    return SUB_AGENT_FEED[index];
-  });
-
-  return (
-    <div className="flex h-full flex-col justify-end gap-1.5 p-6 font-mono text-[11px] leading-relaxed text-paper-faint">
-      {lines.map((line, i) => (
-        <p
-          key={`${tick}-${i}`}
-          className={line.startsWith(">") ? "text-paper-dim" : ""}
-        >
-          {line}
-          {i === lines.length - 1 && (
-            <span className="ml-1 inline-block animate-pulse transition-colors duration-500 group-hover:text-brand">
-              ▍
-            </span>
-          )}
-        </p>
-      ))}
-    </div>
-  );
-}
-
-const WAVE = [16, 34, 22, 52, 78, 44, 88, 58, 30, 46, 20, 36, 14];
-
-function VoiceVisual() {
-  return (
-    <div className="flex h-full items-center justify-center gap-1.5 p-6">
-      {WAVE.map((height, index) => (
-        <span
-          key={index}
-          style={{ height: `${height}%`, animationDelay: `${index * 110}ms` }}
-          className={`animate-wave w-1.5 rounded-full transition-colors duration-500 ${
-            height === 88
-              ? "bg-paper-dim group-hover:bg-brand"
-              : "bg-line-strong"
-          }`}
-        />
-      ))}
-    </div>
-  );
-}
-
-const EXCHANGES = [
-  {
-    q: "Can you move my booking to Friday?",
-    a: "Done - Friday, same time. Anything else?",
-  },
-  {
-    q: "Did my quote go out yet?",
-    a: "Sent this morning - I'll nudge them Thursday.",
-  },
-  {
-    q: "What time do you open tomorrow?",
-    a: "Nine sharp. Want me to hold you a slot?",
-  },
-];
-
-function ConversationalVisual() {
-  const tick = useTicker(3600);
-  const exchange = EXCHANGES[tick % EXCHANGES.length];
-
-  return (
-    <div className="flex h-full flex-col justify-end gap-2.5 p-6 text-xs">
-      <p
-        key={`q-${tick}`}
-        className="max-w-[80%] animate-[fade-up_0.5s_ease-out] self-start rounded-2xl rounded-bl-sm bg-ink-overlay px-4 py-2.5 text-paper-dim"
-      >
-        {exchange.q}
-      </p>
-      <p
-        key={`a-${tick}`}
-        className="max-w-[80%] animate-[fade-up_0.5s_ease-out] self-end rounded-2xl rounded-br-sm bg-paper px-4 py-2.5 text-ink"
-      >
-        {exchange.a}
-      </p>
-    </div>
-  );
-}
-
-const CHATBOT_QUESTION = "When are you open?";
-
-function ChatbotVisual() {
-  // Retypes the question character by character, pausing when it lands.
-  const tick = useTicker(140);
-  const cycle = CHATBOT_QUESTION.length + 8;
-  const typed = CHATBOT_QUESTION.slice(
-    0,
-    Math.min(tick % cycle, CHATBOT_QUESTION.length),
-  );
-
-  return (
-    <div className="flex h-full flex-col justify-end p-6">
-      <div className="rounded-xl border border-line bg-ink-raised p-3">
-        <p className="text-xs text-paper-dim">
-          Hi! Ask me anything about our services.
-        </p>
-        <div className="mt-3 flex items-center justify-between gap-2 rounded-full border border-line px-3 py-1.5">
-          <span className="truncate font-mono text-[11px] text-paper-faint">
-            {typed || "Type a message"}
-            <span className="ml-0.5 inline-block animate-pulse">▍</span>
-          </span>
-          <span className="text-paper-faint transition-colors duration-500 group-hover:text-brand">
-            ↑
-          </span>
-        </div>
-      </div>
-    </div>
-  );
-}
 
 const AGENTS = [
   {
     name: "Sub-agents",
     body: "Small specialists inside your system - one job each, a human approving anything that matters.",
-    Visual: SubAgentVisual,
+    /* Vite turns each of these into its own chunk, fetched on demand. */
+    load: () => import("@/data/lottie/SubAgent.json"),
   },
   {
     name: "Voice",
     body: "Answers the phone, books the appointment, hands off to your team when it matters.",
-    Visual: VoiceVisual,
+    load: () => import("@/data/lottie/VoiceAI.json"),
   },
   {
     name: "Conversational",
     body: "Natural back-and-forth over chat or email, grounded in your real data.",
-    Visual: ConversationalVisual,
+    load: () => import("@/data/lottie/ConversationAI.json"),
   },
   {
     name: "Chatbot",
     body: "On your website around the clock, answering from your own knowledge base.",
-    Visual: ChatbotVisual,
+    load: () => import("@/data/lottie/ChatBot.json"),
   },
 ];
 
+/* One crossing of the screen, edge to edge. Slow: a plane that hurries reads as
+   a logo animation rather than as something in the sky behind the page. */
+const PLANE_SECONDS = 26;
+
+/* The pinwheels, standing in the corner of the section. Loaded on demand like
+   the card artwork - scenery should never be on the critical path. */
+const loadWindCatcher = () => import("@/data/lottie/WindCatcher.json");
+
+/*
+ * The horizon: where this paper section gives way to the dark one below it.
+ *
+ * Drawn as the dark section RISING INTO this one rather than as a border on
+ * either. That is the whole point - a border is a line between two things, and
+ * this has to read as one ground meeting another. It also means no seam: the
+ * fill runs past the bottom edge, so the sub-pixel gap that sections land on at
+ * fractional heights has ink on both sides of it instead of a paper sliver.
+ *
+ * The land is low on the left and rises to a plateau across the right third,
+ * which is where the pinwheels stand. The curve reaches y=0 - the top of its
+ * own box - exactly where that plateau begins, which is what lets the pinwheels
+ * be placed at `bottom-<GROUND>`: the plateau's height IS the box's height, so
+ * the two cannot drift apart when the box is retuned.
+ */
+const HORIZON = "M 0 64 C 30 64, 46 0, 70 0 L 100 0 L 100 101 L 0 101 Z";
+
 function AgentShowcase() {
+  const reduce = useReducedMotion();
+
   return (
     <section
       data-tone="paper"
-      className="bg-paper py-14 text-ink md:py-32"
+      /*
+       * relative + overflow-hidden: the plane crosses beyond both edges, and
+       * must be cut off here rather than widening the document.
+       *
+       * The bottom padding is deeper than the top on purpose - it is the sky
+       * between the last line of text and the horizon below it. It has to clear
+       * the HORIZON's own height (h-20/24/32), not just the text: the land's
+       * plateau rises to exactly that height, so padding equal to it would put
+       * the crest against the words. Padding, never margin - a margin here
+       * would open a gap that the page's own ink shows through.
+       */
+      className="relative overflow-hidden bg-paper pb-44 pt-14 text-ink sm:pb-48 md:pb-52 md:pt-32"
     >
-      <Container>
+      {/*
+        Scenery: behind the content, takes no pointer, says nothing a screen
+        reader needs - the section reads identically without it.
+
+        The plane flies the seam between this section and the wash above it, so
+        the two read as one sky rather than two panels that happen to touch.
+      */}
+      {!reduce && (
+        <motion.div
+          aria-hidden="true"
+          className="pointer-events-none absolute left-0 top-2 h-32 w-32 md:top-4 md:h-44 md:w-44"
+          animate={{ x: ["-15vw", "115vw"] }}
+          transition={{
+            duration: PLANE_SECONDS,
+            ease: "linear",
+            repeat: Infinity,
+          }}
+        >
+          <LottiePlayer animationData={plane} className="h-full w-full" />
+        </motion.div>
+      )}
+
+      {/*
+        The pinwheels, standing on the section's floor in the bottom right.
+
+        MIRRORED, which is what turns the wind around: the artwork blows
+        right-to-left - the streaks trail off the right of the pinwheels and
+        travel out the left edge - and a mirror is the only transform that
+        reverses a direction without tipping the sticks off vertical, which any
+        real rotation would do. It also carries the pinwheels themselves across
+        to the right of their own frame, which is where they are wanted.
+
+        The blades are near enough symmetrical that mirroring them costs
+        nothing; the sticks stay upright.
+      */}
+      {/* The horizon itself. preserveAspectRatio="none" so the curve stretches
+          to any width - it is a fill, so there is no stroke to distort. */}
+      <svg
+        aria-hidden="true"
+        viewBox="0 0 100 100"
+        preserveAspectRatio="none"
+        className="pointer-events-none absolute inset-x-0 bottom-0 z-0 h-20 w-full sm:h-24 md:h-32"
+      >
+        <path d={HORIZON} fill="var(--ink)" />
+      </svg>
+
+      {/* Standing ON the plateau, not on the section's floor: `bottom` here is
+          the horizon box's own height, which is exactly where the flat of the
+          land sits. Kept small enough to stay in the corner - the pinwheels sit
+          in the right half of their own frame, and any larger they wander under
+          the last card's paragraph. Scenery loses that argument. */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute bottom-20 right-0 z-0 aspect-[1500/1080] w-52 -scale-x-100 opacity-70 sm:bottom-24 sm:w-72 md:bottom-32 md:w-96"
+      >
+        <LottieCard load={loadWindCatcher} still={reduce} />
+      </div>
+
+      <Container className="relative">
         <SectionHeading title="AI agents" />
 
         {/* Below md this row is a swipeable slider - snap points and the
@@ -180,8 +159,11 @@ function AgentShowcase() {
               className="w-[75%] shrink-0 snap-start sm:w-[48%] md:w-auto"
             >
               <div className="group h-full">
+                {/* The box keeps its square whether or not the artwork ever
+                    arrives, so a slow fetch never reflows the row. Reduced
+                    motion still gets the picture, held on one frame. */}
                 <div className="aspect-square overflow-hidden rounded-2xl bg-ink">
-                  <agent.Visual />
+                  <LottieCard load={agent.load} still={reduce} />
                 </div>
                 <h3 className="mt-6 font-display text-title tracking-display">
                   {agent.name}

@@ -5,8 +5,18 @@ import reactHooks from "eslint-plugin-react-hooks";
 import reactRefresh from "eslint-plugin-react-refresh";
 
 export default [
-  // .wrangler holds generated scratch workers that are not ours to lint.
-  { ignores: ["dist", ".wrangler"] },
+  /*
+   * Not ours to lint:
+   * - dist: build output.
+   * - .wrangler: generated scratch workers.
+   * - any "skills" directory: vendored third-party agent tooling (bundled UMD,
+   *   minified builds), installed into .github, .claude AND .agents alike.
+   *   It was contributing 213 errors - every one of them in code we did not
+   *   write and will never edit - which is enough noise to make `pnpm run lint`
+   *   fail by default, and a lint gate that always fails tells you nothing
+   *   about your own source.
+   */
+  { ignores: ["dist", ".wrangler", "**/skills/**"] },
   {
     files: ["**/*.{js,jsx}"],
     languageOptions: {

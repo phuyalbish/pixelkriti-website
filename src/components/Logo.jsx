@@ -8,11 +8,18 @@ import { site } from "@/data/site.js";
  * half of it would read as a bug.
  *
  * `small` is for the header, where the mark sits beside the nav and should not
- * out-weigh it. The footer keeps the larger mark, having room to breathe.
+ * out-weigh it. `large` is for the footer, which has a whole column to itself
+ * and is the last time the page says its own name - at the default size it read
+ * as a caption rather than a signature.
  */
 const sizes = {
   default: { gap: "gap-3", mark: "h-8 w-8", name: "text-[15px]" },
   small: { gap: "gap-2.5", mark: "h-6 w-6", name: "text-sm" },
+  large: {
+    gap: "gap-4",
+    mark: "h-12 w-12 md:h-14 md:w-14",
+    name: "text-2xl md:text-3xl",
+  },
 };
 
 function Logo({ size = "default", className = "" }) {

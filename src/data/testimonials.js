@@ -1,40 +1,58 @@
 /**
- * ─────────────────────────────────────────────────────────────────────────────
- * PLACEHOLDER CONTENT - REPLACE BEFORE LAUNCH.
+ * Real client testimonials, supplied by the client and attributed to the people
+ * who gave them.
  *
- * These are not real client quotes. They are shaped like real ones so the
- * layout can be built, and they are attributed to generic roles rather than
- * invented people at invented companies - no names, no logos, no star ratings.
- * Publishing fabricated testimonials under real names would be a lie, and would
- * undercut the accountability this brand sells.
+ * These are no longer placeholders: the words below are theirs. That is what
+ * earns the names, the companies and the links - and it is the only thing that
+ * does. If a quote ever needs a stand-in again, it goes back to a visible
+ * "pending" marker and the name comes off with it. A real name over a written-
+ * for-them sentence is a fabricated endorsement of a real person at a real
+ * company, and two of these are clients with case studies on this same site.
  *
- * Replace the quote, name, and company with real approved ones, then set
- * `isPlaceholder: false`. Do not ship these as-is.
- * ─────────────────────────────────────────────────────────────────────────────
+ * `audio` stays null until that person's own recording exists: a play button
+ * under someone's name claims a recording of THEM is behind it, and the
+ * recording must be the same words as `quote` - see VoiceNote.
  */
 export const testimonials = [
   {
-    id: "retail",
+    id: "hellotrekkers",
     quote:
-      "They spent two weeks understanding how we actually worked before proposing anything. Nobody had done that before.",
-    name: "Operations Lead",
-    company: "Regional retail chain",
-    isPlaceholder: true,
+      "Every booking used to live in a different inbox or spreadsheet, and things slipped through the cracks constantly. The system they built brought enquiries, itineraries, guide scheduling and payments into one dashboard. This peak season we handled nearly double the trips without adding a single admin hire - and for the first time the whole team actually trusts the numbers in front of them.",
+    /** Job title, shown before the name. */
+    role: "Founder",
+    name: "Aashish Regmi",
+    company: "HelloTrekkers",
+    /** The company's site. Linked only when the attribution is real. */
+    url: "https://hellotrekkers.com",
+    /**
+     * Path to this person's recorded testimonial, e.g. "/voice/aashish.m4a".
+     * The transcript and the recording must be the SAME words - a quote that
+     * does not match the voice under it is two testimonials, one of them false.
+     * Null renders no button at all, rather than a control that plays nothing.
+     */
+    audio: null,
+    isPlaceholder: false,
   },
   {
-    id: "clinic",
+    id: "tailg",
     quote:
-      "We asked for a booking form. They told us why patients were abandoning the one we had, and fixed that instead.",
-    name: "Practice Manager",
-    company: "Multi-location clinic",
-    isPlaceholder: true,
+      "Running multiple showrooms meant three different versions of the truth on stock and service. Now inventory, test-ride bookings and after-sales follow-ups all sit in one place, and I can see every branch from my phone. Customer response times dropped noticeably, and month-end reconciliation went from two full days to about an hour.",
+    role: "Manager",
+    name: "Sanjeev Silpakar",
+    company: "TAILG Nepal",
+    url: "https://tailgnepal.com",
+    audio: null,
+    isPlaceholder: false,
   },
   {
-    id: "freight",
+    id: "sciobyte",
     quote:
-      "The dashboard is useful. Getting three systems to agree on what a delivery is was the part that changed how we run mornings.",
-    name: "Head of Dispatch",
-    company: "Freight operator",
-    isPlaceholder: true,
+      "We didn't want another tool we'd outgrow in six months - we needed something that scaled with us. What they delivered was clean, fast, and genuinely built around how our team actually works. The automation alone saves us a dozen-plus hours a week, and the handover was thorough enough that we were running it confidently from day one.",
+    role: "Founder",
+    name: "Subhankar",
+    company: "Sciobyte",
+    url: "https://sciobyte.com",
+    audio: null,
+    isPlaceholder: false,
   },
 ];

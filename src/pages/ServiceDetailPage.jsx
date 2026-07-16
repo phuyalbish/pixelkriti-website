@@ -1,4 +1,5 @@
 import { Link, Navigate, useParams } from "react-router-dom";
+import { useReducedMotion } from "framer-motion";
 import {
   FiArrowLeft,
   FiBarChart2,
@@ -12,8 +13,14 @@ import {
 } from "react-icons/fi";
 import Container from "@/components/Container.jsx";
 import Reveal from "@/components/Reveal.jsx";
+import LottieCard from "@/components/LottieCard.jsx";
 import CallToAction from "@/components/CallToAction.jsx";
 import usePageMeta from "@/hooks/usePageMeta.js";
+import {
+  SERVICE_ART,
+  SERVICE_ART_SHAPE,
+  needsWhiteGround,
+} from "@/lib/serviceArt.js";
 import { getPillarById, pillars } from "@/data/services.js";
 import { work } from "@/data/work.js";
 
@@ -39,6 +46,9 @@ const groupIcons = {
 
 function ServiceDetailPage() {
   const { slug } = useParams();
+  /* Before the early return below: a hook after a conditional return is a
+     different hook order on the two paths, which React will not have. */
+  const reduce = useReducedMotion();
   const pillar = getPillarById(slug);
 
   usePageMeta(pillar?.title ?? "Services", pillar?.outcome);
@@ -68,17 +78,34 @@ function ServiceDetailPage() {
               </Link>
             </Reveal>
 
-            <Reveal delay={0.06}>
-              <h1 className="mt-10 max-w-4xl text-balance font-display text-display tracking-display">
-                {pillar.title}
-              </h1>
-            </Reveal>
+            <div className="mt-10 grid gap-10 md:grid-cols-12 md:items-center md:gap-12">
+              <div className="md:col-span-7">
+                <Reveal delay={0.06}>
+                  <h1 className="text-balance font-display text-display tracking-display">
+                    {pillar.title}
+                  </h1>
+                </Reveal>
 
-            <Reveal delay={0.12}>
-              <p className="mt-8 max-w-prose text-pretty text-lg leading-relaxed text-paper-dim">
-                {pillar.outcome}
-              </p>
-            </Reveal>
+                <Reveal delay={0.12}>
+                  <p className="mt-8 max-w-prose text-pretty text-lg leading-relaxed text-paper-dim">
+                    {pillar.outcome}
+                  </p>
+                </Reveal>
+              </div>
+
+              {/* The pillar's artwork. Decorative - the page says everything
+                  it says without it. Transparent unless the document brings its
+                  own ground - see needsWhiteGround. */}
+              <Reveal delay={0.18} className="md:col-span-5">
+                <div
+                  className={`${SERVICE_ART_SHAPE} rounded-2xl ${
+                    needsWhiteGround(pillar.id) ? "bg-white" : ""
+                  }`}
+                >
+                  <LottieCard load={SERVICE_ART[pillar.id]} still={reduce} />
+                </div>
+              </Reveal>
+            </div>
           </Container>
         </section>
 

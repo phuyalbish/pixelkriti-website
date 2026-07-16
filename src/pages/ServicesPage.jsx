@@ -1,16 +1,24 @@
 import { Link } from "react-router-dom";
+import { useReducedMotion } from "framer-motion";
 import { FiArrowUpRight } from "react-icons/fi";
 import Container from "@/components/Container.jsx";
 import Reveal from "@/components/Reveal.jsx";
 import WordReveal from "@/components/WordReveal.jsx";
-import Accordion from "@/components/Accordion.jsx";
+import LottieCard from "@/components/LottieCard.jsx";
 import CallToAction from "@/components/CallToAction.jsx";
 import usePageMeta from "@/hooks/usePageMeta.js";
+import {
+  SERVICE_ART,
+  SERVICE_ART_SHAPE,
+  needsWhiteGround,
+} from "@/lib/serviceArt.js";
 import { pillars } from "@/data/services.js";
 import { process } from "@/data/process.js";
 import SectionHeading from "@/components/SectionHeading.jsx";
 
 function ServicesPage() {
+  const reduce = useReducedMotion();
+
   usePageMeta(
     "Services",
     "Web & Software Development, Artificial Intelligence, and Business Intelligence - solutions designed to solve your specific business problems. One accountable team.",
@@ -23,34 +31,49 @@ function ServicesPage() {
 
   return (
     <>
-      <section className="pb-16 pt-20 md:pb-24 md:pt-28">
-        <Container>
-          <Reveal>
-            <p className="eyebrow">Services</p>
-          </Reveal>
-          <h1 className="mt-6 max-w-4xl text-balance font-display text-display tracking-display">
-            <WordReveal text="You don't need a website. You need customers." delay={0.06} />
-          </h1>
-        </Container>
-      </section>
+      {/*
+        The page's heading, for readers who cannot see it is a services page.
+        The visible hero was removed, and with it the only h1 - which would have
+        left the document opening at h2 and no title to jump to. This is the
+        standard fix: present to the outline, absent to the eye.
+      */}
+      <h1 className="sr-only">Services</h1>
 
       {pillars.map((pillar, pillarIndex) => (
         <section
           key={pillar.id}
           id={pillar.id}
-          className={`border-t border-line py-20 md:py-28 ${
-            pillarIndex % 2 === 1 ? "bg-ink-raised" : ""
-          }`}
+          className={[
+            "pb-20 md:pb-28",
+            /* The first pillar now opens the page, so it carries the top
+               space the hero used to and drops the rule that would otherwise
+               be the first thing under the header. */
+            pillarIndex === 0
+              ? "pt-24 md:pt-32"
+              : "border-t border-line pt-20 md:pt-28",
+            pillarIndex % 2 === 1 ? "bg-ink-raised" : "",
+          ].join(" ")}
         >
           <Container>
             <div className="grid gap-12 md:grid-cols-12">
               <div className="md:col-span-5">
+                {/* The artwork leads: it says which pillar this is before the
+                    title has to. Transparent unless the document brings its own
+                    ground - see needsWhiteGround. */}
                 <Reveal>
-                  <p className="eyebrow">
-                    Pillar {String(pillarIndex + 1).padStart(2, "0")}
-                  </p>
+                  <div
+                    className={`${SERVICE_ART_SHAPE} rounded-2xl ${
+                      needsWhiteGround(pillar.id) ? "bg-white" : ""
+                    }`}
+                  >
+                    <LottieCard
+                      load={SERVICE_ART[pillar.id]}
+                      still={reduce}
+                    />
+                  </div>
                 </Reveal>
-                <h2 className="mt-5 text-balance font-display text-headline tracking-display">
+
+                <h2 className="mt-8 text-balance font-display text-headline tracking-display">
                   <WordReveal text={pillar.title} delay={0.06} />
                 </h2>
                 <Reveal delay={0.18}>
@@ -67,33 +90,33 @@ function ServicesPage() {
                 </Reveal>
               </div>
 
+              {/*
+                The groups, named and counted - no expanding, no item lists.
+                They used to open into every sub-service, which put ten near
+                identical lines under a heading that had already said the thing.
+                The count carries the depth; the pillar's own page is where
+                someone who wants the detail is going anyway.
+              */}
               <div className="md:col-span-6 md:col-start-7">
                 <Reveal>
-                  <div className="border-t border-line">
-                    {pillar.groups.map((group, groupIndex) => (
-                      <Accordion
+                  <ul className="border-t border-line">
+                    {pillar.groups.map((group) => (
+                      <li
                         key={group.title}
-                        title={group.title}
-                        count={group.items.length}
-                        defaultOpen={groupIndex === 0}
+                        className="flex items-baseline justify-between gap-6 border-b border-line py-5"
                       >
-                        <ul className="grid gap-x-8 gap-y-3 sm:grid-cols-2">
-                          {group.items.map((item) => (
-                            <li
-                              key={item}
-                              className="flex gap-3 text-sm text-paper-dim"
-                            >
-                              <span
-                                aria-hidden="true"
-                                className="mt-2.5 h-px w-3 shrink-0 bg-line-strong"
-                              />
-                              {item}
-                            </li>
-                          ))}
-                        </ul>
-                      </Accordion>
+                        <h3 className="text-balance font-display text-2xl tracking-display">
+                          {group.title}
+                        </h3>
+                        <span
+                          aria-hidden="true"
+                          className="shrink-0 font-mono text-xs text-paper-faint"
+                        >
+                          {String(group.items.length).padStart(2, "0")}
+                        </span>
+                      </li>
                     ))}
-                  </div>
+                  </ul>
                 </Reveal>
               </div>
             </div>

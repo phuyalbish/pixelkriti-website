@@ -5,7 +5,6 @@ import Logo from "@/components/Logo.jsx";
 import SocialLinks from "@/components/SocialLinks.jsx";
 import LogoOutline from "@/components/LogoOutline.jsx";
 import { nav, site } from "@/data/site.js";
-import { promise } from "@/data/content.js";
 
 function Footer() {
   return (
@@ -13,30 +12,19 @@ function Footer() {
       {/* Watermark, cropped by the bottom-right corner. */}
       <LogoOutline className="absolute -bottom-32 -right-24 hidden h-[26rem] w-[26rem] rotate-6 sm:block" />
 
-      {/*
-        The page opened on this sentence and it closes on it. Outlined rather
-        than filled, so it signs off without competing with the promise section
-        that stated it - the same word, quieter, at the end of the argument.
-      */}
-      <Container className="relative pt-20 md:pt-28">
-        <p
-          aria-hidden="true"
-          className="select-none whitespace-pre-line font-display text-mega tracking-display text-transparent [-webkit-text-stroke:1px_var(--line-strong)]"
-        >
-          {promise.line}
-        </p>
-      </Container>
-
       <Container className="relative py-16 md:py-20">
         <div className="grid gap-12 md:grid-cols-12">
           <div className="md:col-span-5">
-            <Logo />
-            <p className="mt-6 max-w-xs text-pretty text-sm leading-relaxed text-paper-dim">
-              {site.positioning}
-            </p>
+            <Logo size="large" />
+            {/* `flex w-fit`, not `inline-flex`: the Logo above is itself an
+                inline-flex link, so two inline boxes in a row sit on the SAME
+                line and collide. A block-level flex starts its own line; w-fit
+                keeps the target the width of the address rather than the whole
+                column. (The positioning line that used to separate them was
+                doing this job by accident.) */}
             <a
               href={`mailto:${site.email}`}
-              className="mt-8 inline-flex items-center gap-2 font-display text-2xl transition-colors hover:text-paper-dim md:text-3xl"
+              className="mt-8 flex w-fit items-center gap-2 font-display text-2xl transition-colors hover:text-paper-dim md:text-3xl"
             >
               {site.email}
               <FiArrowUpRight aria-hidden="true" className="text-paper-faint" />
@@ -66,9 +54,8 @@ function Footer() {
         </div>
 
         <div className="mt-16 flex flex-col gap-3 border-t border-line pt-8 md:flex-row md:items-baseline md:justify-between">
-          {/* Locked boilerplate (brand guide 2.5). */}
           <p className="max-w-md text-pretty text-sm leading-relaxed text-paper-dim">
-            {site.boilerplate}
+            {site.footerTagline}
           </p>
           <p className="font-mono text-xs text-paper-faint">
             © {new Date().getFullYear()} {site.name}. All rights reserved.

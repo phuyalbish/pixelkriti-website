@@ -65,28 +65,61 @@ export const paths = {
  */
 export const spine = {
   eyebrow: "How we work",
-  title: "Four steps. Always these four.",
+  title: "Four Simple Steps",
   lead: "No discovery theatre, no sixty-page deck. The point of the method is that you can check us against it.",
+  /*
+   * Each step lists what happens inside it, rather than describing it in a
+   * paragraph.
+   *
+   * Every item below is a claim the old paragraphs already made - the budget
+   * test, the source code, the human sign-off, paid to finish. Breaking prose
+   * into a list is a layout change; it was NOT licence to add a capability we
+   * had not already promised in writing. Nothing here is new.
+   *
+   * `id` per item because the icons are mapped by id in Method.jsx: keyed by
+   * position instead, an icon would silently follow the slot rather than the
+   * meaning the first time one of these is reordered.
+   */
   steps: [
     {
       id: "count",
-      title: "Count the stack",
-      body: "We total what you pay every month, and the hours your people lose moving data between tools by hand. That number is the budget - and if the build cannot beat it, we will tell you so and you will have lost a meeting, not a quarter.",
+      title: "We study your Business",
+      items: [
+        { id: "spend", text: "What you pay every month, totalled" },
+        { id: "hours", text: "The hours lost moving data between tools by hand" },
+        { id: "budget", text: "That number becomes the budget" },
+        { id: "honest", text: "If the build cannot beat it, we tell you so" },
+      ],
     },
     {
       id: "build",
       title: "Build the system",
-      body: "One system, shaped to your workflow rather than the other way round. Written for you, not configured for you. You see it working in weeks, not at the end - and you hold the source code the whole way through.",
+      items: [
+        { id: "shaped", text: "One system, shaped to your workflow" },
+        { id: "written", text: "Written for you, not configured for you" },
+        { id: "weeks", text: "Working software in weeks, not at the end" },
+        { id: "source", text: "You hold the source code the whole way through" },
+      ],
     },
     {
       id: "agents",
-      title: "Hand the dull work to sub-agents",
-      body: "Small, specialised AIs with real jobs: one answers the lead that arrives at 9pm, one chases the unpaid invoice, one keeps the records tidy. They run inside your system, on your real data, and a human signs off on anything that matters.",
+      title: "Deliver the best system",
+      items: [
+        { id: "leads", text: "Answers the lead that arrives at 9pm" },
+        { id: "invoices", text: "Chases the unpaid invoice" },
+        { id: "records", text: "Keeps the records tidy" },
+        { id: "signoff", text: "A human signs off on anything that matters" },
+      ],
     },
     {
       id: "stand-behind",
-      title: "Stay on the hook",
-      body: "We are paid to finish, not to keep you subscribed. When it is done it is yours - and support is a choice you make afterwards, not a hostage arrangement you agreed to on day one.",
+      title: "We stay Partner",
+      items: [
+        { id: "finish", text: "Paid to finish, not to keep you subscribed" },
+        { id: "yours", text: "When it is done, it is yours" },
+        { id: "support", text: "Support is a choice you make afterwards" },
+        { id: "person", text: "You reach the person who wrote the code" },
+      ],
     },
   ],
 };
@@ -157,8 +190,7 @@ export const faq = [
 ];
 
 export const cta = {
-  eyebrow: "Start with a conversation",
   title: "Let's have a chat",
   /* The one thing we can promise about the call itself. */
-  lead: "Bring the thing that is not working. You will leave the call knowing whether we are worth hiring - including if the answer is no.",
+  lead: "Bring the thing that is not working. You will leave the call knowing whether we are worth hiring.",
 };

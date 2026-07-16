@@ -12,10 +12,7 @@ function CallToAction() {
       <LogoOutline className="absolute left-1/2 top-1/2 h-[34rem] w-[34rem] -translate-x-1/2 -translate-y-1/2" />
 
       <Container className="relative text-center">
-        <Reveal>
-          <p className="eyebrow">{cta.eyebrow}</p>
-        </Reveal>
-        <h2 className="mx-auto mt-6 max-w-4xl text-balance font-display text-headline tracking-display">
+        <h2 className="mx-auto max-w-4xl text-balance font-display text-headline tracking-display">
           <WordReveal text={cta.title} delay={0.06} />
         </h2>
         <Reveal delay={0.14}>

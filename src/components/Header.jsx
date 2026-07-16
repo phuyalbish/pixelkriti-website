@@ -46,15 +46,14 @@ function Header() {
    * The underline lives on ::after and grows from the left on hover; on the
    * active link it stays fully drawn. Colour and transform both transition.
    */
+  /* Both states are drawn at full paper: the underline carries "where you are",
+     so the colour does not have to, and dimming the rest cost legibility for a
+     distinction the underline already makes. */
   const linkClass = ({ isActive }) =>
-    `relative text-sm transition-colors duration-300 hover:text-paper ` +
+    `relative text-sm text-paper transition-colors duration-300 ` +
     `after:absolute after:-bottom-1.5 after:left-0 after:h-px after:w-full ` +
     `after:origin-left after:bg-paper after:transition-transform after:duration-300 after:ease-out ` +
-    `${
-      isActive
-        ? "text-paper after:scale-x-100"
-        : "text-paper-dim after:scale-x-0 hover:after:scale-x-100"
-    }`;
+    `${isActive ? "after:scale-x-100" : "after:scale-x-0 hover:after:scale-x-100"}`;
 
   return (
     <header
@@ -64,11 +63,18 @@ function Header() {
        * drawer's `top-20 bottom-0` to the header's own 80px box - a 1px-tall
        * background with the menu links spilling over the transparent page.
        */
+      /*
+       * NOT `bg-ink/85`. The colour tokens are `var(--ink)`, and Tailwind
+       * cannot compute an alpha over a var() - it emits no rule at all for the
+       * opacity modifier, so that class was silently nothing and the bar
+       * painted transparent over every section it crossed. color-mix does the
+       * blend the modifier could not, and keeps the token.
+       */
       className={`sticky top-0 z-50 transition-[background-color,border-color,transform] duration-500 ease-out ${
         menuOpen
           ? "border-b border-line bg-ink"
           : scrolled
-            ? "border-b border-line bg-ink/85 backdrop-blur-md"
+            ? "border-b border-line bg-[color-mix(in_srgb,var(--ink)_85%,transparent)] backdrop-blur-md"
             : ""
       } ${hidden && !menuOpen && !reduceMotion ? "-translate-y-full" : ""}`}
     >

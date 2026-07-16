@@ -12,7 +12,6 @@ import Method from "@/components/Method.jsx";
 import ServicesShowcase from "@/components/ServicesShowcase.jsx";
 import AgentShowcase from "@/components/AgentShowcase.jsx";
 import Testimonials from "@/components/Testimonials.jsx";
-import Faq from "@/components/Faq.jsx";
 import usePageMeta from "@/hooks/usePageMeta.js";
 import { work } from "@/data/work.js";
 
@@ -20,7 +19,9 @@ function FeaturedWork() {
   const featured = work.slice(0, 3);
 
   return (
-    <section className="border-t border-line py-24 md:py-32">
+    /* No top border: the section above ends in a curved horizon, and a rule
+       across it would draw the straight line the curve exists to avoid. */
+    <section className="py-24 md:py-32">
       <Container>
         <div className="flex flex-wrap items-end justify-between gap-6">
           <SectionHeading title="Selected Work" />
@@ -94,14 +95,32 @@ function HomePage() {
   return (
     <>
       <SplashHero />
-      <PromiseSection />
-      <GrowthPaths />
-      <Method />
-      <ServicesShowcase />
+
+      {/*
+        The paper run, on a paper backdrop.
+
+        These four sections are all paper-toned, but the PAGE is ink - so every
+        join between them sat over a dark backdrop, and because sections land on
+        fractional pixel boundaries (4025.90625, not 4026), each seam leaked a
+        sub-pixel sliver of that ink and drew a hairline one shade darker than
+        the paper either side of it. No border, no margin and no colour change
+        was ever involved - which is exactly why it could not be found by
+        looking for one.
+
+        Backing the run in the same paper the sections are painted in means a
+        sliver of the backdrop is indistinguishable from the sections. Do not
+        replace this with a border, a margin, or a nudge on one of the sections.
+      */}
+      <div className="bg-paper">
+        <PromiseSection />
+        <GrowthPaths />
+        <Method />
+        <ServicesShowcase />
+      </div>
+
       <AgentShowcase />
       <FeaturedWork />
       <Testimonials />
-      <Faq />
       <CallToAction />
     </>
   );

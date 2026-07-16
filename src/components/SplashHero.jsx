@@ -6,6 +6,8 @@ import {
   useTransform,
 } from "framer-motion";
 import LogoMark from "@/components/LogoMark.jsx";
+import Button from "@/components/Button.jsx";
+import PixelTrail from "@/components/PixelTrail.jsx";
 import { site } from "@/data/site.js";
 
 /*
@@ -19,6 +21,48 @@ import { site } from "@/data/site.js";
  * The section is SPLASH_LENGTH viewports tall with a sticky, screen-high
  * stage: the pin is what makes the zoom scroll-driven rather than timed.
  */
+
+/** The motto's two halves. The break is authored in the copy, not measured. */
+const mottoLines = site.motto.split("\n");
+
+/*
+ * The motto is two lines, always - the break is the argument (the work, then
+ * the relationship), so a line that reflows into four on a phone has lost the
+ * point of the copy.
+ *
+ * Each line is therefore `whitespace-nowrap`, and the type is capped at what
+ * the LONGEST line can occupy at the width available. Derived from the copy
+ * rather than hard-coded, so rewriting the motto cannot silently overflow it.
+ * 0.55em is a safe mean glyph width for Montserrat at these sizes; it only has
+ * to be an upper bound, since being a little small is survivable and running
+ * off the edge of the board is not.
+ */
+const MOTTO_CHARS = Math.max(...mottoLines.map((line) => line.length));
+const MOTTO_EM = 0.55;
+
+/*
+ * The lockup introduces itself: mark, then name, then motto, then the way out,
+ * each rising into place. The order is the order you would read it in, which is
+ * the only reason to stagger rather than fade the whole block at once.
+ *
+ * INTRO_DONE is when the last of the four has landed. The mark's petal ripple
+ * waits for it - the two playing over each other would read as one busy
+ * animation instead of an introduction followed by a demonstration.
+ */
+const INTRO_STEP = 0.18;
+const INTRO_DURATION = 0.7;
+const INTRO_LAST = 3; // the button is the last thing up
+const INTRO_DONE = INTRO_STEP * INTRO_LAST + INTRO_DURATION + 0.15;
+
+const rise = (index) => ({
+  initial: { opacity: 0, y: 18 },
+  animate: { opacity: 1, y: 0 },
+  transition: {
+    duration: INTRO_DURATION,
+    delay: index * INTRO_STEP,
+    ease: [0.22, 1, 0.36, 1],
+  },
+});
 
 /** Where the billboard's white face sits in the 1920x1080 video frame. */
 const BILLBOARD = {
@@ -66,6 +110,7 @@ function billboardRect(vw, vh) {
 function SplashHero() {
   const sectionRef = useRef(null);
   const stageRef = useRef(null);
+  const videoRef = useRef(null);
   const reduceMotion = useReducedMotion();
 
   /*
@@ -92,7 +137,14 @@ function SplashHero() {
        * then overflow the screen once you were inside it (the board is wider
        * than a phone, so the video crops it).
        */
-      const type = Math.min(vw * 0.1, vh * 0.12) / endScale;
+      /*
+       * A phone is narrow, so the width cap - which never binds on a desktop,
+       * where the height does - is the only thing setting the type there, and
+       * a tenth of 390px is a lockup nobody can read. Narrow screens get a
+       * bigger share of their width; wide ones are unchanged.
+       */
+      const widthShare = vw < 640 ? 0.17 : 0.1;
+      const type = Math.min(vw * widthShare, vh * 0.12) / endScale;
       setMetrics({
         vw,
         vh,
@@ -100,6 +152,16 @@ function SplashHero() {
         endScale,
         type,
         readable: (vw * 0.84) / endScale,
+        /* Never wider than the motto's longest line can be drawn without
+           wrapping - see MOTTO_CHARS. */
+        motto: Math.min(
+          type * 0.33,
+          (vw * 0.88) / endScale / (MOTTO_CHARS * MOTTO_EM),
+        ),
+        /* The button is a control, not display type: it wants the same size
+           everywhere rather than one proportional to a headline. Divided back
+           out by endScale for the same reason as `type`. */
+        button: 15 / endScale,
       });
     };
     measure();
@@ -140,6 +202,40 @@ function SplashHero() {
   const scale = useTransform(scrollYProgress, (p) => zoom(p).s);
   const x = useTransform(scrollYProgress, (p) => zoom(p).tx);
   const y = useTransform(scrollYProgress, (p) => zoom(p).ty);
+
+  /*
+   * The billboard is not centred in the video frame, so a lockup centred on the
+   * BOARD sits off-centre on the SCREEN until the zoom drifts the board into
+   * place - about 25px on a phone, which is a twentieth of the width and reads
+   * as a mistake. This slides the artwork back to the screen's centre at rest
+   * and releases it to 0 exactly as the zoom lands, so it is centred at both
+   * ends and pasted to the board where that matters. Solve `(boardCx + d - cx)
+   * * s + tx = cx` for d.
+   *
+   * It has to be `left`/`top` rather than a transform: a transform on this
+   * layer would make it its own stacking context, and `mix-blend-mode` only
+   * blends within one - the artwork would blend against nothing and the
+   * billboard's shadows would pop off it. That is the same trap the single
+   * transformed group below exists to avoid.
+   */
+  const offset = useCallback(
+    (p, axis) => {
+      if (!metrics) return 0;
+      const { s, tx, ty } = zoom(p);
+      const centre = axis === "x" ? metrics.vw / 2 : metrics.vh / 2;
+      const board = axis === "x" ? metrics.rect.cx : metrics.rect.cy;
+      const t = axis === "x" ? tx : ty;
+      return -t / s - (board - centre);
+    },
+    [metrics, zoom],
+  );
+
+  const artLeft = useTransform(scrollYProgress, (p) =>
+    metrics ? metrics.rect.left + offset(p, "x") : 0,
+  );
+  const artTop = useTransform(scrollYProgress, (p) =>
+    metrics ? metrics.rect.top + offset(p, "y") : 0,
+  );
 
   /* All transforms use the explicit function form: mixing framer's
      range form onto the same source proved unreliable at the extremes. */
@@ -192,21 +288,39 @@ function SplashHero() {
         */}
         {still ? (
           <div className="flex h-full flex-col items-center justify-center gap-6 bg-paper px-6 text-center text-ink">
-            <LogoMark className="h-24 w-24 text-brand md:h-28 md:w-28" />
-            <h1 className="font-display text-display tracking-display">
+            <motion.div {...rise(0)}>
+              <LogoMark
+                interactive
+                demoDelay={INTRO_DONE}
+                className="h-24 w-24 text-brand md:h-28 md:w-28"
+              />
+            </motion.div>
+            <motion.h1
+              className="font-display text-display tracking-display"
+              {...rise(1)}
+            >
               {site.name}
-            </h1>
-            <p
-              className="max-w-2xl text-balance text-xl font-light leading-snug md:text-3xl"
+            </motion.h1>
+            <motion.p
+              /* vw units, not a fixed size: this branch has no metrics to
+                 measure with, and the two lines must hold on any width. */
+              className="text-[3.6vw] font-light leading-snug sm:text-2xl md:text-3xl"
               style={{
                 fontFamily: "'Montserrat', 'Manrope', system-ui, sans-serif",
               }}
+              {...rise(2)}
             >
-              {site.motto}
-            </p>
-            <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-ink-faint">
-              {site.positioning}
-            </p>
+              {mottoLines.map((line) => (
+                <span key={line} className="block whitespace-nowrap">
+                  {line}
+                </span>
+              ))}
+            </motion.p>
+            <motion.div {...rise(INTRO_LAST)}>
+              <Button to="/contact" variant="inverse">
+                Book a Free Consultation
+              </Button>
+            </motion.div>
           </div>
         ) : (
           /*
@@ -227,6 +341,7 @@ function SplashHero() {
           */
           <motion.div style={{ scale, x, y }} className="absolute inset-0">
             <video
+              ref={videoRef}
               src="/splashvideo.mp4"
               poster="/splash-poster.jpg"
               autoPlay
@@ -256,58 +371,94 @@ function SplashHero() {
                   className="bg-paper"
                 />
 
+                {/* The pointer's trail, on the board's face and nowhere else.
+                    Pasted to the RESTING rectangle like the paper panel, so the
+                    group's transform carries it and it needs no geometry of its
+                    own. */}
                 <div
+                  className="pointer-events-none absolute"
                   style={{
-                    position: "absolute",
                     left: metrics.rect.left,
                     top: metrics.rect.top,
+                    width: metrics.rect.width,
+                    height: metrics.rect.height,
+                  }}
+                >
+                  <PixelTrail
+                    videoRef={videoRef}
+                    targetRef={stageRef}
+                    billboard={BILLBOARD}
+                    width={Math.round(metrics.rect.width)}
+                    height={Math.round(metrics.rect.height)}
+                  />
+                </div>
+
+                <motion.div
+                  style={{
+                    position: "absolute",
+                    left: artLeft,
+                    top: artTop,
                     width: metrics.rect.width,
                     height: metrics.rect.height,
                     mixBlendMode: "multiply",
                   }}
                   className="flex flex-col items-center justify-center px-[4%] text-center text-ink"
                 >
-                  <LogoMark
-                    className="text-brand"
-                    style={{
-                      width: metrics.type * 1.15,
-                      height: metrics.type * 1.15,
-                    }}
-                  />
-                  <h1
+                  <motion.div {...rise(0)}>
+                    <LogoMark
+                      interactive
+                      demoDelay={INTRO_DONE}
+                      className="text-brand"
+                      style={{
+                        width: metrics.type * 1.15,
+                        height: metrics.type * 1.15,
+                      }}
+                    />
+                  </motion.div>
+                  <motion.h1
                     className="font-display tracking-display"
                     style={{
                       marginTop: metrics.type * 0.35,
                       fontSize: metrics.type,
                       lineHeight: 1,
                     }}
+                    {...rise(1)}
                   >
                     {site.name}
-                  </h1>
-                  <p
+                  </motion.h1>
+                  <motion.p
                     className="font-light leading-snug"
                     style={{
                       marginTop: metrics.type * 0.4,
-                      maxWidth: metrics.readable,
-                      fontSize: metrics.type * 0.33,
+                      fontSize: metrics.motto,
                       fontFamily:
                         "'Montserrat', 'Manrope', system-ui, sans-serif",
                     }}
+                    {...rise(2)}
                   >
-                    {site.motto}
-                  </p>
-                  <p
-                    className="font-mono uppercase text-ink-faint"
-                    style={{
-                      marginTop: metrics.type * 0.35,
-                      maxWidth: metrics.readable,
-                      fontSize: metrics.type * 0.13,
-                      letterSpacing: "0.18em",
-                    }}
+                    {mottoLines.map((line) => (
+                      <span key={line} className="block whitespace-nowrap">
+                        {line}
+                      </span>
+                    ))}
+                  </motion.p>
+                  <motion.div
+                    style={{ marginTop: metrics.type * 0.45 }}
+                    {...rise(INTRO_LAST)}
                   >
-                    {site.positioning}
-                  </p>
-                </div>
+                    <Button
+                      to="/contact"
+                      variant="inverse"
+                      style={{
+                        fontSize: metrics.button,
+                        paddingInline: metrics.button * 1.7,
+                        paddingBlock: metrics.button * 0.9,
+                      }}
+                    >
+                      Book a Free Consultation
+                    </Button>
+                  </motion.div>
+                </motion.div>
               </>
             )}
           </motion.div>

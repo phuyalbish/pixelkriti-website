@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import {
@@ -6,10 +7,13 @@ import {
   FiArrowLeft,
   FiAward,
   FiCheck,
+  FiCheckCircle,
   FiChevronDown,
+  FiClock,
   FiChevronRight,
   FiFileText,
   FiInbox,
+  FiList,
   FiLock,
   FiLogOut,
   FiPhoneCall,
@@ -76,10 +80,16 @@ const iconButton =
  */
 const isReviewed = (item) => Boolean(item.reviewed);
 
+/* All first: it is the default, and the one that always has everything in it.
+   "Pending" rather than "Un Reviewed" - it names the state of the lead, not
+   the absence of an action, and it is the word for a thing still owed.
+
+   The icons are shared with the toggle in the detail view, so the mark for
+   "reviewed" is the same glyph wherever the idea appears. */
 const VIEWS = [
-  { id: "unreviewed", label: "Un Reviewed", match: (item) => !isReviewed(item) },
-  { id: "all", label: "All", match: () => true },
-  { id: "reviewed", label: "Reviewed", match: isReviewed },
+  { id: "all", label: "All", icon: FiList, match: () => true },
+  { id: "pending", label: "Pending", icon: FiClock, match: (item) => !isReviewed(item) },
+  { id: "reviewed", label: "Reviewed", icon: FiCheckCircle, match: isReviewed },
 ];
 
 /**
@@ -238,23 +248,64 @@ function LoginForm({ onSuccess }) {
  * hand too, so: Enter/Space/ArrowDown opens, arrows move, Enter picks, Escape
  * closes and returns focus, click-away closes.
  */
+const MENU_WIDTH = 176;
+const MENU_ROW = 34;
+
 function StatusMenu({ item, statuses, disabled, onChange }) {
   const [open, setOpen] = useState(false);
   const [active, setActive] = useState(() => statuses.indexOf(item.status));
+  const [coords, setCoords] = useState(null);
   const root = useRef(null);
   const button = useRef(null);
+  const menu = useRef(null);
 
   const meta = statusMeta(item.status);
   const Icon = meta.icon;
 
+  /*
+   * Position the menu against the viewport, then render it into <body>.
+   *
+   * An absolutely-positioned menu is clipped by any ancestor with an overflow
+   * of its own, and cannot escape one - which is how the last row's dropdown
+   * ended up sliced off inside the table. A portal takes it out of that
+   * subtree entirely, so no container above it can ever crop it again.
+   *
+   * Flips above the button when there is not room below, so the bottom row of
+   * a long list opens upward rather than off-screen.
+   */
+  const place = useCallback(() => {
+    const rect = button.current?.getBoundingClientRect();
+    if (!rect) return;
+    const height = statuses.length * MENU_ROW + 8;
+    const room = window.innerHeight - rect.bottom;
+    const flip = room < height + 12 && rect.top > height;
+    setCoords({
+      /* Right-aligned to the button, clamped so it cannot leave the viewport. */
+      left: Math.max(8, Math.min(rect.right - MENU_WIDTH, window.innerWidth - MENU_WIDTH - 8)),
+      top: flip ? rect.top - height - 6 : rect.bottom + 6,
+    });
+  }, [statuses.length]);
+
   useEffect(() => {
     if (!open) return undefined;
+    place();
+
     const onDown = (event) => {
-      if (!root.current?.contains(event.target)) setOpen(false);
+      /* Both subtrees: the menu is no longer inside `root`. */
+      if (root.current?.contains(event.target) || menu.current?.contains(event.target)) return;
+      setOpen(false);
     };
+    /* Fixed coordinates go stale the moment anything scrolls. `true` catches
+       scrolls on any ancestor, not just the window. */
     document.addEventListener("mousedown", onDown);
-    return () => document.removeEventListener("mousedown", onDown);
-  }, [open]);
+    window.addEventListener("scroll", place, true);
+    window.addEventListener("resize", place);
+    return () => {
+      document.removeEventListener("mousedown", onDown);
+      window.removeEventListener("scroll", place, true);
+      window.removeEventListener("resize", place);
+    };
+  }, [open, place]);
 
   const pick = (status) => {
     setOpen(false);
@@ -304,48 +355,56 @@ function StatusMenu({ item, statuses, disabled, onChange }) {
         className={`inline-flex w-full items-center gap-2 rounded-full py-1.5 pl-3 pr-2.5 font-mono text-[11px] font-medium uppercase tracking-[0.12em] transition-opacity focus:outline-none focus:ring-2 focus:ring-ink/40 disabled:opacity-50 ${meta.fill}`}
       >
         <Icon aria-hidden="true" size={12} className="shrink-0" />
-        <span className="flex-1 text-left">{item.status}</span>
+        {/* Label drops on a phone: the name is what you scan for, and a 144px
+            pill was crushing it to "Ami...". The icon carries the status, and
+            the button's aria-label spells it out for anyone who cannot see it. */}
+        <span className="hidden flex-1 text-left sm:block">{item.status}</span>
         <FiChevronDown aria-hidden="true" size={12} className="shrink-0 opacity-60" />
       </button>
 
-      <AnimatePresence>
-        {open && (
-          <motion.ul
-            role="listbox"
-            aria-label="Status"
-            initial={{ opacity: 0, y: -4 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -4 }}
-            transition={{ duration: 0.14 }}
-            onKeyDown={onKeyDown}
-            className="absolute right-0 z-30 mt-1.5 w-44 overflow-hidden rounded-xl border border-line-ink bg-cream-raised p-1 shadow-lg shadow-ink/10"
-          >
-            {statuses.map((status, index) => {
-              const option = statusMeta(status);
-              const OptionIcon = option.icon;
-              const selected = status === item.status;
-              return (
-                <li key={status}>
-                  <button
-                    type="button"
-                    role="option"
-                    aria-selected={selected}
-                    onMouseEnter={() => setActive(index)}
-                    onClick={() => pick(status)}
-                    className={`flex w-full items-center gap-2.5 rounded-lg px-2.5 py-2 text-left font-mono text-[11px] uppercase tracking-[0.12em] transition-colors ${
-                      index === active ? "bg-ink/[0.06]" : ""
-                    } ${selected ? "text-ink" : "text-ink-dim"}`}
-                  >
-                    <OptionIcon aria-hidden="true" size={12} className="shrink-0" />
-                    <span className="flex-1">{status}</span>
-                    {selected && <FiCheck aria-hidden="true" size={12} className="shrink-0" />}
-                  </button>
-                </li>
-              );
-            })}
-          </motion.ul>
-        )}
-      </AnimatePresence>
+      {createPortal(
+        <AnimatePresence>
+          {open && coords && (
+            <motion.ul
+              ref={menu}
+              role="listbox"
+              aria-label="Status"
+              initial={{ opacity: 0, y: -4 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -4 }}
+              transition={{ duration: 0.14 }}
+              onKeyDown={onKeyDown}
+              style={{ left: coords.left, top: coords.top, width: MENU_WIDTH }}
+              className="fixed z-50 overflow-hidden rounded-xl border border-line-ink bg-cream-raised p-1 shadow-lg shadow-ink/10"
+            >
+              {statuses.map((status, index) => {
+                const option = statusMeta(status);
+                const OptionIcon = option.icon;
+                const selected = status === item.status;
+                return (
+                  <li key={status}>
+                    <button
+                      type="button"
+                      role="option"
+                      aria-selected={selected}
+                      onMouseEnter={() => setActive(index)}
+                      onClick={() => pick(status)}
+                      className={`flex w-full items-center gap-2.5 rounded-lg px-2.5 py-2 text-left font-mono text-[11px] uppercase tracking-[0.12em] transition-colors ${
+                        index === active ? "bg-ink/[0.06]" : ""
+                      } ${selected ? "text-ink" : "text-ink-dim"}`}
+                    >
+                      <OptionIcon aria-hidden="true" size={12} className="shrink-0" />
+                      <span className="flex-1">{status}</span>
+                      {selected && <FiCheck aria-hidden="true" size={12} className="shrink-0" />}
+                    </button>
+                  </li>
+                );
+              })}
+            </motion.ul>
+          )}
+        </AnimatePresence>,
+        document.body,
+      )}
     </div>
   );
 }
@@ -357,14 +416,20 @@ function Row({ item, statuses, onPatch, onRequestDelete }) {
   return (
     <tr className="border-b border-line-ink transition-colors last:border-0 hover:bg-ink/[0.03]">
       <td className="py-3 pr-4">
+        {/*
+          flex + min-w-0 + truncate, and the table is table-fixed above.
+          All four are load-bearing: an auto-layout cell sizes to its widest
+          nowrap content, so `truncate` never fires and one long company name
+          drags the table clean off the side of its own card.
+        */}
         <Link
           to={`/dashboard/${item.id}`}
-          className="group inline-flex items-center gap-2 text-[15px] text-ink transition-colors hover:text-brand-deep"
+          className="group flex items-center gap-2 text-[15px] text-ink transition-colors hover:text-brand-deep"
         >
-          <span className="truncate font-medium">{item.name}</span>
-          {item.company && (
-            <span className="truncate text-ink-dim">· {item.company}</span>
-          )}
+          <span className="min-w-0 truncate">
+            <span className="font-medium">{item.name}</span>
+            {item.company && <span className="text-ink-dim"> · {item.company}</span>}
+          </span>
           <FiChevronRight
             aria-hidden="true"
             size={14}
@@ -391,14 +456,14 @@ function Row({ item, statuses, onPatch, onRequestDelete }) {
         )}
       </td>
 
-      <td className="w-20 whitespace-nowrap py-3 font-mono text-xs text-ink-muted">
+      <td className="hidden w-20 whitespace-nowrap py-3 font-mono text-xs text-ink-muted sm:table-cell">
         {/* Full stamp on hover; the row shows day and month only. */}
         <time dateTime={asDate(item.created_at).toISOString()} title={formatFull(item.created_at)}>
           {formatShort(item.created_at)}
         </time>
       </td>
 
-      <td className="w-40 py-3 pl-4">
+      <td className="w-16 py-3 pl-3 sm:w-36 sm:pl-4">
         <StatusMenu
           item={item}
           statuses={statuses}
@@ -435,6 +500,9 @@ function Row({ item, statuses, onPatch, onRequestDelete }) {
  */
 function ReviewedToggle({ item, busy, onToggle }) {
   const on = isReviewed(item);
+  /* The same glyphs the filter tabs use: whichever state this shows, the mark
+     matches the tab the enquiry will be filed under. */
+  const Icon = on ? FiCheckCircle : FiClock;
 
   return (
     <button
@@ -443,20 +511,13 @@ function ReviewedToggle({ item, busy, onToggle }) {
       aria-checked={on}
       disabled={busy}
       onClick={() => onToggle(!on)}
-      className={`inline-flex items-center gap-2.5 rounded-full border px-4 py-1.5 font-mono text-[11px] uppercase tracking-[0.12em] transition-colors disabled:opacity-50 ${
+      className={`inline-flex items-center gap-2 rounded-full border px-4 py-1.5 font-mono text-[11px] uppercase tracking-[0.12em] transition-colors disabled:opacity-50 ${
         on
           ? "border-brand-deep/40 bg-brand/12 text-brand-deep"
           : "border-line-ink text-ink-dim hover:border-ink hover:text-ink"
       }`}
     >
-      <span
-        aria-hidden="true"
-        className={`flex h-4 w-4 items-center justify-center rounded-full border transition-colors ${
-          on ? "border-brand-deep bg-brand-deep text-cream" : "border-ink-muted"
-        }`}
-      >
-        {on && <FiCheck size={10} strokeWidth={3} />}
-      </span>
+      <Icon aria-hidden="true" size={13} className="shrink-0" />
       {on ? "Reviewed" : "Mark reviewed"}
     </button>
   );
@@ -915,25 +976,28 @@ function DashboardPage() {
 
         <div className="mt-8 flex flex-wrap items-center justify-between gap-4 border-b border-line-ink pb-8">
           <div className="flex flex-wrap gap-2">
-            {VIEWS.map((entry) => (
-              <button
-                key={entry.id}
-                type="button"
-                onClick={() => setView(entry.id)}
-                aria-pressed={view === entry.id}
-                className={`rounded-full border px-5 py-2 font-mono text-xs uppercase tracking-[0.12em] transition-colors duration-300 ${
-                  view === entry.id
-                    ? "border-ink bg-ink text-cream"
-                    : "border-line-ink text-ink-dim hover:border-ink hover:text-ink"
-                }`}
-              >
-                {entry.label}
-                <span className={view === entry.id ? "text-cream/60" : "text-ink-muted"}>
-                  {" "}
-                  {counts[entry.id] ?? 0}
-                </span>
-              </button>
-            ))}
+            {VIEWS.map((entry) => {
+              const ViewIcon = entry.icon;
+              return (
+                <button
+                  key={entry.id}
+                  type="button"
+                  onClick={() => setView(entry.id)}
+                  aria-pressed={view === entry.id}
+                  className={`inline-flex items-center gap-2 rounded-full border px-4 py-2 font-mono text-xs uppercase tracking-[0.12em] transition-colors duration-300 ${
+                    view === entry.id
+                      ? "border-ink bg-ink text-cream"
+                      : "border-line-ink text-ink-dim hover:border-ink hover:text-ink"
+                  }`}
+                >
+                  <ViewIcon aria-hidden="true" size={13} className="shrink-0" />
+                  {entry.label}
+                  <span className={view === entry.id ? "text-cream/60" : "text-ink-muted"}>
+                    {counts[entry.id] ?? 0}
+                  </span>
+                </button>
+              );
+            })}
           </div>
 
           <div className="relative w-full sm:w-72">
@@ -990,10 +1054,17 @@ function DashboardPage() {
                 : "Nothing in this view."}
           </p>
         ) : (
-          /* overflow-x-auto so the table scrolls inside its own box on a phone
-             rather than pushing the page sideways. */
-          <div className="mt-8 overflow-x-auto rounded-2xl border border-line-ink bg-cream-raised px-5">
-            <table className="w-full min-w-[36rem] border-collapse text-left">
+          /*
+           * No overflow of its own, deliberately.
+           *
+           * An overflow container gets a second scrollbar inside the page, and
+           * - worse - becomes a clipping context that crops the status menu
+           * open on the last row. The menu is portalled out now, but the inner
+           * scrollbar was unwanted regardless: on a narrow screen the page
+           * scrolls, not the table.
+           */
+          <div className="mt-8 rounded-2xl border border-line-ink bg-cream-raised px-5">
+            <table className="w-full table-fixed border-collapse text-left">
               <thead>
                 <tr className="border-b border-line-ink">
                   <th scope="col" className={`${label} py-3 pr-4 font-normal`}>
@@ -1004,10 +1075,12 @@ function DashboardPage() {
                   <th scope="col" className="w-8">
                     <span className="sr-only">Notification status</span>
                   </th>
-                  <th scope="col" className={`${label} w-20 py-3 font-normal`}>
+                  {/* Dropped on a phone: the name is what you are looking for,
+                      and the date is in the detail. */}
+                  <th scope="col" className={`${label} hidden w-20 py-3 font-normal sm:table-cell`}>
                     Received
                   </th>
-                  <th scope="col" className={`${label} w-40 py-3 pl-4 font-normal`}>
+                  <th scope="col" className={`${label} w-16 py-3 pl-3 font-normal sm:w-36 sm:pl-4`}>
                     Status
                   </th>
                   <th scope="col" className="w-12">

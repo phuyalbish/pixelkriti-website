@@ -40,6 +40,15 @@ function AppRoutes() {
           </Suspense>
         }
       />
+      {/* Before :id, so "new" is never looked up as an enquiry id. */}
+      <Route
+        path="/dashboard/new"
+        element={
+          <Suspense fallback={null}>
+            <DashboardPage />
+          </Suspense>
+        }
+      />
       <Route
         path="/dashboard/:id"
         element={

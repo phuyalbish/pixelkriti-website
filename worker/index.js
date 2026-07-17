@@ -63,6 +63,12 @@ const MAX = { name: 120, email: 200, company: 160, service: 120, message: 5000, 
  */
 const STATUSES = ["New", "Contacted", "Quoted", "Deal", "Development", "Delivered", "Lost"];
 
+/* One list, used by every query that returns an enquiry. Separate lists drift:
+   a column gets added to the SELECT, forgotten in the PATCH's RETURNING, and
+   the row the dashboard puts back into state is quietly missing a field. */
+const ROW_COLUMNS = `id, name, email, company, service, message, created_at,
+                     notified, status, reviewed, notes, updated_at, updated_by, source`;
+
 /** Trim, cap, and reject the obviously-not-real. Storage is not validation. */
 function readEnquiry(payload) {
   const clean = (value, limit) =>
@@ -173,8 +179,7 @@ async function handleEnquiry(request, db, id, user) {
     const row = await db
       .prepare(
         `UPDATE enquiries SET ${sets.join(", ")} WHERE id = ?
-         RETURNING id, name, email, company, service, message, created_at,
-                   notified, status, reviewed, notes, updated_at, updated_by`,
+         RETURNING ${ROW_COLUMNS}`,
       )
       .bind(...binds)
       .first();
@@ -200,6 +205,68 @@ async function handleApi(request, env, ctx, url) {
   const perEnquiry = url.pathname.match(/^\/api\/enquiries\/(\d+)$/);
   if (perEnquiry) {
     return handleEnquiry(request, db, Number(perEnquiry[1]), await sessionUser(db, request));
+  }
+
+  /*
+   * Adding a lead by hand. Kept separate from the public intake below rather
+   * than branching inside it: the two look alike but differ in every way that
+   * matters - this one needs a session, sends no email (nobody asked us to
+   * confirm anything to them), is not rate-limited, and is recorded as
+   * `manual` so the dashboard does not flag the absent email as a failure.
+   */
+  if (route === "POST /api/enquiries/manual") {
+    const user = await sessionUser(db, request);
+    if (!user) return json({ error: "Unauthorised" }, { status: 401 });
+
+    const enquiry = readEnquiry(await request.json().catch(() => ({})));
+    if (!enquiry) return json({ error: "Name, a valid email and a message are required" }, { status: 400 });
+
+    const row = await db
+      .prepare(
+        `INSERT INTO enquiries (name, email, company, service, message, source,
+                                status, reviewed, updated_at, updated_by)
+         VALUES (?, ?, ?, ?, ?, 'manual', 'New', 1, datetime('now'), ?)
+         RETURNING ${ROW_COLUMNS}`,
+      )
+      /* reviewed = 1: you cannot type a lead in without having read it. */
+      .bind(
+        enquiry.name,
+        enquiry.email,
+        enquiry.company || null,
+        enquiry.service || null,
+        enquiry.message,
+        user.displayName,
+      )
+      .first();
+
+    return json({ enquiry: row });
+  }
+
+  /*
+   * Bulk delete. POST, not DELETE-with-a-body: a body on DELETE is legal but
+   * widely dropped by proxies, and a delete that silently loses its list of
+   * ids is worse than one that never shipped.
+   */
+  if (route === "POST /api/enquiries/bulk-delete") {
+    const user = await sessionUser(db, request);
+    if (!user) return json({ error: "Unauthorised" }, { status: 401 });
+
+    const body = await request.json().catch(() => ({}));
+    const ids = Array.isArray(body.ids)
+      ? body.ids.map(Number).filter((id) => Number.isInteger(id) && id > 0)
+      : [];
+
+    if (!ids.length) return json({ error: "No ids" }, { status: 400 });
+    /* Bounded so one request cannot ask D1 for a statement with 10,000
+       placeholders in it. The dashboard loads at most 500 rows anyway. */
+    if (ids.length > 500) return json({ error: "Too many" }, { status: 400 });
+
+    const { meta } = await db
+      .prepare(`DELETE FROM enquiries WHERE id IN (${ids.map(() => "?").join(",")})`)
+      .bind(...ids)
+      .run();
+
+    return json({ ok: true, deleted: meta.changes });
   }
 
   switch (route) {
@@ -291,9 +358,7 @@ async function handleApi(request, env, ctx, url) {
          abuse, not to be browsed. */
       const { results } = await db
         .prepare(
-          `SELECT id, name, email, company, service, message, created_at,
-                  notified, status, reviewed, notes, updated_at, updated_by
-           FROM enquiries ORDER BY created_at DESC LIMIT 500`,
+          `SELECT ${ROW_COLUMNS} FROM enquiries ORDER BY created_at DESC LIMIT 500`,
         )
         .all();
 

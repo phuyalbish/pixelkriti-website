@@ -27,6 +27,16 @@ CREATE TABLE IF NOT EXISTS enquiries (
   -- Kept only to investigate abuse. Not shown in the dashboard.
   source_ip   TEXT,
 
+  -- 'form' (a stranger filled the contact form) or 'manual' (someone on the
+  -- team typed it in from a call or an email).
+  --
+  -- This exists so `notified` can be read honestly. A manual enquiry sends no
+  -- confirmation - there is nothing to confirm and the person did not ask us
+  -- for one - so it sits at notified = 0 forever. Without knowing the source,
+  -- the dashboard would flag every hand-typed lead as "notification email
+  -- failed", which is not a failure; no email was ever due.
+  source      TEXT NOT NULL DEFAULT 'form',
+
   -- Where the lead is in the pipeline: New | Contacted | Quoted | Deal |
   -- Development | Delivered | Lost.
   --

@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import {
   FiAlertTriangle,
@@ -17,10 +17,13 @@ import {
   FiLock,
   FiLogOut,
   FiPhoneCall,
+  FiPrinter,
   FiSearch,
   FiTool,
   FiTrash2,
   FiTruck,
+  FiUpload,
+  FiUserPlus,
   FiX,
   FiXCircle,
 } from "react-icons/fi";
@@ -79,6 +82,10 @@ const iconButton =
  * of review - but only the toggle clears it again.
  */
 const isReviewed = (item) => Boolean(item.reviewed);
+
+/* A failed notification is only a failure if one was due. Manual entries were
+   typed in by us from a call or an email - nobody is waiting on a receipt. */
+const needsNotice = (item) => item.source !== "manual" && !item.notified;
 
 /* All first: it is the default, and the one that always has everything in it.
    "Pending" rather than "Un Reviewed" - it names the state of the lead, not
@@ -145,6 +152,56 @@ const formatShort = (value) =>
 
 const formatFull = (value) =>
   asDate(value).toLocaleString(undefined, { dateStyle: "medium", timeStyle: "short" });
+
+/* Everything, not just what the table shows: an export is for reading
+   elsewhere, so the columns the list omits for scanning are the whole point. */
+const CSV_COLUMNS = [
+  ["Name", (row) => row.name],
+  ["Email", (row) => row.email],
+  ["Company", (row) => row.company],
+  ["Service", (row) => row.service],
+  ["Status", (row) => row.status],
+  ["Reviewed", (row) => (row.reviewed ? "Yes" : "No")],
+  ["Received", (row) => formatFull(row.created_at)],
+  ["Source", (row) => (row.source === "manual" ? "Added by hand" : "Contact form")],
+  ["Last edited by", (row) => row.updated_by],
+  ["Message", (row) => row.message],
+  ["Notes", (row) => row.notes],
+];
+
+/**
+ * One CSV cell.
+ *
+ * The leading-quote guard is not paranoia. A cell beginning =, +, - or @ is
+ * executed as a formula when the file is opened in Excel or Sheets, and every
+ * enquiry here contains free text a stranger typed into a public form. Someone
+ * pasting `=HYPERLINK(...)` into the message box should produce a row that
+ * reads oddly, not one that runs when a colleague opens the export.
+ */
+const csvCell = (value) => {
+  const text = value == null ? "" : String(value);
+  const guarded = /^[=+\-@\t\r]/.test(text) ? `'${text}` : text;
+  return `"${guarded.replace(/"/g, '""')}"`;
+};
+
+const toCsv = (rows) =>
+  [
+    CSV_COLUMNS.map(([heading]) => csvCell(heading)).join(","),
+    ...rows.map((row) => CSV_COLUMNS.map(([, read]) => csvCell(read(row))).join(",")),
+  ].join("\r\n");
+
+const download = (text, filename, type) => {
+  const url = URL.createObjectURL(new Blob([text], { type }));
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = filename;
+  link.click();
+  /* Revoked, or the blob is held in memory for the life of the tab. */
+  URL.revokeObjectURL(url);
+};
+
+/* Dated, so two exports a week apart do not both land as "enquiries.csv". */
+const stamp = () => new Date().toISOString().slice(0, 10);
 
 function LoginForm({ onSuccess }) {
   const [username, setUsername] = useState("");
@@ -251,49 +308,46 @@ function LoginForm({ onSuccess }) {
 const MENU_WIDTH = 176;
 const MENU_ROW = 34;
 
-function StatusMenu({ item, statuses, disabled, onChange }) {
-  const [open, setOpen] = useState(false);
-  const [active, setActive] = useState(() => statuses.indexOf(item.status));
+/**
+ * Anchors a portalled menu to its trigger, in viewport coordinates.
+ *
+ * Every dropdown on this page has to be portalled into <body>, because both of
+ * them live inside a container that clips: the status menu sits in the table,
+ * and the export menu sits in the bulk bar, which needs `overflow-hidden` for
+ * its height animation. An absolutely-positioned child cannot escape either -
+ * it just gets sliced off. Portalling is the only fix, and it costs a manual
+ * position, which is what this returns.
+ *
+ * Shared rather than written twice: the first version of this lived in
+ * StatusMenu only, so ExportMenu shipped with exactly the bug StatusMenu had
+ * already fixed.
+ */
+function useAnchoredMenu({ open, onClose, triggerRef, menuRef, width, height }) {
   const [coords, setCoords] = useState(null);
-  const root = useRef(null);
-  const button = useRef(null);
-  const menu = useRef(null);
 
-  const meta = statusMeta(item.status);
-  const Icon = meta.icon;
-
-  /*
-   * Position the menu against the viewport, then render it into <body>.
-   *
-   * An absolutely-positioned menu is clipped by any ancestor with an overflow
-   * of its own, and cannot escape one - which is how the last row's dropdown
-   * ended up sliced off inside the table. A portal takes it out of that
-   * subtree entirely, so no container above it can ever crop it again.
-   *
-   * Flips above the button when there is not room below, so the bottom row of
-   * a long list opens upward rather than off-screen.
-   */
   const place = useCallback(() => {
-    const rect = button.current?.getBoundingClientRect();
+    const rect = triggerRef.current?.getBoundingClientRect();
     if (!rect) return;
-    const height = statuses.length * MENU_ROW + 8;
-    const room = window.innerHeight - rect.bottom;
-    const flip = room < height + 12 && rect.top > height;
+    /* Flip above when there is no room below, so a trigger near the bottom of
+       the window opens upward instead of off-screen. */
+    const flip = window.innerHeight - rect.bottom < height + 12 && rect.top > height;
     setCoords({
-      /* Right-aligned to the button, clamped so it cannot leave the viewport. */
-      left: Math.max(8, Math.min(rect.right - MENU_WIDTH, window.innerWidth - MENU_WIDTH - 8)),
+      /* Right-aligned to the trigger, clamped inside the viewport. */
+      left: Math.max(8, Math.min(rect.right - width, window.innerWidth - width - 8)),
       top: flip ? rect.top - height - 6 : rect.bottom + 6,
     });
-  }, [statuses.length]);
+  }, [triggerRef, width, height]);
 
   useEffect(() => {
     if (!open) return undefined;
     place();
 
     const onDown = (event) => {
-      /* Both subtrees: the menu is no longer inside `root`. */
-      if (root.current?.contains(event.target) || menu.current?.contains(event.target)) return;
-      setOpen(false);
+      /* Both subtrees: the menu is no longer a descendant of the trigger. */
+      if (triggerRef.current?.contains(event.target) || menuRef.current?.contains(event.target)) {
+        return;
+      }
+      onClose();
     };
     /* Fixed coordinates go stale the moment anything scrolls. `true` catches
        scrolls on any ancestor, not just the window. */
@@ -305,7 +359,30 @@ function StatusMenu({ item, statuses, disabled, onChange }) {
       window.removeEventListener("scroll", place, true);
       window.removeEventListener("resize", place);
     };
-  }, [open, place]);
+  }, [open, place, onClose, triggerRef, menuRef]);
+
+  return coords;
+}
+
+function StatusMenu({ item, statuses, disabled, onChange }) {
+  const [open, setOpen] = useState(false);
+  const [active, setActive] = useState(() => statuses.indexOf(item.status));
+  const root = useRef(null);
+  const button = useRef(null);
+  const menu = useRef(null);
+
+  const meta = statusMeta(item.status);
+  const Icon = meta.icon;
+
+  const close = useCallback(() => setOpen(false), []);
+  const coords = useAnchoredMenu({
+    open,
+    onClose: close,
+    triggerRef: root,
+    menuRef: menu,
+    width: MENU_WIDTH,
+    height: statuses.length * MENU_ROW + 8,
+  });
 
   const pick = (status) => {
     setOpen(false);
@@ -410,11 +487,18 @@ function StatusMenu({ item, statuses, disabled, onChange }) {
 }
 
 /** One table row per enquiry. The name opens it; nothing else lives out here. */
-function Row({ item, statuses, onPatch, onRequestDelete }) {
+function Row({ item, statuses, onPatch, onRequestDelete, checked, onCheck }) {
   const [busy, setBusy] = useState(false);
 
   return (
-    <tr className="border-b border-line-ink transition-colors last:border-0 hover:bg-ink/[0.03]">
+    <tr
+      className={`border-b border-line-ink transition-colors last:border-0 ${
+        checked ? "bg-ink/[0.04]" : "hover:bg-ink/[0.03]"
+      }`}
+    >
+      <td className="w-8 py-3" data-print-hide>
+        <Tick checked={checked} onChange={onCheck} label={`Select enquiry from ${item.name}`} />
+      </td>
       <td className="py-3 pr-4">
         {/*
           flex + min-w-0 + truncate, and the table is table-fixed above.
@@ -445,7 +529,10 @@ function Row({ item, statuses, onPatch, onRequestDelete }) {
         the glyph cannot; an unexplained "!" is decoration.
       */}
       <td className="w-8 py-3">
-        {!item.notified && (
+        {/* Only for enquiries that were actually owed an email. A hand-typed
+            one sends no confirmation and never will, so flagging it as a
+            failed notification would report a problem that does not exist. */}
+        {needsNotice(item) && (
           <span
             title="Notification email failed to send"
             className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-amber-600/20 text-amber-800"
@@ -479,10 +566,10 @@ function Row({ item, statuses, onPatch, onRequestDelete }) {
         />
       </td>
 
-      <td className="w-12 py-3 pl-3 text-right">
+      <td className="w-12 py-3 pl-3 text-right" data-print-hide>
         <button
           type="button"
-          onClick={() => onRequestDelete(item)}
+          onClick={() => onRequestDelete([item])}
           aria-label={`Delete enquiry from ${item.name}`}
           className={iconButton}
         >
@@ -605,7 +692,7 @@ function Detail({ item, statuses, onPatch, onRequestDelete, onBack }) {
             />
             <button
               type="button"
-              onClick={() => onRequestDelete(item)}
+              onClick={() => onRequestDelete([item])}
               aria-label={`Delete enquiry from ${item.name}`}
               className={iconButton}
             >
@@ -621,7 +708,7 @@ function Detail({ item, statuses, onPatch, onRequestDelete, onBack }) {
               · Last edited by {item.updated_by}, {formatFull(item.updated_at)}
             </span>
           )}
-          {!item.notified && (
+          {needsNotice(item) && (
             <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-600/15 px-2.5 py-0.5 text-amber-800">
               <FiAlertTriangle aria-hidden="true" size={11} />
               Notification email failed
@@ -728,18 +815,20 @@ function Detail({ item, statuses, onPatch, onRequestDelete, onBack }) {
  * alertdialog, not dialog: this interrupts to ask something consequential, and
  * the deletion is permanent - there is no undo and no archive behind it.
  */
-function DeleteConfirm({ item, busy, error, onCancel, onConfirm }) {
+function DeleteConfirm({ targets, busy, error, onCancel, onConfirm }) {
+  const many = targets && targets.length > 1;
+
   /* Escape cancels - the reflex when a confirmation you did not mean appears. */
   useEffect(() => {
-    if (!item) return undefined;
+    if (!targets) return undefined;
     const onKey = (event) => event.key === "Escape" && !busy && onCancel();
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [item, busy, onCancel]);
+  }, [targets, busy, onCancel]);
 
   return (
     <AnimatePresence>
-      {item && (
+      {targets && (
         <motion.div
           role="alertdialog"
           aria-modal="false"
@@ -751,14 +840,28 @@ function DeleteConfirm({ item, busy, error, onCancel, onConfirm }) {
           className="fixed bottom-6 right-6 z-50 w-[min(22rem,calc(100vw-3rem))] rounded-2xl border border-red-700/25 bg-cream-raised p-5 shadow-xl shadow-ink/10"
         >
           <p id="delete-title" className="text-sm font-medium text-ink">
-            Delete this enquiry?
+            {many ? `Delete ${targets.length} enquiries?` : "Delete this enquiry?"}
           </p>
-          <p className="mt-2 text-[13px] leading-relaxed text-ink-dim">
-            <span className="text-ink">{item.name}</span>
-            {item.company && ` · ${item.company}`}
-            <br />
-            This cannot be undone.
-          </p>
+          <div className="mt-2 text-[13px] leading-relaxed text-ink-dim">
+            {/*
+              Names, not just a count. "Delete 12 enquiries?" is a number you
+              agree to; a list is something you can actually check before
+              agreeing. Capped at four so the panel cannot grow past the corner
+              it lives in.
+            */}
+            <ul className="max-h-24 space-y-0.5 overflow-hidden">
+              {targets.slice(0, 4).map((entry) => (
+                <li key={entry.id} className="truncate">
+                  <span className="text-ink">{entry.name}</span>
+                  {entry.company && ` · ${entry.company}`}
+                </li>
+              ))}
+            </ul>
+            {targets.length > 4 && (
+              <p className="mt-1">and {targets.length - 4} more</p>
+            )}
+            <p className="mt-2">This cannot be undone.</p>
+          </div>
 
           {error && (
             <p role="alert" className="mt-3 text-[13px] text-red-700">
@@ -781,7 +884,7 @@ function DeleteConfirm({ item, busy, error, onCancel, onConfirm }) {
               onClick={onConfirm}
               className="flex-1 rounded-full bg-red-700 px-4 py-2 text-[13px] font-medium text-white transition-colors hover:bg-red-800 disabled:opacity-50"
             >
-              {busy ? "Deleting…" : "Delete"}
+              {busy ? "Deleting…" : many ? `Delete ${targets.length}` : "Delete"}
             </button>
           </div>
         </motion.div>
@@ -790,8 +893,248 @@ function DeleteConfirm({ item, busy, error, onCancel, onConfirm }) {
   );
 }
 
+/** A tick that matches the rest of the page rather than the OS. */
+function Tick({ checked, indeterminate, onChange, label }) {
+  const box = useRef(null);
+
+  /* `indeterminate` has no HTML attribute - it is a DOM property only, so it
+     has to be written after render or the half-state never shows. */
+  useEffect(() => {
+    if (box.current) box.current.indeterminate = Boolean(indeterminate && !checked);
+  }, [indeterminate, checked]);
+
+  return (
+    <span className="relative flex h-4 w-4 items-center justify-center">
+      <input
+        ref={box}
+        type="checkbox"
+        checked={checked}
+        onChange={(event) => onChange(event.target.checked)}
+        aria-label={label}
+        className="peer h-4 w-4 cursor-pointer appearance-none rounded border border-ink-muted bg-cream-raised transition-colors checked:border-ink checked:bg-ink indeterminate:border-ink indeterminate:bg-ink focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink"
+      />
+      <FiCheck
+        aria-hidden="true"
+        size={10}
+        strokeWidth={3}
+        className="pointer-events-none absolute hidden text-cream peer-checked:block"
+      />
+      <span
+        aria-hidden="true"
+        className="pointer-events-none absolute hidden h-0.5 w-2 rounded bg-cream peer-indeterminate:block"
+      />
+    </span>
+  );
+}
+
+/** Add a lead that arrived by phone or email rather than through the form. */
+function NewEnquiry({ onCreate, onBack }) {
+  const [draft, setDraft] = useState({
+    name: "",
+    email: "",
+    company: "",
+    service: "",
+    message: "",
+  });
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState(null);
+
+  const set = (key) => (event) =>
+    setDraft((current) => ({ ...current, [key]: event.target.value }));
+
+  const submit = async (event) => {
+    event.preventDefault();
+    setBusy(true);
+    setError(null);
+    try {
+      await onCreate(draft);
+    } catch (problem) {
+      setError(problem.message);
+      setBusy(false);
+    }
+  };
+
+  return (
+    <section className="pb-32 pt-20 md:pt-28">
+      <Container>
+        <button
+          type="button"
+          onClick={onBack}
+          className="group inline-flex items-center gap-2 font-mono text-xs uppercase tracking-[0.12em] text-ink-dim transition-colors hover:text-ink"
+        >
+          <FiArrowLeft
+            aria-hidden="true"
+            className="transition-transform duration-300 group-hover:-translate-x-0.5"
+          />
+          All enquiries
+        </button>
+
+        <h1 className="mt-8 font-display text-headline tracking-display text-ink">Add an enquiry</h1>
+        <p className="mt-3 max-w-prose text-sm leading-relaxed text-ink-dim">
+          For a lead that came by phone, email or in person. Nothing is sent to
+          them - this only records what you already know.
+        </p>
+
+        <form onSubmit={submit} className="mt-10 border-t border-line-ink pt-10">
+          <div className="grid gap-x-8 gap-y-6 sm:grid-cols-2">
+            {EDITABLE.map((entry) => (
+              <div key={entry.key}>
+                <label htmlFor={`new-${entry.key}`} className={label}>
+                  {entry.label}
+                  {!entry.required && <span className="normal-case"> (optional)</span>}
+                </label>
+                <input
+                  id={`new-${entry.key}`}
+                  type={entry.type}
+                  required={entry.required}
+                  value={draft[entry.key]}
+                  onChange={set(entry.key)}
+                  className={`${field} mt-2`}
+                />
+              </div>
+            ))}
+          </div>
+
+          <div className="mt-8">
+            <label htmlFor="new-message" className={label}>
+              What is not working
+            </label>
+            <textarea
+              id="new-message"
+              required
+              rows={5}
+              value={draft.message}
+              onChange={set("message")}
+              placeholder="What they told you, in their words where you have them."
+              className={`${field} mt-2 resize-y leading-relaxed`}
+            />
+          </div>
+
+          {error && (
+            <p role="alert" className="mt-6 text-sm text-red-700">
+              {error}
+            </p>
+          )}
+
+          <div className="mt-10 flex flex-wrap items-center gap-4">
+            <button
+              type="submit"
+              disabled={busy}
+              className="rounded-full bg-ink px-6 py-3 text-sm font-medium text-cream transition-colors duration-300 hover:bg-ink-overlay disabled:opacity-40"
+            >
+              {busy ? "Adding…" : "Add enquiry"}
+            </button>
+            <button
+              type="button"
+              onClick={onBack}
+              className="font-mono text-xs uppercase tracking-[0.12em] text-ink-dim transition-colors hover:text-ink"
+            >
+              Cancel
+            </button>
+          </div>
+        </form>
+      </Container>
+    </section>
+  );
+}
+
+const EXPORT_MENU_WIDTH = 224;
+const EXPORT_MENU_HEIGHT = 104;
+
+/** CSV downloads; PDF goes through the browser's print dialog - see index.css. */
+function ExportMenu({ rows, disabled }) {
+  const [open, setOpen] = useState(false);
+  const root = useRef(null);
+  const menu = useRef(null);
+
+  const close = useCallback(() => setOpen(false), []);
+  /* Portalled for the same reason the status menu is: this renders inside the
+     bulk bar, which is overflow-hidden so it can animate its height, and an
+     absolutely-positioned menu in there gets sliced in half. */
+  const coords = useAnchoredMenu({
+    open,
+    onClose: close,
+    triggerRef: root,
+    menuRef: menu,
+    width: EXPORT_MENU_WIDTH,
+    height: EXPORT_MENU_HEIGHT,
+  });
+
+  return (
+    <div ref={root} className="relative">
+      <button
+        type="button"
+        disabled={disabled}
+        aria-haspopup="menu"
+        aria-expanded={open}
+        onClick={() => setOpen((was) => !was)}
+        className="inline-flex items-center gap-2 rounded-full border border-line-ink px-4 py-2 font-mono text-xs uppercase tracking-[0.12em] text-ink-dim transition-colors hover:border-ink hover:text-ink disabled:opacity-40"
+      >
+        <FiUpload aria-hidden="true" size={13} />
+        Export
+        <FiChevronDown aria-hidden="true" size={12} className="opacity-60" />
+      </button>
+
+      {createPortal(
+        <AnimatePresence>
+          {open && coords && (
+            <motion.div
+              ref={menu}
+              role="menu"
+              initial={{ opacity: 0, y: -4 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -4 }}
+              transition={{ duration: 0.14 }}
+              style={{ left: coords.left, top: coords.top, width: EXPORT_MENU_WIDTH }}
+              className="fixed z-50 overflow-hidden rounded-xl border border-line-ink bg-cream-raised p-1 shadow-lg shadow-ink/10"
+            >
+            <button
+              type="button"
+              role="menuitem"
+              onClick={() => {
+                download(toCsv(rows), `pixelkriti-enquiries-${stamp()}.csv`, "text/csv;charset=utf-8");
+                setOpen(false);
+              }}
+              className="flex w-full items-center gap-2.5 rounded-lg px-2.5 py-2 text-left text-[13px] text-ink transition-colors hover:bg-ink/[0.06]"
+            >
+              <FiFileText aria-hidden="true" size={13} className="shrink-0 text-ink-dim" />
+              <span>
+                CSV
+                <span className="block text-[11px] text-ink-dim">
+                  {rows.length} row{rows.length === 1 ? "" : "s"}, every field
+                </span>
+              </span>
+            </button>
+            <button
+              type="button"
+              role="menuitem"
+              onClick={() => {
+                setOpen(false);
+                /* The dialog blocks the thread, so let the menu close first. */
+                setTimeout(() => window.print(), 50);
+              }}
+              className="flex w-full items-center gap-2.5 rounded-lg px-2.5 py-2 text-left text-[13px] text-ink transition-colors hover:bg-ink/[0.06]"
+            >
+              <FiPrinter aria-hidden="true" size={13} className="shrink-0 text-ink-dim" />
+              <span>
+                PDF
+                <span className="block text-[11px] text-ink-dim">
+                  Choose “Save as PDF” when printing
+                </span>
+              </span>
+            </button>
+            </motion.div>
+          )}
+        </AnimatePresence>,
+        document.body,
+      )}
+    </div>
+  );
+}
+
 function DashboardPage() {
   const { id } = useParams();
+  const location = useLocation();
   const navigate = useNavigate();
   usePageMeta("Dashboard", null, { noindex: true });
 
@@ -804,6 +1147,9 @@ function DashboardPage() {
   const [pendingDelete, setPendingDelete] = useState(null);
   const [deleting, setDeleting] = useState(false);
   const [deleteError, setDeleteError] = useState(null);
+  /* Ids, not rows: a row object goes stale the moment its status is patched,
+     and a stale selection would delete against an old copy of the list. */
+  const [selected, setSelected] = useState(() => new Set());
 
   /*
    * Flip the whole document to the cream surface while this page is mounted.
@@ -863,13 +1209,25 @@ function DashboardPage() {
   const confirmDelete = async () => {
     setDeleting(true);
     setDeleteError(null);
+    const ids = pendingDelete.map((entry) => entry.id);
     try {
-      const response = await fetch(`/api/enquiries/${pendingDelete.id}`, { method: "DELETE" });
+      /* One request for many, so a half-finished bulk delete cannot leave the
+         list disagreeing with the database. */
+      const response =
+        ids.length === 1
+          ? await fetch(`/api/enquiries/${ids[0]}`, { method: "DELETE" })
+          : await fetch("/api/enquiries/bulk-delete", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ ids }),
+            });
       if (!response.ok) {
         const data = await response.json().catch(() => ({}));
         throw new Error(data.error ?? "Could not delete");
       }
-      setEnquiries((current) => current.filter((item) => item.id !== pendingDelete.id));
+      const gone = new Set(ids);
+      setEnquiries((current) => current.filter((item) => !gone.has(item.id)));
+      setSelected((current) => new Set([...current].filter((entry) => !gone.has(entry))));
       setPendingDelete(null);
       /* Deleting the enquiry you are reading leaves nothing to read. */
       if (id) navigate("/dashboard");
@@ -878,6 +1236,18 @@ function DashboardPage() {
     } finally {
       setDeleting(false);
     }
+  };
+
+  const create = async (draft) => {
+    const response = await fetch("/api/enquiries/manual", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(draft),
+    });
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.error ?? "Could not add");
+    setEnquiries((current) => [data.enquiry, ...(current ?? [])]);
+    navigate(`/dashboard/${data.enquiry.id}`);
   };
 
   const logout = async () => {
@@ -904,12 +1274,36 @@ function DashboardPage() {
     [found, view],
   );
 
+  /* Only what is on screen can be ticked, so a selection made under one filter
+     cannot quietly delete rows the current view is hiding. */
+  const chosen = useMemo(() => visible.filter((item) => selected.has(item.id)), [visible, selected]);
+  const allShown = visible.length > 0 && chosen.length === visible.length;
+
+  const toggleOne = (itemId, on) =>
+    setSelected((current) => {
+      const next = new Set(current);
+      if (on) next.add(itemId);
+      else next.delete(itemId);
+      return next;
+    });
+
+  const toggleAll = (on) =>
+    setSelected(() => (on ? new Set(visible.map((item) => item.id)) : new Set()));
+
   if (checking) return null;
   if (!user) return <LoginForm onSuccess={setUser} />;
 
+  if (location.pathname === "/dashboard/new") {
+    return (
+      <>
+        <NewEnquiry onCreate={create} onBack={() => navigate("/dashboard")} />
+      </>
+    );
+  }
+
   const deleteDialog = (
     <DeleteConfirm
-      item={pendingDelete}
+      targets={pendingDelete}
       busy={deleting}
       error={deleteError}
       onCancel={() => {
@@ -961,12 +1355,15 @@ function DashboardPage() {
       <Container>
         <div className="flex flex-wrap items-baseline justify-between gap-4">
           <div>
-            <p className={label}>Signed in as {user}</p>
+            <p className={label} data-print-hide>
+              Signed in as {user}
+            </p>
             <h1 className="mt-3 font-display text-display tracking-display text-ink">Enquiries</h1>
           </div>
           <button
             type="button"
             onClick={logout}
+            data-print-hide
             className="inline-flex items-center gap-2 rounded-full border border-line-ink px-5 py-2 font-mono text-xs uppercase tracking-[0.12em] text-ink-dim transition-colors hover:border-ink hover:text-ink"
           >
             <FiLogOut aria-hidden="true" size={14} />
@@ -974,7 +1371,10 @@ function DashboardPage() {
           </button>
         </div>
 
-        <div className="mt-8 flex flex-wrap items-center justify-between gap-4 border-b border-line-ink pb-8">
+        <div
+          data-print-hide
+          className="mt-8 flex flex-wrap items-center justify-between gap-4 border-b border-line-ink pb-8"
+        >
           <div className="flex flex-wrap gap-2">
             {VIEWS.map((entry) => {
               const ViewIcon = entry.icon;
@@ -1000,7 +1400,8 @@ function DashboardPage() {
             })}
           </div>
 
-          <div className="relative w-full sm:w-72">
+          <div className="flex w-full items-center gap-3 sm:w-auto">
+            <div className="relative flex-1 sm:w-64 sm:flex-none">
             <label htmlFor="search" className="sr-only">
               Search enquiries by name, company or email
             </label>
@@ -1037,7 +1438,74 @@ function DashboardPage() {
                 <FiX aria-hidden="true" size={14} />
               </button>
             )}
+            </div>
+
+            {/* Exports what the filters and the search have left on screen -
+                what you are looking at is what you get, rather than a silent
+                dump of all 500 rows. */}
+            <ExportMenu rows={visible} disabled={visible.length === 0} />
+
+            <button
+              type="button"
+              onClick={() => navigate("/dashboard/new")}
+              className="inline-flex shrink-0 items-center gap-2 rounded-full bg-ink px-4 py-2 font-mono text-xs uppercase tracking-[0.12em] text-cream transition-colors hover:bg-ink-overlay"
+            >
+              <FiUserPlus aria-hidden="true" size={13} />
+              Add
+            </button>
           </div>
+        </div>
+
+        {/*
+          Only while something is ticked. A permanently visible bar of disabled
+          buttons is furniture; this appears because there is now something to
+          do with it, and says exactly how many rows it means.
+        */}
+        <AnimatePresence>
+          {chosen.length > 0 && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              exit={{ opacity: 0, height: 0 }}
+              transition={{ duration: 0.18 }}
+              data-print-hide
+              className="overflow-hidden"
+            >
+              <div className="mt-6 flex flex-wrap items-center gap-3 rounded-xl border border-line-ink bg-ink/[0.04] px-4 py-3">
+                <p aria-live="polite" className="text-[13px] text-ink">
+                  {chosen.length} selected
+                </p>
+                <button
+                  type="button"
+                  onClick={() => setSelected(new Set())}
+                  className="font-mono text-[11px] uppercase tracking-[0.12em] text-ink-dim transition-colors hover:text-ink"
+                >
+                  Clear
+                </button>
+                <div className="ml-auto flex items-center gap-2">
+                  <ExportMenu rows={chosen} />
+                  <button
+                    type="button"
+                    onClick={() => setPendingDelete(chosen)}
+                    className="inline-flex items-center gap-2 rounded-full border border-red-700/40 px-4 py-1.5 font-mono text-[11px] uppercase tracking-[0.12em] text-red-700 transition-colors hover:bg-red-700/10"
+                  >
+                    <FiTrash2 aria-hidden="true" size={12} />
+                    Delete {chosen.length}
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Print-only: the screen gets this context from the filter pills and
+            the search box, neither of which survive onto paper. */}
+        <div data-print-only className="hidden">
+          <p className="mt-6 text-sm">
+            Pixel Kriti - Enquiries ({VIEWS.find((entry) => entry.id === view).label}
+            {query ? `, matching "${query}"` : ""}) - {visible.length} row
+            {visible.length === 1 ? "" : "s"} - printed {formatFull(new Date().toISOString().slice(0, 19).replace("T", " "))}
+          </p>
         </div>
 
         {enquiries === null ? (
@@ -1067,6 +1535,14 @@ function DashboardPage() {
             <table className="w-full table-fixed border-collapse text-left">
               <thead>
                 <tr className="border-b border-line-ink">
+                  <th scope="col" className="w-8 py-3" data-print-hide>
+                    <Tick
+                      checked={allShown}
+                      indeterminate={chosen.length > 0}
+                      onChange={toggleAll}
+                      label="Select every enquiry shown"
+                    />
+                  </th>
                   <th scope="col" className={`${label} py-3 pr-4 font-normal`}>
                     Name
                   </th>
@@ -1083,7 +1559,7 @@ function DashboardPage() {
                   <th scope="col" className={`${label} w-16 py-3 pl-3 font-normal sm:w-36 sm:pl-4`}>
                     Status
                   </th>
-                  <th scope="col" className="w-12">
+                  <th scope="col" className="w-12" data-print-hide>
                     <span className="sr-only">Delete</span>
                   </th>
                 </tr>
@@ -1096,6 +1572,8 @@ function DashboardPage() {
                     statuses={statuses}
                     onPatch={patch}
                     onRequestDelete={setPendingDelete}
+                    checked={selected.has(item.id)}
+                    onCheck={(on) => toggleOne(item.id, on)}
                   />
                 ))}
               </tbody>

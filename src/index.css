@@ -143,6 +143,57 @@ body[data-surface="cream"] ::-webkit-scrollbar-thumb:hover {
   background: var(--line-ink);
 }
 
+/*
+ * The dashboard's PDF export.
+ *
+ * This is the print stylesheet, and "Save as PDF" in the browser's print
+ * dialog is the download. No PDF library ships to do this - jsPDF and friends
+ * are ~150KB to redo, worse, what the browser already does: pagination,
+ * repeated table headers, real text (selectable and searchable, not an image),
+ * and the reader's own paper size. The trade is one extra click in the print
+ * dialog. If that ever stops being worth it, the library goes in the lazy
+ * dashboard chunk and no public visitor pays for it.
+ *
+ * Anything marked data-print-hide is chrome: buttons, filters, the search box.
+ */
+@media print {
+  body[data-surface="cream"] {
+    background: #fff;
+    color: #000;
+  }
+
+  body[data-surface="cream"] [data-print-hide] {
+    display: none !important;
+  }
+
+  /* The print header carries the context the screen gets from the filters:
+     which view, what search, printed when. On screen it is invisible. */
+  body[data-surface="cream"] [data-print-only] {
+    display: block !important;
+  }
+
+  body[data-surface="cream"] table {
+    width: 100%;
+    font-size: 10pt;
+  }
+
+  /* Repeat the column headings on every page - a second page of names with no
+     idea which column is which is not a document. */
+  body[data-surface="cream"] thead {
+    display: table-header-group;
+  }
+
+  body[data-surface="cream"] tbody tr {
+    /* Never split a row across a page break. */
+    break-inside: avoid;
+  }
+
+  body[data-surface="cream"] a {
+    text-decoration: none;
+    color: #000;
+  }
+}
+
 @layer utilities {
   .text-balance {
     text-wrap: balance;

@@ -57,9 +57,9 @@ const MAX = { name: 120, email: 200, company: 160, service: 120, message: 5000, 
  * its dropdown from the same list the Worker validates against, so the two
  * can never disagree about what a valid status is.
  *
- * "New" is first because it is the default for every incoming enquiry, and
- * the dashboard's Unreviewed filter is defined as exactly this value - an
- * enquiry nobody has triaged yet.
+ * "New" is first because it is the default for every incoming enquiry. It is
+ * NOT what the Un Reviewed filter reads - that is the `reviewed` column, which
+ * this only nudges (see the PATCH handler).
  */
 const STATUSES = ["New", "Contacted", "Quoted", "Deal", "Development", "Delivered", "Lost"];
 
@@ -110,6 +110,24 @@ async function handleEnquiry(request, db, id, user) {
       }
       sets.push("status = ?");
       binds.push(body.status);
+
+      /*
+       * Moving a lead off New is an act of review, so it stops being
+       * unreviewed - otherwise an enquiry marked Deal would sit in the Un
+       * Reviewed list forever waiting for a second click nobody remembers.
+       *
+       * One-way only, and only when `reviewed` was not sent explicitly: this
+       * must never UNDO a deliberate toggle, and setting a status back to New
+       * does not un-read what you have already read.
+       */
+      if (body.reviewed === undefined && body.status !== "New") {
+        sets.push("reviewed = 1");
+      }
+    }
+
+    if (body.reviewed !== undefined) {
+      sets.push("reviewed = ?");
+      binds.push(body.reviewed ? 1 : 0);
     }
 
     /* Optional by definition on the form, so "" legitimately clears them. */
@@ -156,7 +174,7 @@ async function handleEnquiry(request, db, id, user) {
       .prepare(
         `UPDATE enquiries SET ${sets.join(", ")} WHERE id = ?
          RETURNING id, name, email, company, service, message, created_at,
-                   notified, status, notes, updated_at, updated_by`,
+                   notified, status, reviewed, notes, updated_at, updated_by`,
       )
       .bind(...binds)
       .first();
@@ -274,7 +292,7 @@ async function handleApi(request, env, ctx, url) {
       const { results } = await db
         .prepare(
           `SELECT id, name, email, company, service, message, created_at,
-                  notified, status, notes, updated_at, updated_by
+                  notified, status, reviewed, notes, updated_at, updated_by
            FROM enquiries ORDER BY created_at DESC LIMIT 500`,
         )
         .all();

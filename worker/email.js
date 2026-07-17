@@ -1,5 +1,5 @@
 /**
- * Enquiry notifications, via Resend.
+ * Enquiry notifications, via the Gmail API.
  *
  * Two emails per enquiry:
  *   1. the team ("you have a new contact enquiry"), replying to the enquirer
@@ -7,25 +7,38 @@
  *
  * Both are best-effort and neither can fail the submission - see index.js. The
  * enquiry is committed to the database first; email is a courtesy on top of a
- * record that already exists. An outage at Resend must never cost a lead.
+ * record that already exists. A Google outage must never cost a lead.
  *
  * ---------------------------------------------------------------------------
- * Chosen over the Gmail API deliberately, after building both.
+ * WHY GMAIL AND NOT RESEND
  *
- * Gmail sends as the authenticated mailbox, so client confirmations would have
- * arrived from pixelkriti@gmail.com - a gmail.com address on a site whose
- * argument is that you own what you run. It also needs an OAuth refresh token
- * that Google expires after 7 DAYS unless the consent screen is published,
- * failing silently when it does. Resend needs one API key and a verified
- * domain, and sends as info@pixelkriti.com.
+ * Resend would send as info@pixelkriti.com, which is the better address to
+ * reach a client from - but it needs that domain verified by DNS, which is not
+ * done. Gmail sends today, from the mailbox that already exists. That is the
+ * whole trade: a working notification from a gmail.com address beats a
+ * perfect one that does not send.
  *
- * RESEND_API_KEY is a Wrangler secret - never in this repo, never in .env,
- * never in the bundle. FROM_EMAIL must be on a domain verified in Resend, or
- * every send is rejected.
+ * To move back later: verify pixelkriti.com in Resend, then restore the
+ * Resend version of this file (git history) and swap the vars in
+ * wrangler.jsonc. Nothing else in the Worker cares which sender is used.
+ * ---------------------------------------------------------------------------
+ * CREDENTIALS
+ *
+ * Sending needs THREE things, not two. GOOGLE_CLIENT_ID and
+ * GOOGLE_CLIENT_SECRET identify this application; they authorise nothing on
+ * their own. GOOGLE_REFRESH_TOKEN is what actually grants access to the
+ * mailbox, and it only exists once a human has signed in and consented -
+ * see scripts/gmail-auth.mjs.
+ *
+ * THE 7-DAY TRAP: while the OAuth consent screen is in "Testing", Google
+ * expires refresh tokens after 7 days. Everything works, then silently stops,
+ * and the only symptom is `notified = 0` on new rows in the dashboard. The
+ * consent screen must be set to "In production" for the token to last.
  * ---------------------------------------------------------------------------
  */
 
-const ENDPOINT = "https://api.resend.com/emails";
+const TOKEN_URL = "https://oauth2.googleapis.com/token";
+const SEND_URL = "https://gmail.googleapis.com/gmail/v1/users/me/messages/send";
 
 /** Escaped before interpolation: this content is a stranger's free text. */
 const escapeHtml = (value = "") =>
@@ -35,21 +48,92 @@ const escapeHtml = (value = "") =>
     .replace(/>/g, "&gt;")
     .replace(/"/g, "&quot;");
 
-async function send(env, payload) {
-  const response = await fetch(ENDPOINT, {
+/**
+ * base64url, UTF-8 safe.
+ *
+ * btoa() throws on any code point above 0xFF, so the string is encoded to
+ * UTF-8 bytes first. Without this, one accented character in a client's name
+ * would throw rather than send.
+ */
+function base64url(value) {
+  const bytes = new TextEncoder().encode(value);
+  let binary = "";
+  for (const byte of bytes) binary += String.fromCharCode(byte);
+  return btoa(binary).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+}
+
+/** Standard base64, for RFC 2047 header words (which are not url-safe). */
+function base64(value) {
+  const bytes = new TextEncoder().encode(value);
+  let binary = "";
+  for (const byte of bytes) binary += String.fromCharCode(byte);
+  return btoa(binary);
+}
+
+/**
+ * RFC 2047 encoding for headers.
+ *
+ * Subject lines carry client names, and a raw non-ASCII byte in a header is
+ * not merely mangled - it is invalid, and gets the whole message rejected.
+ */
+const encodeHeader = (value) =>
+  // eslint-disable-next-line no-control-regex
+  /^[\x00-\x7F]*$/.test(value) ? value : `=?UTF-8?B?${base64(value)}?=`;
+
+/** Refresh tokens are long-lived; access tokens last an hour. Trade one for
+ *  the other on each send - two round-trips, no state to keep or invalidate. */
+async function accessToken(env) {
+  const response = await fetch(TOKEN_URL, {
     method: "POST",
-    headers: {
-      Authorization: `Bearer ${env.RESEND_API_KEY}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ from: env.FROM_EMAIL, ...payload }),
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: new URLSearchParams({
+      client_id: env.GOOGLE_CLIENT_ID,
+      client_secret: env.GOOGLE_CLIENT_SECRET,
+      refresh_token: env.GOOGLE_REFRESH_TOKEN,
+      grant_type: "refresh_token",
+    }),
   });
 
   if (!response.ok) {
-    /* Body, not just status: Resend names the actual cause (domain not
-       verified, key revoked) and that message is the whole diagnosis when
-       this fails months from now. */
-    throw new Error(`Resend ${response.status}: ${await response.text()}`);
+    /*
+     * `invalid_grant` here almost always means the refresh token was revoked
+     * or expired - which, on a Testing-status consent screen, happens exactly
+     * 7 days after it was minted. Re-run scripts/gmail-auth.mjs, and publish
+     * the consent screen so it does not recur.
+     */
+    throw new Error(`Google token refresh failed ${response.status}: ${await response.text()}`);
+  }
+
+  return (await response.json()).access_token;
+}
+
+async function send(env, { to, subject, html, replyTo }) {
+  const token = await accessToken(env);
+
+  const headers = [
+    `From: ${env.GMAIL_SENDER}`,
+    `To: ${to.join(", ")}`,
+    replyTo && `Reply-To: ${replyTo}`,
+    `Subject: ${encodeHeader(subject)}`,
+    "MIME-Version: 1.0",
+    'Content-Type: text/html; charset="UTF-8"',
+  ].filter(Boolean);
+
+  /* CRLF, not LF: RFC 5322 line endings. Gmail tolerates LF; other agents in
+     the chain do not, and the failure is a mangled body rather than an error. */
+  const raw = base64url(`${headers.join("\r\n")}\r\n\r\n${html}`);
+
+  const response = await fetch(SEND_URL, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ raw }),
+  });
+
+  if (!response.ok) {
+    throw new Error(`Gmail send failed ${response.status}: ${await response.text()}`);
   }
 
   return response.json();
@@ -75,7 +159,7 @@ export function notifyTeam(env, enquiry) {
   return send(env, {
     to,
     /* Replying to the notification reaches the client, not the void. */
-    reply_to: enquiry.email,
+    replyTo: enquiry.email,
     subject: `New enquiry - ${enquiry.name}${enquiry.company ? ` (${enquiry.company})` : ""}`,
     html: `<div style="font-family:system-ui,sans-serif;max-width:560px;">
       <p style="margin:0 0 16px;">You have a new contact enquiry.</p>
@@ -91,7 +175,7 @@ export function notifyTeam(env, enquiry) {
 export function confirmToEnquirer(env, enquiry) {
   return send(env, {
     to: [enquiry.email],
-    reply_to: env.NOTIFY_TO.split(",")[0].trim(),
+    replyTo: env.NOTIFY_TO.split(",")[0].trim(),
     subject: "We have got your enquiry - Pixel Kriti",
     /*
      * No promised response time. We cannot keep a promise the site has not

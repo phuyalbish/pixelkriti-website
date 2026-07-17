@@ -39,6 +39,17 @@ CREATE TABLE IF NOT EXISTS enquiries (
   -- reason, add the constraint then and delete this note.
   status      TEXT NOT NULL DEFAULT 'New',
 
+  -- Triaged or not, and what the Reviewed / Un Reviewed filters read.
+  --
+  -- An explicit flag rather than a derivation of `status`, because being
+  -- reviewed and being at a pipeline stage are genuinely different facts: an
+  -- enquiry can be read and understood while still sitting at New, and one
+  -- can be dragged to Quoted by someone who never actually read it. The
+  -- Worker sets this to 1 automatically when the status moves off New (that
+  -- IS an act of review) but never clears it automatically - only the toggle
+  -- in the dashboard does that.
+  reviewed    INTEGER NOT NULL DEFAULT 0,
+
   -- Free-text working notes added from the dashboard.
   notes       TEXT,
 

@@ -9,6 +9,15 @@ export default {
           raised: "var(--ink-raised)",
           overlay: "var(--ink-overlay)",
           faint: "var(--ink-faint)",
+          /* Text on light surfaces - see the cream scale below. */
+          dim: "var(--ink-dim)",
+          muted: "var(--ink-muted)",
+        },
+        /* The dashboard only. The public site is ink-toned throughout. */
+        cream: {
+          DEFAULT: "var(--cream)",
+          raised: "var(--cream-raised)",
+          overlay: "var(--cream-overlay)",
         },
         paper: {
           DEFAULT: "var(--paper)",
@@ -23,6 +32,8 @@ export default {
         brand: {
           DEFAULT: "var(--brand)",
           soft: "var(--brand-soft)",
+          /* The brand green only clears AA as text on ink. Use this on cream. */
+          deep: "var(--brand-deep)",
         },
       },
       fontFamily: {

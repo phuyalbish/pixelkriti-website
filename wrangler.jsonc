@@ -39,16 +39,25 @@
   // and never written down:
   //   npx wrangler secret put RESEND_API_KEY
   "vars": {
-    // Must be on a domain VERIFIED in Resend. pixelkriti.com is added to the
-    // account but pending DNS - until those records resolve, Resend rejects
-    // every send, the catch in index.js logs it, and the enquiry still saves
-    // with notified = 0. Email waits on DNS; the dashboard does not.
-    "FROM_EMAIL": "Pixel Kriti <info@pixelkriti.com>",
+    // Gmail sends as the authenticated mailbox, so this must BE that mailbox
+    // (or an alias verified in Gmail under Settings -> Accounts -> "Send mail
+    // as" - Google rewrites the From header back to the real account
+    // otherwise, and the alias achieves nothing).
+    //
+    // info@pixelkriti.com would be the better address to reach a client from,
+    // and it is what Resend was set up to use - but that needs DNS on
+    // pixelkriti.com which is not done, so it sends nothing at all today. A
+    // working notification from a gmail.com address beats a perfect one that
+    // never arrives. Revisit once the domain is verified.
+    "GMAIL_SENDER": "Pixel Kriti <pixelkriti@gmail.com>",
 
+    // Where "you have a new enquiry" goes. Deliberately the gmail address and
+    // not info@pixelkriti.com: that one is unverified for sending and
+    // unconfirmed for receiving (see the TODO in src/data/site.js), so a
+    // notification sent there might land nowhere and nobody would know.
+    //
     // TODO: replace with the three real addresses, comma-separated
-    // (amitesh@..., bishal@..., muzammil@...). Standing in with the site's
-    // public address so nothing silently goes nowhere in the meantime -
-    // though site.js still marks that address itself as unconfirmed.
-    "NOTIFY_TO": "info@pixelkriti.com"
+    // (amitesh@..., bishal@..., muzammil@...) once they exist.
+    "NOTIFY_TO": "pixelkriti@gmail.com"
   }
 }

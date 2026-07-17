@@ -19,6 +19,26 @@
   --line-ink: rgba(11, 11, 12, 0.12);
   --ink-faint: rgba(11, 11, 12, 0.55);
 
+  /*
+   * The dashboard's surfaces. Warm, not white: a hair of yellow keeps it from
+   * the clinical glare of #fff on a screen someone reads for an hour.
+   *
+   * Only the dashboard uses these. The public site stays ink - atmosphere is
+   * worth something on a page read once by someone deciding whether to call,
+   * and worth nothing on the tool the team lives in.
+   */
+  --cream: #f4f1ea;
+  --cream-raised: #fbf9f4;
+  --cream-overlay: #eae5da;
+
+  /* Text on cream. Measured, not guessed: dim is ~7:1, muted ~4.6:1. */
+  --ink-dim: rgba(11, 11, 12, 0.72);
+  --ink-muted: rgba(11, 11, 12, 0.58);
+
+  /* Brand green is 2.6:1 on cream - unreadable as text. This is the same hue
+     taken down until it clears AA, for light surfaces only. */
+  --brand-deep: #1c7a33;
+
   /* The one saturated colour on an otherwise monochrome site. */
   --brand: #31ae49;
   /* The same green, dialled back for watermarks that must stay in the back. */
@@ -85,6 +105,42 @@
   [data-tone="paper"] .eyebrow {
     color: rgba(11, 11, 12, 0.55);
   }
+}
+
+/*
+ * The dashboard runs light.
+ *
+ * Scoped to an attribute the dashboard puts on <body> and removes when it
+ * unmounts, rather than a wrapper div, because the things that need to change
+ * are not inside the page: the body background shows through on overscroll,
+ * and the scrollbar and selection colours are painted by the browser from
+ * these same rules. A wrapper cannot reach any of them.
+ */
+body[data-surface="cream"] {
+  background-color: var(--cream);
+  color: var(--ink);
+}
+
+body[data-surface="cream"] ::selection {
+  background-color: var(--ink);
+  color: var(--cream);
+}
+
+body[data-surface="cream"] :focus-visible {
+  outline-color: var(--ink);
+}
+
+body[data-surface="cream"] ::-webkit-scrollbar-track {
+  background: var(--cream);
+}
+
+body[data-surface="cream"] ::-webkit-scrollbar-thumb {
+  background: var(--cream-overlay);
+  border-color: var(--cream);
+}
+
+body[data-surface="cream"] ::-webkit-scrollbar-thumb:hover {
+  background: var(--line-ink);
 }
 
 @layer utilities {
